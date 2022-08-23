@@ -1,7 +1,11 @@
+import { json } from '@sveltejs/kit';
+
+// @migration task: Check imports
 import { NFTStorage } from 'nft.storage';
 import 'dotenv/config';
 import sharp from 'sharp';
 import { Blob } from '@web-std/blob';
+
 // import type { Entry } from '$lib/types/entry';
 
 interface Entry {
@@ -11,7 +15,7 @@ interface Entry {
 }
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
-export async function POST({ request }: { request: Request }) {
+export const POST = async ({ request }: { request: Request }) => {
 	const data = await request.formData(); // or .json(), or .text(), etc
 
 	console.log('data is: ', data);
@@ -19,6 +23,9 @@ export async function POST({ request }: { request: Request }) {
 	const name = data.get('name')?.toString();
 	if (!name) {
 		console.error('no name found');
+		throw new Error(
+			'@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)'
+		);
 		return handleError('No name found');
 	}
 	console.log('name is: ', name);
@@ -55,7 +62,9 @@ export async function POST({ request }: { request: Request }) {
 	let i = 0;
 	while (data.has(`entries[${i}].name`)) {
 		const name = data.get(`entries[${i}].name`)?.toString() ?? '';
-		const midi = data.has(`entries[${i}].midi`) ? data.get(`entries[${i}].midi`)?.toString() : '';
+		const midiStr = data.has(`entries[${i}].midi`)
+			? data.get(`entries[${i}].midi`)?.toString()
+			: '';
 		const image = data.has(`entries[${i}].image`)
 			? (data.get(`entries[${i}].image`) as File)
 			: undefined;
@@ -72,11 +81,11 @@ export async function POST({ request }: { request: Request }) {
 
 		console.log('image is: ', image);
 
-		const test = new TextEncoder().encode(midi);
+		const midi = new TextEncoder().encode(midiStr);
 
 		// const test = new Uint8Array(midi?.toString().length)
 
-		entries.push({ name, midi: test, image: blob });
+		entries.push({ name, midi, image: blob });
 
 		i++;
 	}
@@ -85,11 +94,17 @@ export async function POST({ request }: { request: Request }) {
 
 	if (!API_KEY) {
 		console.error('no API_KEY found');
+		throw new Error(
+			'@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)'
+		);
 		return handleError('No API KEY present');
 	}
 
 	if (!logo) {
 		console.error('no image found');
+		throw new Error(
+			'@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)'
+		);
 		return handleError('No image found');
 	}
 
@@ -105,13 +120,23 @@ export async function POST({ request }: { request: Request }) {
 
 	console.log('metadata is: ', metadata);
 
-	return {
-		status: 200,
-		body: {
-			metadata
-		}
-	};
-}
+	return json({
+		metadata: metadata.url
+	});
+	// return {
+	// 	status: 200,
+	// 	// headers: {},
+	// 	body: {
+	// 		metadata: metadata.url
+	// 	}
+	// };
+
+	// return new Response(JSON.stringify({ metadata: metadata.url }), {
+	// 	headers: {
+	// 		'content-type': 'application/json; charset=utf-8'
+	// 	}
+	// });
+};
 
 const handleError = (msg: string) => ({
 	status: 500,

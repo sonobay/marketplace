@@ -5,3 +5,12 @@ export const truncateAddress = (address: string) => {
 	if (!match) return address;
 	return match[1] + '\u2026' + match[2];
 };
+
+export const isNumber = (n: string) => !isNaN(parseFloat(n));
+
+export const isPositiveInteger = (n: string) => {
+	if (!isNumber(n)) {
+		return false;
+	}
+	return +n >>> 0 === parseFloat(n);
+};
