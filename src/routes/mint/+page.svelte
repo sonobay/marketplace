@@ -91,15 +91,10 @@ import { goto } from '$app/navigation';
       $signer
     );
 
-    // const address = 
-
     const tx = await midi.mint($signerAddress, BigNumber.from(amount), json.metadata, [])
-    console.log('tx is: ', tx)
+    const receipt = await tx.wait()
 
-
-    // TODO:
-    // `goto(`/midi/${tokenId}`);`
-
+    goto(`/midi/${receipt.events[0].args.id}`);
   }
 
   const unsubscribe = midi.subscribe((store) => {

@@ -28,6 +28,12 @@ export const load = async ({ params }: LoadEvent) => {
 	console.log('metadata is: ', metadata);
 
 	metadata.image = metadata.image.replace('ipfs://', 'https://ipfs.io/ipfs/');
+	metadata.properties.entries = metadata.properties.entries.map((entry) => {
+		if (entry.image) {
+			entry.image = entry.image?.replace('ipfs://', 'https://ipfs.io/ipfs/');
+		}
+		return entry;
+	});
 
 	return { metadata };
 };
