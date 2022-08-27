@@ -10,6 +10,7 @@
   import { addresses } from '$lib/constants/addresses'
   import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
 import { isPositiveInteger } from '$lib/utils';
+import { goto } from '$app/navigation';
 
   let name = '';
   let description = '';
@@ -81,8 +82,9 @@ import { isPositiveInteger } from '$lib/utils';
     const json: {metadata: string} = await res.json();
     console.log('json is: ', json)
 
-    // mint on ethereum
-
+    /**
+     * Mint on Ethereum
+     */
     const midi = new Contract(
       addresses.midi,
       midiArtifact.abi,
@@ -91,13 +93,12 @@ import { isPositiveInteger } from '$lib/utils';
 
     // const address = 
 
-    const tx = await midi.mint(signerAddress, BigNumber.from(amount), json.metadata, [])
+    const tx = await midi.mint($signerAddress, BigNumber.from(amount), json.metadata, [])
     console.log('tx is: ', tx)
 
-    // address to,
-    // uint256 amount,
-    // string memory tokenURI,
-    // bytes memory data
+
+    // TODO:
+    // `goto(`/midi/${tokenId}`);`
 
   }
 
