@@ -9,8 +9,8 @@
   import { Contract, BigNumber } from 'ethers'
   import { addresses } from '$lib/constants/addresses'
   import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
-import { isPositiveInteger } from '$lib/utils';
-import { goto } from '$app/navigation';
+  import { isPositiveInteger } from '$lib/utils';
+  import { goto } from '$app/navigation';
 
   let name = '';
   let description = '';

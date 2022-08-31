@@ -6,7 +6,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['Silkscreen', ...defaultTheme.fontFamily.sans]
+				sans: ['VT323', ...defaultTheme.fontFamily.sans]
 			}
 		}
 	},
