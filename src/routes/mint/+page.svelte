@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
-  import { midi } from '$lib/stores/midi';
+  import { midi, sendMidiToOutput } from '$lib/stores/midi';
   import { signer, signerAddress } from 'svelte-ethers-store';
   import ImageInput from '$lib/components/ImageInput.svelte';
   import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
@@ -50,7 +50,7 @@
     }
 
     if (!image || image && image.length <= 0) {
-      console.log('image required')
+      console.error('image required')
       return;
     }
 
@@ -63,12 +63,11 @@
 
     entries.forEach((entry, i) => {
       formData.append(`entries[${i}].name`, entry.name)
-      formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '[]')
+      formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '')
       if (entry.image) {
         formData.append(`entries[${i}].image`, entry.image[0])
       }
     })
-    // formData.append('entries', JSON.stringify(entries))
 
     const res = await fetch("mint.json", {
         method: "POST",
@@ -78,9 +77,7 @@
         body: formData,
     });
 
-    console.log('res is: ', res);
     const json: {metadata: string} = await res.json();
-    console.log('json is: ', json)
 
     /**
      * Mint on Ethereum
@@ -188,6 +185,9 @@
               {:else}
                 [.]
               {/if}
+            </td>
+            <td>
+              <button on:click|preventDefault={(_) => sendMidiToOutput(entry.midi ?? new Uint8Array(0))}>Test</button>
             </td>
             <td class="w-12">
               <button class="w-full" on:click|preventDefault={(_) => removeEntry(i) }>

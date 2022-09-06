@@ -24,7 +24,6 @@ export const POST = async ({ request }: { request: Request }) => {
 	}
 
 	const logo = data.get('logo') as File;
-	console.log('logo is: ', logo);
 	if (!logo) {
 		throw new Error('No logo file found');
 	}
@@ -39,9 +38,7 @@ export const POST = async ({ request }: { request: Request }) => {
 	let i = 0;
 	while (data.has(`entries[${i}].name`)) {
 		const name = data.get(`entries[${i}].name`)?.toString() ?? '';
-		const midiStr = data.has(`entries[${i}].midi`)
-			? data.get(`entries[${i}].midi`)?.toString()
-			: '';
+		const midi = data.has(`entries[${i}].midi`) ? data.get(`entries[${i}].midi`) : '';
 		const image = data.has(`entries[${i}].image`)
 			? (data.get(`entries[${i}].image`) as File)
 			: undefined;
@@ -54,15 +51,7 @@ export const POST = async ({ request }: { request: Request }) => {
 			blob = new Blob([resizedLogo]);
 		}
 
-		// const image = undefined;
-
-		console.log('image is: ', image);
-
-		const midi = new TextEncoder().encode(midiStr);
-
-		// const test = new Uint8Array(midi?.toString().length)
-
-		entries.push({ name, midi, image: blob });
+		entries.push({ name, midi: JSON.parse(`[${midi?.toString() ?? ''}]`), image: blob });
 
 		i++;
 	}

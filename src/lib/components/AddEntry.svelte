@@ -27,7 +27,6 @@
     }
 
     store.selectedInput.onmidimessage = (msg) => {
-      console.log('received msg: ', msg.data);
       entry.midi = msg.data;
       entry = entry;
     };

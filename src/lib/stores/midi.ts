@@ -1,3 +1,4 @@
+import type { Entry } from '$lib/types/entry';
 import { writable, get } from 'svelte/store';
 
 interface MidiStore {
@@ -21,7 +22,6 @@ const createMidi = () => {
 		setOutputs(midiAccess.outputs);
 
 		midiAccess.onstatechange = (e) => {
-			console.log('connection event!', e);
 			if (!e.isTrusted) {
 				return;
 			}
@@ -32,8 +32,6 @@ const createMidi = () => {
 	}
 
 	const setInputs = (inputs: WebMidi.MIDIInputMap) => {
-		console.log('inputs are: ', inputs);
-
 		/**
 		 * Update Inputs
 		 */
@@ -116,5 +114,23 @@ const createMidi = () => {
 };
 
 export const midi = createMidi();
+
+export const sendMidiToOutput = async (msg: Uint8Array) => {
+	if (!msg) {
+		return;
+	}
+	const $midi = get(midi);
+
+	if (!$midi.selectedOutput) {
+		return;
+	}
+
+	if ($midi.selectedOutput.connection === 'closed') {
+		await $midi.selectedOutput.open();
+	}
+
+	$midi.selectedOutput.send(msg);
+	return;
+};
 
 midi.connect();

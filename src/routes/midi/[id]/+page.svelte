@@ -1,9 +1,14 @@
 <script lang="ts">
   import Avatar from '$lib/components/Avatar.svelte';
-  import type { Metadata } from './+page.server'
-  export let data: {metadata: Metadata};
+  import type { Entry, IPFSMetadata } from '$lib/types/ipfs-metadata';
+  export let data: {metadata: IPFSMetadata};
+  import { sendMidiToOutput } from '$lib/stores/midi';
 
   let { metadata } = data;
+
+  const loadMIDI = async (entry: Entry) => {
+    sendMidiToOutput(entry.midi)
+  }
 
 </script>
 
@@ -15,13 +20,9 @@
   {#each metadata.properties.entries as entry}
     <div>
       <span>{entry.name}</span>
-      {#if entry.image}
-        <img src={entry.image} alt={entry.name} />
-      {:else}
-        <span>...</span>
-      {/if}
-
       <Avatar path={entry.image} size="md" alt={entry.name} />
+
+      <button on:click|preventDefault={(_) => loadMIDI(entry)}>Load</button>
 
       <pre>{JSON.stringify(entry.midi)}</pre>
     </div>
