@@ -69,7 +69,7 @@
       }
     })
 
-    const res = await fetch("mint.json", {
+    const res = await fetch("api/mint.json", {
         method: "POST",
         headers: {
           "accept": "application/json"
