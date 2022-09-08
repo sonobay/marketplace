@@ -1,5 +1,4 @@
 import type { LoadEvent } from '@sveltejs/kit';
-import 'dotenv/config';
 import { get } from '$lib/api/metadata/ipfs';
 
 export const load = async ({ params }: LoadEvent) => {
