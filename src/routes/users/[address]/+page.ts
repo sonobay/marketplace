@@ -4,6 +4,7 @@ import { getDefaultProvider, Contract, BigNumber } from 'ethers';
 import { variables } from '$lib/env';
 import { addresses } from '$lib/constants/addresses';
 import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
+import type { UserToken } from '$lib/types/user-token';
 
 export const load = async ({ params }: LoadEvent) => {
 	const { address } = params;
@@ -84,13 +85,10 @@ export const load = async ({ params }: LoadEvent) => {
 		}
 	}
 
-	const balances: { tokenID: number; balance: BigNumber }[] = [];
+	const userTokens: UserToken[] = [];
 	for (const [key, value] of Object.entries(balanceMap)) {
-		// console.log(`${key}: ${value}`);
-		balances.push({ tokenID: +key, balance: value });
+		userTokens.push({ id: +key, balance: value });
 	}
 
-	console.log('balances are: ', balances);
-
-	return { userTokens: balances };
+	return { userTokens };
 };
