@@ -5,10 +5,10 @@ import { variables } from '$lib/env';
 import { addresses } from '$lib/constants/addresses';
 import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
 import type { UserToken } from '$lib/types/user-token';
+import type { IPFSMetadata } from '$lib/types/ipfs-metadata';
 
 export const load = async ({ params }: LoadEvent) => {
 	const { address } = params;
-	console.log('searching for: ', address);
 
 	const { infuraEndpoint } = variables;
 	const midi = new Contract(addresses.midi, midiArtifact.abi, getDefaultProvider(infuraEndpoint));
@@ -89,6 +89,46 @@ export const load = async ({ params }: LoadEvent) => {
 	for (const [key, value] of Object.entries(balanceMap)) {
 		userTokens.push({ id: +key, balance: value });
 	}
+	userTokens.reverse();
 
-	return { userTokens };
+	const ipfs = await getMetadata({ userTokens, page: 0, limit: 10 });
+
+	return { userTokens, ipfs };
+};
+
+export const getMetadata = async ({
+	userTokens,
+	page,
+	limit
+}: {
+	userTokens: UserToken[];
+	page: number;
+	limit: number;
+}) => {
+	let metadatas: { metadata: IPFSMetadata; id: number }[] = [];
+	const map = new Map<number, IPFSMetadata>();
+
+	if (page * limit <= userTokens.length) {
+		const promises = [];
+
+		for (let i = page * limit; i < page * limit + limit; i++) {
+			if (userTokens[i]) {
+				promises.push(
+					new Promise<{ id: number; metadata: IPFSMetadata }>((resolve) => {
+						get(String(userTokens[i].id)).then((ipfs) => {
+							resolve({ metadata: ipfs, id: userTokens[i].id });
+						});
+					})
+				);
+			}
+		}
+
+		metadatas = await Promise.all(promises);
+
+		for (const metadata of metadatas) {
+			map.set(metadata.id, metadata.metadata);
+		}
+	}
+
+	return map;
 };
