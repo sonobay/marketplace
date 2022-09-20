@@ -2,7 +2,7 @@ import type { LoadEvent } from '@sveltejs/kit';
 import { get } from '$lib/api/metadata/ipfs';
 import { getDefaultProvider, Contract, BigNumber } from 'ethers';
 import { variables } from '$lib/env';
-import { addresses } from '$lib/constants/addresses';
+import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
 import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
 import type { UserToken } from '$lib/types/user-token';
 import type { IPFSMetadata } from '$lib/types/ipfs-metadata';
@@ -14,16 +14,20 @@ export const load = async ({ params }: LoadEvent) => {
 	const midi = new Contract(addresses.midi, midiArtifact.abi, getDefaultProvider(infuraEndpoint));
 
 	const transferFromSingleEvents = await midi.queryFilter(
-		midi.filters.TransferSingle(null, address, null, null, null)
+		midi.filters.TransferSingle(null, address, null, null, null),
+		MIDI_DEPLOY_BLOCK
 	);
 	const transferToSingleEvents = await midi.queryFilter(
-		midi.filters.TransferSingle(null, null, address, null, null)
+		midi.filters.TransferSingle(null, null, address, null, null),
+		MIDI_DEPLOY_BLOCK
 	);
 	const transferFromBatchEvents = await midi.queryFilter(
-		midi.filters.TransferBatch(null, address, null, null, null)
+		midi.filters.TransferBatch(null, address, null, null, null),
+		MIDI_DEPLOY_BLOCK
 	);
 	const transferToBatchEvents = await midi.queryFilter(
-		midi.filters.TransferBatch(null, null, address, null, null)
+		midi.filters.TransferBatch(null, null, address, null, null),
+		MIDI_DEPLOY_BLOCK
 	);
 
 	const allEvents = [
