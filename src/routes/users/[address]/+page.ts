@@ -3,7 +3,7 @@ import { get } from '$lib/api/metadata/ipfs';
 import { getDefaultProvider, Contract, BigNumber } from 'ethers';
 import { variables } from '$lib/env';
 import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
-import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
+import * as midiArtifact from '$lib/data/artifacts/contracts/midi/MIDI.sol/MIDI.json';
 import type { UserToken } from '$lib/types/user-token';
 import type { IPFSMetadata } from '$lib/types/ipfs-metadata';
 

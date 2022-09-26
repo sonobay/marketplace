@@ -4,9 +4,10 @@
   export let data: {metadata: IPFSMetadata};
   import { sendMidiToOutput } from '$lib/stores/midi';
   import { signerAddress, signer } from 'svelte-ethers-store'
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { page } from '$app/stores';
-  import { isApprovedForAll, midiContract, setApprovalForAll } from '$lib/utils/contracts';
+  import { isApprovedForAll, midiContract, setApprovalForAll } from '$lib/utils/midi.contract';
+  import { createListing, fetchListingEvents } from '$lib/utils/market.contract';
   import { BigNumber } from 'ethers';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import { addresses } from '$lib/constants/addresses';
@@ -19,6 +20,9 @@
   let listingPrice = 1;
   let isApproved = false;
   let approvalIsLoading = false;
+  let listingIsLoading = false;
+  const tokenId = $page.params.id
+  console.log('token id is: ', tokenId)
 
   const loadMIDI = async (entry: Entry) => {
     sendMidiToOutput(entry.midi)
@@ -57,12 +61,36 @@
     approvalIsLoading = false;
   }
 
+  const list = async () => {
+    listingIsLoading = true;
+    if (!tokenId) {
+      console.error('no token id')
+      return
+    }
+    const success = await createListing({ tokenId: +tokenId, amount: listingAmount, price: listingPrice, signer: $signer })
+    if (!success) {
+      return;
+    }
+
+    fetchListingEvents(+tokenId)
+    dialogVisible = false
+  }
+
+  const _fetchListings = async () => {
+    const listingAddresses = fetchListingEvents(+$page.params.id);
+
+  }
+
+  onMount(() => {
+    _fetchListings()
+  })
+
   onDestroy(sub)
 
 </script>
 
 <div>
-  <div class="flex justify-between">
+  <div class="flex justify-between mb-4">
     <div class="flex">
       <Avatar path={metadata.image} size="md" alt={metadata.name} />
       <div>
@@ -87,7 +115,7 @@
 
       <button on:click|preventDefault={(_) => loadMIDI(entry)}>Load</button>
 
-      <pre>{JSON.stringify(entry.midi)}</pre>
+      <!-- <pre>{JSON.stringify(entry.midi)}</pre> -->
     </div>
   {/each}
 </div>
@@ -124,6 +152,6 @@
     <!-- Modal footer -->
     <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
       <Button text="Approve" disabled={approvalIsLoading || isApproved} loading={approvalIsLoading} on:click={() => approve()} />
-      <Button text="Create Listing" disabled={!isApproved} />
+      <Button on:click={(_) => list()} text="Create Listing" disabled={!isApproved} />
     </div>
 </Dialog>

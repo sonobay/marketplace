@@ -1,5 +1,6 @@
 import type { LoadEvent } from '@sveltejs/kit';
 import { get } from '$lib/api/metadata/ipfs';
+// import { fetchListings } from '$lib/utils/market.contract';
 
 export const load = async ({ params }: LoadEvent) => {
 	const { id } = params;
@@ -8,5 +9,6 @@ export const load = async ({ params }: LoadEvent) => {
 	}
 
 	const ipfsMetadata = await get(id);
+
 	return { metadata: ipfsMetadata };
 };

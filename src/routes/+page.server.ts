@@ -2,7 +2,7 @@
 import { Contract, getDefaultProvider } from 'ethers';
 import { addresses } from '$lib/constants/addresses';
 import type { LoadEvent } from '@sveltejs/kit';
-import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
+// import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
 
 export const load = async ({ params, data }: LoadEvent) => {
 	// const { INFURA_ENDPOINT } = process.env;
