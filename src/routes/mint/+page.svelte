@@ -6,11 +6,10 @@
   import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
   import type { Entry } from '$lib/types/entry';
   import AddEntry from '$lib/components/AddEntry.svelte';
-  import { Contract, BigNumber } from 'ethers'
-  import { addresses } from '$lib/constants/addresses'
-  import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
+  import { BigNumber } from 'ethers'
   import { isPositiveInteger } from '$lib/utils';
   import { goto } from '$app/navigation';
+	import { midiContract } from '$lib/utils/midi.contract';
 
   let name = '';
   let description = '';
@@ -82,12 +81,7 @@
     /**
      * Mint on Ethereum
      */
-    const midi = new Contract(
-      addresses.midi,
-      midiArtifact.abi,
-      $signer
-    );
-
+    const midi = midiContract($signer)
     const tx = await midi.mint($signerAddress, BigNumber.from(amount), json.metadata, [])
     const receipt = await tx.wait()
 
