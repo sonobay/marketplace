@@ -12,6 +12,8 @@
 	import Dialog from '$lib/components/Dialog.svelte';
 	import { addresses } from '$lib/constants/addresses';
 	import Button from '$lib/components/Button.svelte';
+	import type { Listing } from '$lib/types/listing';
+	import ListingItem from '$lib/components/ListingItem.svelte';
 
   let { metadata } = data;
   let userBalance = BigNumber.from(0)
@@ -21,33 +23,42 @@
   let isApproved = false;
   let approvalIsLoading = false;
   let listingIsLoading = false;
-  const tokenId = $page.params.id
+  let listings: Listing[] = []
+  const tokenId = $page.params.id;
   console.log('token id is: ', tokenId)
 
   const loadMIDI = async (entry: Entry) => {
     sendMidiToOutput(entry.midi)
   }
 
-  const checkOwner = async (userAddress: string) => {
-    if (!userAddress) {
+  const checkOwner = async () => {
+    if (!$signerAddress) {
       return;
     }
 
-    const { id } = $page.params
-
-    const fetchBalance = await midiContract().balanceOf(userAddress, id)
-    userBalance = BigNumber.from(fetchBalance)
+    await fetchBalance()
 
     /**
      * check if marketplace approved
      */
     if (userBalance.gt(0)) {
-      isApproved = await isApprovedForAll({account: userAddress, operator: addresses.market})
+      isApproved = await isApprovedForAll({account: $signerAddress, operator: addresses.market})
     }
   }
 
+  const fetchBalance = async () => {
+    console.log('fetching balance: ')
+    if (!$signerAddress) {
+      return;
+    }
+    const { id } = $page.params
+
+    const fetchBalance = await midiContract().balanceOf($signerAddress, id)
+    userBalance = BigNumber.from(fetchBalance)
+  }
+
   const sub = signerAddress.subscribe(async (address) => {
-    checkOwner(address)
+    checkOwner()
   })
 
   const toggleModal = () => {
@@ -77,8 +88,7 @@
   }
 
   const _fetchListings = async () => {
-    const listingAddresses = fetchListingEvents(+$page.params.id);
-
+    listings = await fetchListingEvents(+$page.params.id);
   }
 
   onMount(() => {
@@ -118,6 +128,12 @@
       <!-- <pre>{JSON.stringify(entry.midi)}</pre> -->
     </div>
   {/each}
+
+  <div>
+    {#each listings as listing}
+      <ListingItem listing={listing} name={metadata.name} on:purchaseComplete={() => fetchBalance()} />
+    {/each}
+  </div>
 </div>
 
 <!-- modal -->

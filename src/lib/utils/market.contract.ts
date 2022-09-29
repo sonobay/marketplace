@@ -55,15 +55,13 @@ export const fetchListingEvents = async (tokenId: number) => {
 		MIDI_DEPLOY_BLOCK
 	);
 	console.log('listing events by id', listingEventsById);
-	const listings = listingEventsById.map((event) => {
-		if (!event.args) {
-			return;
-		}
+	const listings: Listing[] = listingEventsById
+		.filter((event) => event.args)
+		.map((event) => {
+			const { tokenId, listing, price, amount, user } = event.args as unknown as Listing;
+			return { tokenId, listing, price, amount, user };
+		});
 
-		const { tokenId, listing, price, amount, user } = event.args as unknown as Listing;
-		return { tokenId, listing, price, amount, user };
-	});
 	console.log('listings : ', listings);
-
-	return listingEventsById;
+	return listings;
 };
