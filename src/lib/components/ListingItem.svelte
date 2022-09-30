@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { Listing } from "$lib/types/listing";
-	import { buyItems } from "$lib/utils/listing.contract";
+	import { buyItems, fetchAvailableAmount } from "$lib/utils/listing.contract";
   import { utils } from 'ethers'
 	import Button from "./Button.svelte";
 	import Dialog from "./Dialog.svelte";
   import { signer } from 'svelte-ethers-store'
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import type { BigNumber } from 'ethers'
 
   export let listing: Listing;
   export let name: string;
@@ -13,6 +14,7 @@
   const dispatch = createEventDispatcher();
   let dialogVisible = false;
   let purchaseProcessing = false;
+  let availableAmount: BigNumber;
   $: amountToBuy = 1;
 
   const purchase = async () => {
@@ -33,17 +35,35 @@
     amountToBuy = Math.ceil(+target.value)
   }
 
+  const _fetchAvailableAmount = async () => {
+    availableAmount = await fetchAvailableAmount(listing.listing)
+  }
+
+  onMount(() => {
+    _fetchAvailableAmount()
+  })
+
 </script>
 
 <div class="flex flex-col">
   <span>listing address: {listing.listing}</span>
-  <span>amount: {listing.amount}</span>
+
+  {#if availableAmount}
+    <span>Available: {availableAmount.toString()}</span>
+  {:else}
+    <span>Available: ...</span>
+  {/if}
+
+  <span>Total Amount: {listing.amount}</span>
   <span>price: {utils.formatEther(listing.price)} ETH</span>
   <span>tokenId: {listing.tokenId}</span>
   <span>listed by user: {listing.user}</span>
 
   <!-- <button on:click|preventDefault={(_) => purchase()}>BUY</button> -->
-  <Button on:click={() => dialogVisible = true} text="Buy" disabled={!$signer} />
+  <Button on:click={() => dialogVisible = true} text="Buy" disabled={!$signer || !availableAmount || availableAmount?.isZero()} />
+  {#if availableAmount?.isZero()}
+    <span>SOLD OUT</span>
+  {/if}
 
 </div>
 
@@ -76,6 +96,6 @@
     <!-- Modal footer -->
     <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
       <!-- <Button text="Approve" disabled={approvalIsLoading || isApproved} loading={approvalIsLoading} on:click={() => approve()} /> -->
-      <Button on:click={(_) => purchase()} text="Buy MIDI" loading={purchaseProcessing} />
+      <Button on:click={(_) => purchase()} text="Buy MIDI" loading={purchaseProcessing} disabled={purchaseProcessing} />
     </div>
 </Dialog>
