@@ -7,6 +7,9 @@ module.exports = {
 		extend: {
 			fontFamily: {
 				sans: ['VT323', ...defaultTheme.fontFamily.sans]
+			},
+			colors: {
+				link: 'rgb(34 211 238)' // text-cyan-400
 			}
 		}
 	},

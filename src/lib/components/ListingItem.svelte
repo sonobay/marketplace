@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Listing } from "$lib/types/listing";
-	import { buyItems, fetchAvailableAmount } from "$lib/utils/listing.contract";
+	import { buyItems, fetchAvailableAmount, fetchListed } from "$lib/utils/listing.contract";
   import { utils } from 'ethers'
 	import Button from "./Button.svelte";
 	import Dialog from "./Dialog.svelte";
@@ -15,6 +15,7 @@
   let dialogVisible = false;
   let purchaseProcessing = false;
   let availableAmount: BigNumber;
+  let listed = true;
   $: amountToBuy = 1;
 
   const purchase = async () => {
@@ -39,30 +40,46 @@
     availableAmount = await fetchAvailableAmount(listing.listing)
   }
 
+  const _fetchListed = async () => {
+    listed = await fetchListed(listing.listing)
+  }
+
   onMount(() => {
     _fetchAvailableAmount()
+    _fetchListed()
   })
 
 </script>
 
 <div class="flex flex-col">
-  <span>listing address: {listing.listing}</span>
+  <a class="flex flex-col" href={`/listing/${listing.listing}`}>
+    <span>listing address: {listing.listing}</span>
 
-  {#if availableAmount}
-    <span>Available: {availableAmount.toString()}</span>
-  {:else}
-    <span>Available: ...</span>
-  {/if}
+    {#if listed}
 
-  <span>Total Amount: {listing.amount}</span>
-  <span>price: {utils.formatEther(listing.price)} ETH</span>
-  <span>tokenId: {listing.tokenId}</span>
-  <span>listed by user: {listing.user}</span>
+      {#if availableAmount}
+        <span>Available: {availableAmount.toString()}</span>
+      {:else}
+        <span>Available: ...</span>
+      {/if}
 
-  <!-- <button on:click|preventDefault={(_) => purchase()}>BUY</button> -->
-  <Button on:click={() => dialogVisible = true} text="Buy" disabled={!$signer || !availableAmount || availableAmount?.isZero()} />
-  {#if availableAmount?.isZero()}
-    <span>SOLD OUT</span>
+    {:else}
+      <div>Available: <span class="font-bold text-yellow-600">Listing Canceled</span></div>
+    {/if}
+  
+    <span>Total Amount: {listing.amount}</span>
+    <span>price: {utils.formatEther(listing.price)} ETH</span>
+    <span>tokenId: {listing.tokenId}</span>
+    <span>listed by user: {listing.user}</span>
+  </a>
+
+  {#if listed}
+  <div>
+    <Button on:click={() => dialogVisible = true} text="Buy" disabled={!$signer || !availableAmount || availableAmount?.isZero()} />
+      {#if availableAmount?.isZero()}
+        <span>SOLD OUT</span>
+      {/if}
+  </div>
   {/if}
 
 </div>

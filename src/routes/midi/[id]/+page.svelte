@@ -16,7 +16,7 @@
 	import ListingItem from '$lib/components/ListingItem.svelte';
 
   let { metadata } = data;
-  let userBalance = BigNumber.from(0)
+  let tokenBalance = BigNumber.from(0)
   let dialogVisible = false;
   let listingAmount = 1;
   let listingPrice = 1;
@@ -41,7 +41,7 @@
     /**
      * check if marketplace approved
      */
-    if (userBalance.gt(0)) {
+    if (tokenBalance.gt(0)) {
       isApproved = await isApprovedForAll({account: $signerAddress, operator: addresses.market})
     }
   }
@@ -54,7 +54,7 @@
     const { id } = $page.params
 
     const fetchBalance = await midiContract().balanceOf($signerAddress, id)
-    userBalance = BigNumber.from(fetchBalance)
+    tokenBalance = BigNumber.from(fetchBalance)
   }
 
   const sub = signerAddress.subscribe(async (address) => {
@@ -72,6 +72,10 @@
     approvalIsLoading = false;
   }
 
+  const _fetchListings = async () => {
+    listings = await fetchListingEvents(+$page.params.id);
+  }
+
   const list = async () => {
     listingIsLoading = true;
     if (!tokenId) {
@@ -83,12 +87,9 @@
       return;
     }
 
-    fetchListingEvents(+tokenId)
+    _fetchListings()
+    fetchBalance()
     dialogVisible = false
-  }
-
-  const _fetchListings = async () => {
-    listings = await fetchListingEvents(+$page.params.id);
   }
 
   onMount(() => {
@@ -109,9 +110,9 @@
       </div>
     </div>
     <div>
-      {#if userBalance.gt(0)}
+      {#if tokenBalance.gt(0)}
       <div>
-        <span>Balance: {userBalance.toString()}</span>  
+        <span>Balance: {tokenBalance.toString()}</span>  
       </div>
       <button on:click|preventDefault={(_) => toggleModal()}>Create Listing</button>
     {/if}
@@ -147,9 +148,9 @@
       <div class="mb-6">
         <div class="flex justify-between">
           <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"># to list</label>
-          <span class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Balance: {userBalance.toString()}</span>
+          <span class="text-base leading-relaxed text-gray-500 dark:text-gray-400">Balance: {tokenBalance.toString()}</span>
         </div>
-        <input min="1" max={userBalance.toNumber()} bind:value={listingAmount} type="number" id="amount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+        <input min="1" max={tokenBalance.toNumber()} bind:value={listingAmount} type="number" id="amount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
       </div>
 
       <div class="mb-6">
