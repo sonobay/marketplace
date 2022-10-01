@@ -30,13 +30,50 @@ export const buyItems = async ({
 	}
 };
 
+export const fetchTotalAmount = async (address: string): Promise<BigNumber> => {
+	const contract = listingContract(address);
+	const totalAmount = await contract.totalAmount();
+	return totalAmount;
+};
+
 export const fetchAvailableAmount = async (address: string): Promise<BigNumber> => {
 	const contract = listingContract(address);
 	const availableAmount = await contract.availableAmount();
 	return availableAmount;
 };
 
-// export const price = async (address: string) => {
-//   const contract = listingContract(address)
+export const fetchPrice = async (address: string): Promise<BigNumber> => {
+	const contract = listingContract(address);
+	const price = await contract.price();
+	return price;
+};
 
-// }
+export const fetchSeller = async (address: string): Promise<string> => {
+	const contract = listingContract(address);
+	const seller = await contract.seller();
+	return seller;
+};
+
+export const fetchTokenId = async (address: string): Promise<BigNumber> => {
+	const contract = listingContract(address);
+	const tokenId = await contract.tokenId();
+	return tokenId;
+};
+
+export const fetchListed = async (address: string): Promise<boolean> => {
+	const contract = listingContract(address);
+	const listed = await contract.listed();
+	return listed;
+};
+
+export const cancelListing = async (address: string, signer: Signer) => {
+	try {
+		const contract = listingContract(address, signer);
+		const res = await contract.cancelListing();
+		await res.wait();
+		return true;
+	} catch (error) {
+		console.error(error);
+		return false;
+	}
+};
