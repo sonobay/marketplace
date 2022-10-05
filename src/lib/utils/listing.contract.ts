@@ -77,3 +77,14 @@ export const cancelListing = async (address: string, signer: Signer) => {
 		return false;
 	}
 };
+
+export const withdraw = async (address: string, signer: Signer) => {
+	try {
+		const contract = listingContract(address, signer);
+		const res = await contract.withdraw();
+		await res.await();
+		return true;
+	} catch (error) {
+		console.error(error);
+	}
+};

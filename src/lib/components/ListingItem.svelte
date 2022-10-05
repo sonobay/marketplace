@@ -51,7 +51,7 @@
 
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col border mb-4 py-4 px-8">
   <a class="flex flex-col" href={`/listing/${listing.listing}`}>
     <span>listing address: {listing.listing}</span>
 

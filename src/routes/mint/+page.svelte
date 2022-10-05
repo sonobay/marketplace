@@ -115,7 +115,7 @@
       <div class="flex">
         <div class={`${inputContainerClass} mr-4`}>
           <label class={labelClass} for="manufacturer">Manufacturer</label>
-          <input id="manufacturer" name="manufacturer" bind:value="{manufacturer}" class={inputClass} required disabled />
+          <input id="manufacturer" name="manufacturer" bind:value="{manufacturer}" class={inputClass} required />
         </div>
   
         <div class={inputContainerClass}>
