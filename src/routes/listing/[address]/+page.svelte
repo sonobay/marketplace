@@ -26,8 +26,6 @@
   let contractBalance = BigNumber.from(0);
   $: amountToBuy = 1;
 
-  console.log('data is: ', data)
-
   const setAmountToBuy = (e: Event) => {
     const target = e.target as HTMLInputElement;
     amountToBuy = Math.ceil(+target.value)
@@ -39,9 +37,13 @@
     }
     purchaseProcessing = true;
 
-    await buyItems({amount: amountToBuy, address: listingAddress, signer: $signer, price}) 
+    const success = await buyItems({amount: amountToBuy, address: listingAddress, signer: $signer, price}) 
+    if (success) {
+      availableAmount = availableAmount.sub(amountToBuy);
+    }
     purchaseProcessing = false;
     dialogVisible = false;
+    amountToBuy = 1;
   }
 
   const _cancelListing = async () => {
@@ -126,7 +128,7 @@
 
   {#if $signerAddress == seller}
   <div>
-    <Button disabled={!listed} on:click={() => _cancelListing()} text="Cancel Listing" />
+    <Button disabled={!listed || availableAmount.eq(0)} on:click={() => _cancelListing()} text="Cancel Listing" />
 
     <span>Earnings: {utils.formatEther(contractBalance)} ETH</span>
     <Button disabled={contractBalance.isZero()} on:click={() => sellerWithdraw()} text="Withdraw ETH" />

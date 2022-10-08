@@ -38,7 +38,7 @@
   }
 
   const _fetchAvailableAmount = async () => {
-    availableAmount = await fetchBalanceOf(listing.listing, listing.tokenId)
+    availableAmount = await fetchBalanceOf(listing.listing, listing.tokenId.toNumber())
   }
 
   const _fetchListed = async () => {

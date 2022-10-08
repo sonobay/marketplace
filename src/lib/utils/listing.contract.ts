@@ -21,7 +21,7 @@ export const buyItems = async ({
 	try {
 		const contract = listingContract(address, signer);
 		const userAddress = await signer.getAddress();
-		const res = await contract.buyItems(amount, { value: price.mul(amount), from: userAddress });
+		const res = await contract.buyItems(amount, userAddress, { value: price.mul(amount) });
 		await res.wait();
 		return true;
 	} catch (error) {
@@ -70,7 +70,7 @@ export const withdraw = async (address: string, signer: Signer) => {
 	try {
 		const contract = listingContract(address, signer);
 		const res = await contract.withdraw();
-		await res.await();
+		await res.wait();
 		return true;
 	} catch (error) {
 		console.error(error);
