@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-  import { signerAddress, signer } from 'svelte-ethers-store'
-  import type { BigNumber } from 'ethers'
+	import { onDestroy, onMount } from 'svelte';
+  import { signerAddress, signer, provider } from 'svelte-ethers-store'
+  import { BigNumber } from 'ethers'
   import { utils } from 'ethers'
 	import type { IPFSMetadata } from '$lib/types/ipfs-metadata';
 	import { truncateAddress } from '$lib/utils';
 	import Dialog from '$lib/components/Dialog.svelte';
   import { page } from '$app/stores';
 	import Button from '$lib/components/Button.svelte';
-	import { buyItems, cancelListing } from '$lib/utils/listing.contract';
+	import { buyItems, cancelListing, withdraw } from '$lib/utils/listing.contract';
 
   export let data: {
 		availableAmount: BigNumber,
@@ -23,9 +23,8 @@
   let dialogVisible = false;
   const listingAddress = $page.params.address;
   let purchaseProcessing = false;
+  let contractBalance = BigNumber.from(0);
   $: amountToBuy = 1;
-
-  console.log('data is: ', data)
 
   const setAmountToBuy = (e: Event) => {
     const target = e.target as HTMLInputElement;
@@ -38,9 +37,13 @@
     }
     purchaseProcessing = true;
 
-    await buyItems({amount: amountToBuy, address: listingAddress, signer: $signer, price}) 
+    const success = await buyItems({amount: amountToBuy, address: listingAddress, signer: $signer, price}) 
+    if (success) {
+      availableAmount = availableAmount.sub(amountToBuy);
+    }
     purchaseProcessing = false;
     dialogVisible = false;
+    amountToBuy = 1;
   }
 
   const _cancelListing = async () => {
@@ -54,9 +57,30 @@
     }
   }
 
+  const sellerWithdraw = async () => {
+    if (!$signer) {
+      return;
+    }
+    await withdraw(listingAddress, $signer)
+  }
+
+  const fetchEarnings = async () => {
+    console.log('fetching earnings')
+    if ($signerAddress == seller && $signer.provider) {
+      contractBalance = await $signer.provider.getBalance(listingAddress)
+      console.log('contract balance is: ', contractBalance)
+    }
+  }
+
+  const sub = signer.subscribe(() => {
+    fetchEarnings()
+  })
+
   onMount(() => {
 
   })
+
+  onDestroy(sub)
 
 </script>
 
@@ -98,12 +122,17 @@
       <Button on:click={() => dialogVisible = true} text="Buy" disabled={!$signer || !availableAmount || availableAmount?.isZero()} />
     </div>
     
-
-    {#if $signerAddress == seller}
-      <Button on:click={() => _cancelListing()} text="Cancel Listing" />
-    {/if}
   </div>
 
+  {/if}
+
+  {#if $signerAddress == seller}
+  <div>
+    <Button disabled={!listed || availableAmount.eq(0)} on:click={() => _cancelListing()} text="Cancel Listing" />
+
+    <span>Earnings: {utils.formatEther(contractBalance)} ETH</span>
+    <Button disabled={contractBalance.isZero()} on:click={() => sellerWithdraw()} text="Withdraw ETH" />
+  </div>
   {/if}
 
 </div>

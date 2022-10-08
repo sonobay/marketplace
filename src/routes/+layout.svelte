@@ -7,6 +7,6 @@
 
 <Header />
 
-<main class="container mx-auto py-12">
+<main class="container mx-auto py-12 px-4">
   <slot />
 </main>

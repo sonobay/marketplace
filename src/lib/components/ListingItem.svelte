@@ -1,12 +1,13 @@
 <script lang="ts">
 	import type { Listing } from "$lib/types/listing";
-	import { buyItems, fetchAvailableAmount, fetchListed } from "$lib/utils/listing.contract";
+	import { buyItems, fetchListed } from "$lib/utils/listing.contract";
   import { utils } from 'ethers'
 	import Button from "./Button.svelte";
 	import Dialog from "./Dialog.svelte";
   import { signer } from 'svelte-ethers-store'
   import { createEventDispatcher, onMount } from 'svelte';
   import type { BigNumber } from 'ethers'
+	import { fetchBalanceOf } from "$lib/utils/midi.contract";
 
   export let listing: Listing;
   export let name: string;
@@ -37,7 +38,7 @@
   }
 
   const _fetchAvailableAmount = async () => {
-    availableAmount = await fetchAvailableAmount(listing.listing)
+    availableAmount = await fetchBalanceOf(listing.listing, listing.tokenId.toNumber())
   }
 
   const _fetchListed = async () => {
@@ -51,7 +52,7 @@
 
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col border mb-4 py-4 px-8">
   <a class="flex flex-col" href={`/listing/${listing.listing}`}>
     <span>listing address: {listing.listing}</span>
 

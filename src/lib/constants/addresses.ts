@@ -1,6 +1,6 @@
 export const addresses = {
 	midi: '0x15191385C24876AB5B3Fa8637d53264BF0711E01',
-	market: '0x8Cdb97B726608727a8C422a6d64c6D5768a84ce1'
+	market: '0x9eec1Ee3A5cD9F31016BfFF18FdB06F6c1Fd76d3'
 };
 
 export const MIDI_DEPLOY_BLOCK = 7547278;

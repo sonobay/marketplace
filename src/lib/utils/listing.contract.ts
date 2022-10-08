@@ -21,25 +21,13 @@ export const buyItems = async ({
 	try {
 		const contract = listingContract(address, signer);
 		const userAddress = await signer.getAddress();
-		const res = await contract.buyItems(amount, { value: price.mul(amount), from: userAddress });
+		const res = await contract.buyItems(amount, userAddress, { value: price.mul(amount) });
 		await res.wait();
 		return true;
 	} catch (error) {
 		console.log('error buying items: ', error);
 		return false;
 	}
-};
-
-export const fetchTotalAmount = async (address: string): Promise<BigNumber> => {
-	const contract = listingContract(address);
-	const totalAmount = await contract.totalAmount();
-	return totalAmount;
-};
-
-export const fetchAvailableAmount = async (address: string): Promise<BigNumber> => {
-	const contract = listingContract(address);
-	const availableAmount = await contract.availableAmount();
-	return availableAmount;
 };
 
 export const fetchPrice = async (address: string): Promise<BigNumber> => {
@@ -75,5 +63,16 @@ export const cancelListing = async (address: string, signer: Signer) => {
 	} catch (error) {
 		console.error(error);
 		return false;
+	}
+};
+
+export const withdraw = async (address: string, signer: Signer) => {
+	try {
+		const contract = listingContract(address, signer);
+		const res = await contract.withdraw();
+		await res.wait();
+		return true;
+	} catch (error) {
+		console.error(error);
 	}
 };

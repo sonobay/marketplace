@@ -1,12 +1,6 @@
 import { get } from '$lib/api/metadata/ipfs';
-import {
-	fetchAvailableAmount,
-	fetchListed,
-	fetchPrice,
-	fetchSeller,
-	fetchTokenId,
-	fetchTotalAmount
-} from '$lib/utils/listing.contract';
+import { fetchListed, fetchPrice, fetchSeller, fetchTokenId } from '$lib/utils/listing.contract';
+import { fetchBalanceOf, fetchTotalReceived } from '$lib/utils/midi.contract';
 import type { LoadEvent } from '@sveltejs/kit';
 
 export const load = async ({ params }: LoadEvent) => {
@@ -15,15 +9,15 @@ export const load = async ({ params }: LoadEvent) => {
 		throw new Error('No ID found');
 	}
 
-	const [availableAmount, totalAmount, price, seller, tokenId, listed] = await Promise.all([
-		fetchAvailableAmount(address),
-		fetchTotalAmount(address),
+	const [price, seller, tokenId, listed] = await Promise.all([
 		fetchPrice(address),
 		fetchSeller(address),
 		fetchTokenId(address),
 		fetchListed(address)
 	]);
 
+	const availableAmount = await fetchBalanceOf(address, tokenId.toNumber());
+	const totalAmount = await fetchTotalReceived(address, tokenId.toNumber());
 	const ipfsMetadata = await get(tokenId.toString());
 
 	return {

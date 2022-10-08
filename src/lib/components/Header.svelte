@@ -15,7 +15,7 @@
 
 </script>
 
-<header class="container mx-auto py-2">
+<header class="container mx-auto py-2 px-4">
   <div>
     <div class="flex justify-between">
       <div>
