@@ -1,7 +1,6 @@
 import * as midiArtifact from '$lib/data/artifacts/contracts/midi/MIDI.sol/MIDI.json';
-// import * as marketArtifact from '$lib/data/artifacts/contracts/market/Market.sol/Market.json';
-import { addresses } from '$lib/constants/addresses';
-import { Contract, getDefaultProvider, Signer, utils, BigNumber, constants } from 'ethers';
+import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
+import { Contract, getDefaultProvider, Signer, BigNumber } from 'ethers';
 import { variables } from '$lib/env';
 
 export const midiContract = (signer?: Signer) => {
@@ -42,4 +41,32 @@ export const setApprovalForAll = async ({
 	} catch (error) {
 		return false;
 	}
+};
+
+export const fetchBalanceOf = async (address: string, tokenId: number): Promise<BigNumber> => {
+	const contract = midiContract();
+	const balance = await contract.balanceOf(address, tokenId);
+	return balance;
+};
+
+export const fetchTotalReceived = async (address: string, tokenId: number): Promise<BigNumber> => {
+	const contract = midiContract();
+
+	const transferToSingleEvents = await contract.queryFilter(
+		contract.filters.TransferSingle(null, null, address, null, null),
+		MIDI_DEPLOY_BLOCK
+	);
+
+	/**
+	 * Only searching single because batch tokens should not be sent to Listing contract
+	 */
+	const balance = transferToSingleEvents.reduce((_balance, _event) => {
+		if (_event.args?.id?.toNumber() === tokenId) {
+			_balance = _balance.add(_event.args?.value);
+		}
+
+		return _balance;
+	}, BigNumber.from(0));
+
+	return balance;
 };

@@ -30,18 +30,6 @@ export const buyItems = async ({
 	}
 };
 
-export const fetchTotalAmount = async (address: string): Promise<BigNumber> => {
-	const contract = listingContract(address);
-	const totalAmount = await contract.totalAmount();
-	return totalAmount;
-};
-
-export const fetchAvailableAmount = async (address: string): Promise<BigNumber> => {
-	const contract = listingContract(address);
-	const availableAmount = await contract.availableAmount();
-	return availableAmount;
-};
-
 export const fetchPrice = async (address: string): Promise<BigNumber> => {
 	const contract = listingContract(address);
 	const price = await contract.price();
