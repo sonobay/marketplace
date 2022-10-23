@@ -33,6 +33,13 @@ export const POST = async ({ request }: { request: Request }) => {
 	const resizedLogo = await sharp(buffer).resize({ width: 500 }).webp().toBuffer();
 	const blob = new Blob([resizedLogo]);
 	const description = data.get('description')?.toString() ?? '';
+	const device = data.get('device')?.toString();
+	const manufacturer = data.get('manufacturer')?.toString() ?? '';
+
+	if (!device || device.length <= 0) {
+		throw new Error('No device set');
+	}
+
 	const entries: Entry[] = [];
 
 	let i = 0;
@@ -74,7 +81,7 @@ export const POST = async ({ request }: { request: Request }) => {
 		name,
 		description,
 		image: blob,
-		properties: { entries }
+		properties: { device, manufacturer, entries }
 	};
 
 	const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });

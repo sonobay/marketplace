@@ -59,6 +59,8 @@
     formData.append('name', name)
     formData.append('description', description)
     formData.append('logo', image[0])
+    formData.append('device', device)
+    formData.append('manufacturer', manufacturer)
 
     entries.forEach((entry, i) => {
       formData.append(`entries[${i}].name`, entry.name)
@@ -115,7 +117,7 @@
       <div class="flex">
         <div class={`${inputContainerClass} mr-4`}>
           <label class={labelClass} for="manufacturer">Manufacturer</label>
-          <input id="manufacturer" name="manufacturer" bind:value="{manufacturer}" class={inputClass} required />
+          <input id="manufacturer" name="manufacturer" bind:value="{manufacturer}" class={inputClass} required disabled />
         </div>
   
         <div class={inputContainerClass}>
