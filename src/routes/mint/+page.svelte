@@ -7,17 +7,23 @@
   import type { Entry } from '$lib/types/entry';
   import AddEntry from '$lib/components/AddEntry.svelte';
   import { BigNumber } from 'ethers'
-  import { isPositiveInteger } from '$lib/utils';
-  import { goto } from '$app/navigation';
+  import { isPositiveInteger, truncateAddress } from '$lib/utils';
 	import { midiContract } from '$lib/utils/midi.contract';
+	import Dialog from '$lib/components/Dialog.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import { variables } from '$lib/env';
+  import type { MIDI } from '$lib/types/midi';
 
   let name = '';
   let description = '';
   let image: FileList | undefined;
   let manufacturer = '';
   let device = '';
-  let loading = false;
   let amount: string;
+  let dialogVisible = false;
+  let mintProcessing = false;
+  let pollAttempts = 0;
+  let createdMidiId: number;
 
   const inputClass = 'bg-gray-200 border border-gray-300 px-2'
   const labelClass = 'text-gray-500'
@@ -41,8 +47,8 @@
     && image && image.length > 0 && entries.length > 0
     && isPositiveInteger(amount)
 
-  // const handleSubmit = async (e: SubmitEvent) => {
   const handleSubmit = async () => {
+
     if (!$signer) {
       console.error('not connected')
       return;
@@ -53,7 +59,8 @@
       return;
     }
 
-    loading = true;
+    mintProcessing = true;
+  
     const formData = new FormData();
 
     formData.append('name', name)
@@ -87,7 +94,31 @@
     const tx = await midi.mint($signerAddress, BigNumber.from(amount), json.metadata, [])
     const receipt = await tx.wait()
 
-    goto(`/midi/${receipt.events[0].args.id}`);
+    /**
+     * We poll MIDI from our DB to get indexed device data
+     */
+    pollMIDI(receipt.events[0].args.id)
+
+  }
+
+  const pollMIDI = async (id: number) => {
+    pollAttempts += 1;
+    if (pollAttempts <= 10) {
+
+      try {
+        const { apiEndpoint } = variables;
+        const res = await fetch(`${apiEndpoint}/midi/${id}`)
+        if (!res.ok) {
+          throw new Error(`error fetching ${id}`)
+        }
+        const midi = await res.json() as MIDI;
+        createdMidiId = midi.id;
+
+      } catch (error) {
+        setTimeout(() => pollMIDI(id), 10 * 1000) // every 10 seconds
+      }
+
+    }
   }
 
   const unsubscribe = midi.subscribe((store) => {
@@ -107,8 +138,6 @@
 
 <div>
   <h1 class="text-xl mb-4">Mint MIDI Collection</h1>
-
-  <!-- <form on:submit|once|preventDefault={handleSubmit}> -->
 
   <div>
 
@@ -195,12 +224,48 @@
       </tbody>
     </table>
 
-    <!-- <button on:click|preventDefault={(_) => addEntry()}>Add MIDI patch</button> -->
-
-    <!-- <button type="submit">Mint</button> -->
-    <button class={`text-white px-4 ${isValid ? 'bg-pink-500' : 'bg-gray-400'}`} on:click={(_) => handleSubmit()} disabled={!isValid}>Mint</button>
+    <button class={`text-white px-4 ${isValid ? 'bg-pink-500' : 'bg-gray-400'}`} on:click={(_) => dialogVisible = true} disabled={!isValid}>Mint</button>
 
   </div>
 
-  <!-- </form> -->
 </div>
+
+<!-- modal -->
+<Dialog
+  visible={dialogVisible} 
+  on:close={() => dialogVisible = false} 
+  headerText={`Mint ${amount} ${name}`}
+>
+    <!-- Modal body -->
+    <div class="p-6 space-y-6">
+
+      <div class="font-xl text-white">
+        <span>Name:</span>
+        <span>{name}</span>
+      </div>
+
+      <div class="font-xl text-white">
+        <span>Amount:</span>
+        <span>{amount}</span>
+      </div>
+
+      <div class="font-xl text-white">
+        <span>To:</span>
+        <span>{$signerAddress ? truncateAddress($signerAddress) : ''}</span>
+      </div>
+
+      <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+        lorem ipsum about listing MIDI NFT
+      </p>
+
+    </div>
+
+    <!-- Modal footer -->
+    <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+      {#if createdMidiId}
+        <a href={`/midi/${createdMidiId}`}>🎉 View NFT 🎉</a>
+      {:else}
+        <Button on:click={(_) => handleSubmit()} text="Mint MIDI NFT" loading={mintProcessing} disabled={mintProcessing} />
+      {/if}
+    </div>
+</Dialog>
