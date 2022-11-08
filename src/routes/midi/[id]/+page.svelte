@@ -1,7 +1,7 @@
 <script lang="ts">
   import Avatar from '$lib/components/Avatar.svelte';
-  import type { Entry, IPFSMetadata } from '$lib/types/ipfs-metadata';
-  export let data: {metadata: IPFSMetadata};
+  import type { Entry } from '$lib/types/ipfs-metadata';
+  export let data: {midi: MIDI};
   import { sendMidiToOutput } from '$lib/stores/midi';
   import { signerAddress, signer } from 'svelte-ethers-store'
   import { onDestroy, onMount } from 'svelte';
@@ -14,18 +14,17 @@
 	import Button from '$lib/components/Button.svelte';
 	import type { Listing } from '$lib/types/listing';
 	import ListingItem from '$lib/components/ListingItem.svelte';
+	import type { MIDI } from '$lib/types/midi';
 
-  let { metadata } = data;
+  let { midi } = data;
   let tokenBalance = BigNumber.from(0)
   let dialogVisible = false;
   let listingAmount = 1;
   let listingPrice = 1;
   let isApproved = false;
   let approvalIsLoading = false;
-  let listingIsLoading = false;
   let listings: Listing[] = []
   const tokenId = $page.params.id;
-  console.log('token id is: ', tokenId)
 
   const loadMIDI = async (entry: Entry) => {
     sendMidiToOutput(entry.midi)
@@ -103,10 +102,17 @@
 <div>
   <div class="flex justify-between mb-4">
     <div class="flex">
-      <Avatar path={metadata.image} size="md" alt={metadata.name} />
+      <Avatar path={midi.metadata.image} size="md" alt={midi.metadata.name} />
       <div>
-        <p>name: {metadata.name}</p>
-        <p>desc: {metadata.description}</p>
+        <p>name: {midi.metadata.name}</p>
+        <a href={`/devices/${midi.device}`}>
+          {#if midi.devices}
+            <span>{midi.devices.manufacturer} {midi.devices.name}</span>
+          {:else}
+            ...
+          {/if}
+        </a>
+        <p>desc: {midi.metadata.description}</p>
       </div>
     </div>
     <div>
@@ -119,7 +125,7 @@
     </div>
   </div>
 
-  {#each metadata.properties.entries as entry}
+  {#each midi.metadata.properties.entries as entry}
     <div class="border py-4 px-8">
       <span>{entry.name}</span>
       <Avatar path={entry.image} size="md" alt={entry.name} />
@@ -132,7 +138,7 @@
 
   <div>
     {#each listings as listing}
-      <ListingItem listing={listing} name={metadata.name} on:purchaseComplete={() => fetchBalance()} />
+      <ListingItem listing={listing} name={midi.metadata.name} on:purchaseComplete={() => fetchBalance()} />
     {/each}
   </div>
 </div>
@@ -141,7 +147,7 @@
 <Dialog 
   visible={dialogVisible} 
   on:close={toggleModal} 
-  headerText={`Create Listing | ${metadata.name}`}
+  headerText={`Create Listing | ${midi.metadata.name}`}
 >
     <!-- Modal body -->
     <div class="p-6 space-y-6">
