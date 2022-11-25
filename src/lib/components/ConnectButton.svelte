@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { connected, chainId, signerAddress, defaultEvmStores } from 'svelte-ethers-store'
+  import { connected, signerAddress, defaultEvmStores } from 'svelte-ethers-store'
   import Web3Modal from 'web3modal'
   import detectEthereumProvider from '@metamask/detect-provider'
   import {truncateAddress} from '$lib/utils';
@@ -20,11 +20,18 @@
 
 {#if !$connected}
 
-<button type="button" on:click={(e) => connect()}>Connect</button>
+<button 
+  type="button" 
+  on:click={(e) => connect()}
+  class="bg-gold text-black rounded-lg py-2 px-4 uppercase text-sm"
+>
+  Connect Wallet
+</button>
 
 {:else}
 
-<!-- <p>Connected to chain (id {$chainId}) with account ({$signerAddress})</p> -->
-{truncateAddress($signerAddress)}
+<div class="bg-gold text-black rounded-lg py-2 px-4 uppercase text-sm font-bold">
+  {truncateAddress($signerAddress)}
+</div>
 
 {/if}

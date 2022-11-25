@@ -6,10 +6,16 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['VT323', ...defaultTheme.fontFamily.sans]
+				sans: ['Inter', ...defaultTheme.fontFamily.sans]
 			},
 			colors: {
-				link: 'rgb(34 211 238)' // text-cyan-400
+				link: 'rgb(34 211 238)', // text-cyan-400
+				charcoal: '#414141',
+				midiBlue: '#70C1EC',
+				midiBlueLight: '#B2D1EE',
+				midiBlueLink: '#1A85C0',
+				gold: '#FFCA09',
+				midiYellow: '#F2E06B'
 			}
 		}
 	},
