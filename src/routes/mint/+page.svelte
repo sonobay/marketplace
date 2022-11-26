@@ -13,6 +13,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import { variables } from '$lib/env';
   import type { MIDI } from '$lib/types/midi';
+	import MintStep from '$lib/components/MintStep.svelte';
 
   let name = '';
   let description = '';
@@ -25,11 +26,10 @@
   let pollAttempts = 0;
   let createdMidiId: number;
 
-  const inputClass = 'bg-gray-200 border border-gray-300 px-2'
-  const labelClass = 'text-gray-500'
+  const inputClass = 'border border-gray-300 px-2 rounded'
+  const labelClass = 'text-gray-500 text-sm font-semibold'
   const inputContainerClass = 'flex flex-col mb-4'
   const tdClass = 'border border-gray-200'
-  const subHeaderClass = 'text-lg mb-2'
 
   let entries: Entry[] = []
 
@@ -137,52 +137,86 @@
 </script>
 
 <div>
-  <h1 class="text-xl mb-4">Mint MIDI Collection</h1>
+  <div class="text-center mb-8">
+    <h2 class="text-4xl mb-1 text-charcoal font-semibold">Start Minting Now</h2>
+    <span class="text-gray-400">Follow the MIDI.link workflow below to build <br /> your catalogue of MIDI NFTs.</span>
+  </div>
 
   <div>
 
+    <MintStep stepNumber={1} instruction="Connect Instrument" />
+
     <div class="mb-8">
-      <h2 class={subHeaderClass}>Device</h2>
-      <div class="flex">
-        <div class={`${inputContainerClass} mr-4`}>
+      
+      <div class="flex flex-col">
+        <div class={`${inputContainerClass}`}>
           <label class={labelClass} for="manufacturer">Manufacturer</label>
-          <input id="manufacturer" name="manufacturer" bind:value="{manufacturer}" class={inputClass} required disabled />
+          <input 
+            id="manufacturer" 
+            name="manufacturer" 
+            bind:value="{manufacturer}" 
+            class={inputClass} 
+            placeholder="Autofills after synth connect..."
+            required 
+            disabled 
+          />
         </div>
   
         <div class={inputContainerClass}>
           <label class={labelClass} for="device">Device</label>
-          <input id="device" name="device" bind:value="{device}" class={inputClass} required disabled />
+          <input 
+            id="device" 
+            name="device" 
+            bind:value="{device}" 
+            class={inputClass} 
+            placeholder="Autofills after synth connect..."
+            required 
+            disabled 
+          />
         </div>
       </div>
     </div>
 
+    <MintStep stepNumber={2} instruction="Create Collection" />
+
     <div class="mb-8">
-      <h2 class={subHeaderClass}>Collection Info</h2>
+      
       <div class="flex">
 
-        <ImageInput image={image} id="logo" on:imageUpdated={((e) => image = e.detail.image)} />
-    
-        <div class={`${inputContainerClass} mr-4`}>
-          <label class={labelClass} for="name">Collection Name</label>
-          <input id="name" name="name" bind:value="{name}" class={inputClass} required />
+        <div class="mt-5">
+          <ImageInput image={image} id="logo" on:imageUpdated={((e) => image = e.detail.image)} />
         </div>
 
-        <div class={inputContainerClass}>
-          <label class={labelClass} for="amount"># To Mint</label>
-          <input type="number" id="amount" name="amount" bind:value="{amount}" class={inputClass} />
-        </div>
-      </div>
+        <div class="flex flex-col w-full">
+
+          <div class="flex">
+
+            <div class={`${inputContainerClass} mr-4`}>
+              <label class={labelClass} for="name">Collection Name</label>
+              <input id="name" name="name" bind:value="{name}" class={inputClass} required />
+            </div>
+    
+            <div class={inputContainerClass}>
+              <label class={labelClass} for="amount"># To Mint</label>
+              <input type="number" id="amount" name="amount" bind:value="{amount}" class={inputClass} />
+            </div>
+
+          </div>
   
-      <div class={inputContainerClass}>
-        <label class={labelClass} for="description">Description</label>
-        <textarea id="description" name="description" bind:value="{description}" class={inputClass} />
+          <div class={inputContainerClass}>
+            <label class={labelClass} for="description">Description</label>
+            <textarea id="description" name="description" bind:value="{description}" class={inputClass} />
+          </div>
+
+        </div>
+    
       </div>
 
     </div>
 
-    <div class="mb-8">
+    <MintStep stepNumber={3} instruction="Add MIDI to your collection" />
 
-      <h2 class={subHeaderClass}>MIDI</h2>
+    <div class="mb-8">
 
       <AddEntry on:addEntry={((e) => addEntry(e.detail.entry))} />
 
