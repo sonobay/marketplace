@@ -8,6 +8,7 @@ interface Entry {
 	name: string;
 	midi: Uint8Array;
 	image: Blob | undefined;
+	tags: string[];
 }
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
@@ -51,6 +52,10 @@ export const POST = async ({ request }: { request: Request }) => {
 			: undefined;
 		let blob: Blob | undefined;
 
+		const tags = data.has(`entries[${i}].tags`)
+			? (JSON.parse(data.get(`entries[${i}].tags`) as string) as string[])
+			: [];
+
 		if (image) {
 			const ab = await image?.arrayBuffer();
 			const buffer = Buffer.from(ab);
@@ -58,7 +63,7 @@ export const POST = async ({ request }: { request: Request }) => {
 			blob = new Blob([resizedLogo]);
 		}
 
-		entries.push({ name, midi: JSON.parse(`[${midi?.toString() ?? ''}]`), image: blob });
+		entries.push({ name, midi: JSON.parse(`[${midi?.toString() ?? ''}]`), image: blob, tags });
 
 		i++;
 	}

@@ -32,7 +32,7 @@
   
       <div>
         <ConnectButton />
-        <!-- <a href="/mint">Mint</a> -->
+        <a href="/mint">Mint</a>
       </div>
     </div>
     <div class="float-left">

@@ -72,6 +72,7 @@
     entries.forEach((entry, i) => {
       formData.append(`entries[${i}].name`, entry.name)
       formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '')
+      formData.append(`entries[${i}].tags`, JSON.stringify(entry.tags))
       if (entry.image) {
         formData.append(`entries[${i}].image`, entry.image[0])
       }
@@ -158,7 +159,6 @@
             class={inputClass} 
             placeholder="Autofills after synth connect..."
             required 
-            disabled 
           />
         </div>
   
@@ -171,7 +171,6 @@
             class={inputClass} 
             placeholder="Autofills after synth connect..."
             required 
-            disabled 
           />
         </div>
       </div>
