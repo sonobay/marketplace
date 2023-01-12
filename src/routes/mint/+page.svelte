@@ -14,6 +14,8 @@
 	import { variables } from '$lib/env';
   import type { MIDI } from '$lib/types/midi';
 	import MintStep from '$lib/components/MintStep.svelte';
+	import Tag from '$lib/components/Tag.svelte';
+	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
 
   let name = '';
   let description = '';
@@ -26,10 +28,10 @@
   let pollAttempts = 0;
   let createdMidiId: number;
 
-  const inputClass = 'border border-gray-300 px-2 rounded'
+  const inputClass = 'border border-gray-300 px-2 rounded border-2'
   const labelClass = 'text-gray-500 text-sm font-semibold'
   const inputContainerClass = 'flex flex-col mb-4'
-  const tdClass = 'border border-gray-200'
+  const tdClass = 'border border-gray-200 px-2'
 
   let entries: Entry[] = []
 
@@ -152,14 +154,20 @@
       <div class="flex flex-col">
         <div class={`${inputContainerClass}`}>
           <label class={labelClass} for="manufacturer">Manufacturer</label>
-          <input 
-            id="manufacturer" 
-            name="manufacturer" 
-            bind:value="{manufacturer}" 
-            class={inputClass} 
-            placeholder="Autofills after synth connect..."
-            required 
-          />
+
+          <div class="rounded bg-gradient-to-b p-0.5 from-gray-200 to-gray-300 w-full">
+            <input 
+              id="manufacturer" 
+              name="manufacturer" 
+              bind:value="{manufacturer}" 
+              on:focus={(_) => console.log('focusing!!')}
+              class="rounded w-full px-4"
+              placeholder="Autofills after synth connect..."
+              required 
+            />
+          </div>
+
+
         </div>
   
         <div class={inputContainerClass}>
@@ -221,7 +229,7 @@
 
     </div>
 
-    <table class="w-full border border-collapse">
+    <table class="w-full border border-collapse rounded">
       <tbody>
         {#each entries as entry, i}
           <tr>
@@ -229,25 +237,19 @@
               {#if entry.image}
                 <img class="w-12" src={URL.createObjectURL(entry.image[0])} alt="Device Logo" />
               {:else}
-                <span>none</span>
+                <ImageRegular size={24} color="rgb(156 163 175)" />
               {/if}
             </td>
             <td class={tdClass}>{entry.name}</td>
             <td class={tdClass}>
-              {#if entry.midi}
-                [
-                {#each entry.midi as byte}
-                  {byte}
-                {/each}
-                ]
-              {:else}
-                [.]
-              {/if}
+              {#each entry.tags as tag}
+                <Tag label={tag} />
+              {/each}
             </td>
-            <td>
+            <td class={tdClass}>
               <button on:click|preventDefault={(_) => sendMidiToOutput(entry.midi ?? new Uint8Array(0))}>Test</button>
             </td>
-            <td class="w-12">
+            <td class={`${tdClass} w-12`}>
               <button class="w-full" on:click|preventDefault={(_) => removeEntry(i) }>
                 <TrashSolid color="#000" />
               </button>

@@ -3,6 +3,7 @@
   import type { Entry } from "$lib/types/entry";
   import { createEventDispatcher, onDestroy } from "svelte";
   import { midi } from '$lib/stores/midi';
+	import Tag from "./Tag.svelte";
 
   const inputClass = 'border border-gray-300 px-2 rounded'
   const labelClass = 'text-gray-500 text-sm font-semibold'
@@ -98,9 +99,9 @@
         />
       </div>
 
-      <div class="text-sm text-white h-12">
+      <div class="h-12">
         {#each entry.tags as tag}
-          <span class="bg-midiBlueLink mr-1 px-2 py-1 rounded">#{tag}</span>
+          <Tag label={tag} />
         {/each}
       </div>
 
