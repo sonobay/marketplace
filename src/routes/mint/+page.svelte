@@ -20,8 +20,14 @@
   let name = '';
   let description = '';
   let image: FileList | undefined;
-  let manufacturer = '';
-  let device = '';
+
+  let devices: {name: string, manufacturer: string}[] = [
+    {
+      name: '',
+      manufacturer: ''
+    }
+  ]
+
   let amount: string;
   let dialogVisible = false;
   let mintProcessing = false;
@@ -44,8 +50,9 @@
     entries = entries;
   }
 
-  $: isValid = signer && manufacturer.length > 0 
-    && device.length > 0 && name.length > 0 
+  $: isValid = signer && devices.length > 0 
+    && devices[0].manufacturer.length > 0 && devices[0].name.length > 0 
+    && name.length > 0 
     && image && image.length > 0 && entries.length > 0
     && isPositiveInteger(amount)
 
@@ -68,8 +75,7 @@
     formData.append('name', name)
     formData.append('description', description)
     formData.append('logo', image[0])
-    formData.append('device', device)
-    formData.append('manufacturer', manufacturer)
+    formData.append('devices', JSON.stringify(devices))
 
     entries.forEach((entry, i) => {
       formData.append(`entries[${i}].name`, entry.name)
@@ -124,18 +130,31 @@
     }
   }
 
-  const unsubscribe = midi.subscribe((store) => {
-    if (!store.selectedInput) {
-      manufacturer = '';
-      device = '';
-      return;
-    }
+  // const unsubscribe = midi.subscribe((store) => {
+  //   if (!store.selectedInput) {
+  //     manufacturer = '';
+  //     device = '';
+  //     return;
+  //   }
 
-    manufacturer = store.selectedInput.manufacturer ?? ''
-    device = store.selectedInput.name ?? ''
-  })
+  //   manufacturer = store.selectedInput.manufacturer ?? ''
+  //   device = store.selectedInput.name ?? ''
+  // })
 
-  onDestroy(unsubscribe)
+  const addDevice = () => {
+    devices.push({
+      name: '',
+      manufacturer: ''
+    })
+    devices = devices
+  }
+
+  const removeDevice = (i: number) => {
+    devices.splice(i, 1)
+    devices = devices
+  }
+
+  // onDestroy(unsubscribe)
 
 </script>
 
@@ -151,37 +170,44 @@
 
     <div class="mb-8">
       
-      <div class="flex flex-col">
-        <div class={`${inputContainerClass}`}>
-          <label class={labelClass} for="manufacturer">Manufacturer</label>
+      {#each devices as device, i}
+        
+        <div class="flex flex-col">
+          <div class={`${inputContainerClass}`}>
+            <label class={labelClass} for="manufacturer">Manufacturer</label>
 
-          <div class="rounded bg-gradient-to-b p-0.5 from-gray-200 to-gray-300 w-full">
+            <div class="rounded bg-gradient-to-b p-0.5 from-gray-200 to-gray-300 w-full">
+              <input 
+                id="manufacturer" 
+                name="manufacturer" 
+                bind:value="{device.manufacturer}" 
+                on:focus={(_) => console.log('focusing!!')}
+                class="rounded w-full px-4"
+                required 
+              />
+            </div>
+
+          </div>
+    
+          <div class={inputContainerClass}>
+            <label class={labelClass} for="device">Device</label>
             <input 
-              id="manufacturer" 
-              name="manufacturer" 
-              bind:value="{manufacturer}" 
-              on:focus={(_) => console.log('focusing!!')}
-              class="rounded w-full px-4"
-              placeholder="Autofills after synth connect..."
+              id="device" 
+              name="device" 
+              bind:value="{device.name}" 
+              class={inputClass} 
               required 
             />
           </div>
 
+          <button on:click|preventDefault={(_) => removeDevice(i)}>Remove Device</button>
 
         </div>
-  
-        <div class={inputContainerClass}>
-          <label class={labelClass} for="device">Device</label>
-          <input 
-            id="device" 
-            name="device" 
-            bind:value="{device}" 
-            class={inputClass} 
-            placeholder="Autofills after synth connect..."
-            required 
-          />
-        </div>
-      </div>
+
+      {/each}
+
+      <button on:click|preventDefault={(_) => addDevice()}>Add Another Device</button>
+
     </div>
 
     <MintStep stepNumber={2} instruction="Create Collection" />

@@ -1,4 +1,4 @@
-import type { IPFSMetadata } from './ipfs-metadata';
+import type { MIDI } from './midi';
 
 export type Device = {
 	created_at: string;
@@ -6,10 +6,9 @@ export type Device = {
 	manufacturer: string;
 	id: string;
 	imageSrc?: string;
-	midi?: {
-		createdBy: string;
-		device: string;
-		id: number;
-		metadata: IPFSMetadata;
+	midi_devices: {
+		id?: number;
+		device?: string;
+		midi: MIDI;
 	}[];
 };

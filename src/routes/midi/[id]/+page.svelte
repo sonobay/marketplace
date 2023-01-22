@@ -15,6 +15,7 @@
 	import type { Listing } from '$lib/types/listing';
 	import ListingItem from '$lib/components/ListingItem.svelte';
 	import type { MIDI } from '$lib/types/midi';
+	import { each } from 'svelte/internal';
 
   let { midi } = data;
   let tokenBalance = BigNumber.from(0)
@@ -76,7 +77,7 @@
   }
 
   const list = async () => {
-    listingIsLoading = true;
+    // listingIsLoading = true;
     if (!tokenId) {
       console.error('no token id')
       return
@@ -105,13 +106,11 @@
       <Avatar path={midi.metadata.image} size="md" alt={midi.metadata.name} />
       <div>
         <p>name: {midi.metadata.name}</p>
-        <a href={`/devices/${midi.device}`}>
-          {#if midi.devices}
-            <span>{midi.devices.manufacturer} {midi.devices.name}</span>
-          {:else}
-            ...
-          {/if}
+        {#each midi.midi_devices as midiDevice}
+        <a href={`/devices/${midiDevice.device.id}`}>
+          <span>{midiDevice.device.manufacturer} {midiDevice.device.name}</span>
         </a>
+        {/each}
         <p>desc: {midi.metadata.description}</p>
       </div>
     </div>
