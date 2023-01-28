@@ -2,6 +2,7 @@
   import ConnectButton from "$lib/components/ConnectButton.svelte";
   import { midi } from '$lib/stores/midi';
   import { onDestroy } from "svelte";
+	import Logo from "./Logo.svelte";
 
   let selectedInput: WebMidi.MIDIInput | undefined;
   let selectedOutput: WebMidi.MIDIOutput | undefined;
@@ -19,7 +20,14 @@
   <div>
     <div class="flex justify-between">
       <div>
-        <h1 class="font-bold hover:bg-emerald-500 hover:text-white mb-1"><a href="/">MIDI.Link</a></h1>
+        <h1>
+          <a href="/" class="flex align-items">
+            <Logo />
+            <div class="ml-2 h-9 w-[62px] flex -mt-1">
+              <img src="/images/midi-link.png" alt="MIDI.link" />
+            </div>
+          </a>
+        </h1>
       </div>
   
       <div>

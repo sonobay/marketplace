@@ -12,13 +12,13 @@
 <div>
   <h1>{device.manufacturer} {device.name}</h1>
 
-  {#if device.midi}
-  {#each device.midi as midi}
-    <a href={`/midi/${midi.id}`}>
-      <Avatar path={midi.metadata.image} size="md" alt={midi.metadata.name} />
-      <span>{midi.metadata.name}</span>
+  {#if device.midi_devices}
+  {#each device.midi_devices as midiDevice}
+    <a href={`/midi/${midiDevice.midi.id}`}>
+      <Avatar path={midiDevice.midi.metadata.image} size="md" alt={midiDevice.midi.metadata.name} />
+      <span>{midiDevice.midi.metadata.name}</span>
       <br />
-      <span>{midi.metadata.description}</span>
+      <span>{midiDevice.midi.metadata.description}</span>
     </a>
   {/each}    
   {/if}

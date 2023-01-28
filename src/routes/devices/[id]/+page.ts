@@ -8,10 +8,13 @@ export const load = async ({ params, fetch }: LoadEvent) => {
 	const res = await fetch(`${apiEndpoint}/devices/${id}`);
 	const device = (await res.json()) as Device;
 
-	if (device.midi && device.midi.length > 0) {
-		device.midi = device.midi.map((midi) => {
-			midi.metadata.image = midi.metadata.image.replace('ipfs://', 'https://nftstorage.link/ipfs/');
-			return midi;
+	if (device.midi_devices && device.midi_devices.length > 0) {
+		device.midi_devices = device.midi_devices.map((midiDevice) => {
+			midiDevice.midi.metadata.image = midiDevice.midi.metadata.image.replace(
+				'ipfs://',
+				'https://nftstorage.link/ipfs/'
+			);
+			return midiDevice;
 		});
 	}
 

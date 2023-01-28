@@ -8,6 +8,7 @@ interface Entry {
 	name: string;
 	midi: Uint8Array;
 	image: Blob | undefined;
+	tags: string[];
 }
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
@@ -33,11 +34,12 @@ export const POST = async ({ request }: { request: Request }) => {
 	const resizedLogo = await sharp(buffer).resize({ width: 500 }).webp().toBuffer();
 	const blob = new Blob([resizedLogo]);
 	const description = data.get('description')?.toString() ?? '';
-	const device = data.get('device')?.toString();
-	const manufacturer = data.get('manufacturer')?.toString() ?? '';
+	// const device = data.get('device')?.toString();
+	// const manufacturer = data.get('manufacturer')?.toString() ?? '';
+	const devices = JSON.parse(data.get('devices')?.toString() ?? '[]');
 
-	if (!device || device.length <= 0) {
-		throw new Error('No device set');
+	if (!devices || devices.length <= 0) {
+		throw new Error('No devices set');
 	}
 
 	const entries: Entry[] = [];
@@ -51,6 +53,10 @@ export const POST = async ({ request }: { request: Request }) => {
 			: undefined;
 		let blob: Blob | undefined;
 
+		const tags = data.has(`entries[${i}].tags`)
+			? (JSON.parse(data.get(`entries[${i}].tags`) as string) as string[])
+			: [];
+
 		if (image) {
 			const ab = await image?.arrayBuffer();
 			const buffer = Buffer.from(ab);
@@ -58,7 +64,7 @@ export const POST = async ({ request }: { request: Request }) => {
 			blob = new Blob([resizedLogo]);
 		}
 
-		entries.push({ name, midi: JSON.parse(`[${midi?.toString() ?? ''}]`), image: blob });
+		entries.push({ name, midi: JSON.parse(`[${midi?.toString() ?? ''}]`), image: blob, tags });
 
 		i++;
 	}
@@ -81,7 +87,7 @@ export const POST = async ({ request }: { request: Request }) => {
 		name,
 		description,
 		image: blob,
-		properties: { device, manufacturer, entries }
+		properties: { devices, entries }
 	};
 
 	const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });

@@ -2,7 +2,7 @@
   import { onDestroy } from 'svelte';
   import { midi, sendMidiToOutput } from '$lib/stores/midi';
   import { signer, signerAddress } from 'svelte-ethers-store';
-  import ImageInput from '$lib/components/ImageInput.svelte';
+  import ImageInput from '$lib/components/inputs/ImageInput.svelte';
   import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
   import type { Entry } from '$lib/types/entry';
   import AddEntry from '$lib/components/AddEntry.svelte';
@@ -13,23 +13,29 @@
 	import Button from '$lib/components/Button.svelte';
 	import { variables } from '$lib/env';
   import type { MIDI } from '$lib/types/midi';
+	import MintStep from '$lib/components/MintStep.svelte';
+	import Tag from '$lib/components/Tag.svelte';
+	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
+	import Input from '$lib/components/inputs/Input.svelte';
+	import TextArea from '$lib/components/inputs/TextArea.svelte';
 
   let name = '';
   let description = '';
   let image: FileList | undefined;
-  let manufacturer = '';
-  let device = '';
+
+  let devices: {name: Readonly<string>, manufacturer: Readonly<string>}[] = []
+  let deviceInput = '';
+  let manufacturerInput = ''
+
   let amount: string;
   let dialogVisible = false;
   let mintProcessing = false;
   let pollAttempts = 0;
   let createdMidiId: number;
 
-  const inputClass = 'bg-gray-200 border border-gray-300 px-2'
-  const labelClass = 'text-gray-500'
+  const labelClass = 'text-gray-500 text-sm font-semibold'
   const inputContainerClass = 'flex flex-col mb-4'
-  const tdClass = 'border border-gray-200'
-  const subHeaderClass = 'text-lg mb-2'
+  const tdClass = 'border border-gray-200 px-2'
 
   let entries: Entry[] = []
 
@@ -42,8 +48,9 @@
     entries = entries;
   }
 
-  $: isValid = signer && manufacturer.length > 0 
-    && device.length > 0 && name.length > 0 
+  $: isValid = signer && devices.length > 0 
+    && devices[0].manufacturer.length > 0 && devices[0].name.length > 0 
+    && name.length > 0 
     && image && image.length > 0 && entries.length > 0
     && isPositiveInteger(amount)
 
@@ -66,12 +73,12 @@
     formData.append('name', name)
     formData.append('description', description)
     formData.append('logo', image[0])
-    formData.append('device', device)
-    formData.append('manufacturer', manufacturer)
+    formData.append('devices', JSON.stringify(devices))
 
     entries.forEach((entry, i) => {
       formData.append(`entries[${i}].name`, entry.name)
       formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '')
+      formData.append(`entries[${i}].tags`, JSON.stringify(entry.tags))
       if (entry.image) {
         formData.append(`entries[${i}].image`, entry.image[0])
       }
@@ -121,74 +128,146 @@
     }
   }
 
-  const unsubscribe = midi.subscribe((store) => {
-    if (!store.selectedInput) {
-      manufacturer = '';
-      device = '';
-      return;
-    }
+  // const unsubscribe = midi.subscribe((store) => {
+  //   if (!store.selectedInput) {
+  //     manufacturer = '';
+  //     device = '';
+  //     return;
+  //   }
 
-    manufacturer = store.selectedInput.manufacturer ?? ''
-    device = store.selectedInput.name ?? ''
-  })
+  //   manufacturer = store.selectedInput.manufacturer ?? ''
+  //   device = store.selectedInput.name ?? ''
+  // })
 
-  onDestroy(unsubscribe)
+  const addDevice = () => {
+    devices.push({
+      name: deviceInput,
+      manufacturer: manufacturerInput
+    })
+    devices = devices
+    deviceInput = ''
+    manufacturerInput = ''
+  }
+
+  const removeDevice = (i: number) => {
+    devices.splice(i, 1)
+    devices = devices
+  }
+
+  // onDestroy(unsubscribe)
 
 </script>
 
 <div>
-  <h1 class="text-xl mb-4">Mint MIDI Collection</h1>
+  <div class="text-center mb-8">
+    <h2 class="text-4xl mb-1 text-charcoal font-semibold">Start Minting Now</h2>
+    <span class="text-gray-400">Follow the MIDI.link workflow below to build <br /> your catalogue of MIDI NFTs.</span>
+  </div>
 
   <div>
 
+    <MintStep stepNumber={1} instruction="Enter MIDI Devices" />
+
     <div class="mb-8">
-      <h2 class={subHeaderClass}>Device</h2>
-      <div class="flex">
-        <div class={`${inputContainerClass} mr-4`}>
+
+      <div class="flex flex-col">
+        <div class={`${inputContainerClass}`}>
           <label class={labelClass} for="manufacturer">Manufacturer</label>
-          <input id="manufacturer" name="manufacturer" bind:value="{manufacturer}" class={inputClass} required disabled />
+          <Input id="manufacturer" name="manufacturer" bind:value={manufacturerInput} required={true} />
         </div>
   
         <div class={inputContainerClass}>
           <label class={labelClass} for="device">Device</label>
-          <input id="device" name="device" bind:value="{device}" class={inputClass} required disabled />
+          <Input id="device" name="device" bind:value={deviceInput} required={true} />
         </div>
+
+        <button on:click|preventDefault={(_) => addDevice()}>Add Device</button>
+
       </div>
+
+      {#if devices.length > 0}
+        
+      <table>
+        <thead>
+          <tr>
+            <th>Manufacturer</th>
+            <th>Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each devices as device, i}
+          <tr>
+            <td>
+              {device.manufacturer}
+            </td>
+            <td>
+              {device.name}
+            </td>
+            <td>
+              <button on:click|preventDefault={(_) => removeDevice(i)}>
+                <TrashSolid color="#000" />
+              </button>
+            </td>
+          </tr>
+          {/each}
+        </tbody>
+      </table>
+
+      {:else}
+
+      <span>Add a device</span>
+
+      {/if}
+
     </div>
 
+    <MintStep stepNumber={2} instruction="Create Collection" />
+
     <div class="mb-8">
-      <h2 class={subHeaderClass}>Collection Info</h2>
+      
       <div class="flex">
 
-        <ImageInput image={image} id="logo" on:imageUpdated={((e) => image = e.detail.image)} />
-    
-        <div class={`${inputContainerClass} mr-4`}>
-          <label class={labelClass} for="name">Collection Name</label>
-          <input id="name" name="name" bind:value="{name}" class={inputClass} required />
+        <div class="mt-5">
+          <ImageInput image={image} id="logo" on:imageUpdated={((e) => image = e.detail.image)} />
         </div>
 
-        <div class={inputContainerClass}>
-          <label class={labelClass} for="amount"># To Mint</label>
-          <input type="number" id="amount" name="amount" bind:value="{amount}" class={inputClass} />
-        </div>
-      </div>
+        <div class="flex flex-col w-full">
+
+          <div class="flex">
+
+            <div class={`${inputContainerClass} mr-4`}>
+              <label class={labelClass} for="collectionName">Collection Name</label>
+              <Input id="collectionName" name="collectionName" required={true} bind:value={name} />
+            </div>
+    
+            <div class={inputContainerClass}>
+              <label class={labelClass} for="amount"># To Mint</label>
+              <Input type="number" id="amount" name="amount" bind:value="{amount}" required={true} />
+            </div>
+
+          </div>
   
-      <div class={inputContainerClass}>
-        <label class={labelClass} for="description">Description</label>
-        <textarea id="description" name="description" bind:value="{description}" class={inputClass} />
+          <div class={inputContainerClass}>
+            <label class={labelClass} for="description">Description</label>
+            <TextArea id="description" name="description" bind:value="{description}" />
+          </div>
+
+        </div>
+    
       </div>
 
     </div>
 
-    <div class="mb-8">
+    <MintStep stepNumber={3} instruction="Add MIDI to your collection" />
 
-      <h2 class={subHeaderClass}>MIDI</h2>
+    <div class="mb-8">
 
       <AddEntry on:addEntry={((e) => addEntry(e.detail.entry))} />
 
     </div>
 
-    <table class="w-full border border-collapse">
+    <table class="w-full border border-collapse rounded">
       <tbody>
         {#each entries as entry, i}
           <tr>
@@ -196,25 +275,19 @@
               {#if entry.image}
                 <img class="w-12" src={URL.createObjectURL(entry.image[0])} alt="Device Logo" />
               {:else}
-                <span>none</span>
+                <ImageRegular size={24} color="rgb(156 163 175)" />
               {/if}
             </td>
             <td class={tdClass}>{entry.name}</td>
             <td class={tdClass}>
-              {#if entry.midi}
-                [
-                {#each entry.midi as byte}
-                  {byte}
-                {/each}
-                ]
-              {:else}
-                [.]
-              {/if}
+              {#each entry.tags as tag}
+                <Tag label={tag} />
+              {/each}
             </td>
-            <td>
+            <td class={tdClass}>
               <button on:click|preventDefault={(_) => sendMidiToOutput(entry.midi ?? new Uint8Array(0))}>Test</button>
             </td>
-            <td class="w-12">
+            <td class={`${tdClass} w-12`}>
               <button class="w-full" on:click|preventDefault={(_) => removeEntry(i) }>
                 <TrashSolid color="#000" />
               </button>
