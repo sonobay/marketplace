@@ -1,9 +1,10 @@
 <script lang="ts">
-  import ImageInput from "$lib/components/ImageInput.svelte";
+  import ImageInput from "$lib/components/inputs/ImageInput.svelte";
   import type { Entry } from "$lib/types/entry";
   import { createEventDispatcher, onDestroy } from "svelte";
   import { midi } from '$lib/stores/midi';
 	import Tag from "./Tag.svelte";
+	import Input from "./inputs/Input.svelte";
 
   const inputClass = 'border border-gray-300 px-2 rounded'
   const labelClass = 'text-gray-500 text-sm font-semibold'
@@ -80,7 +81,7 @@
       <label class={labelClass} for="entry-name">
         MIDI Name
       </label>
-      <input name="entry-name" id="entry-name" bind:value={entry.name} class={inputClass} required />
+      <Input name="entry-name" id="entry-name" bind:value={entry.name} required={true} />
     </div>
 
     <div class={inputContainerClass}>
@@ -89,15 +90,17 @@
         Tags
       </label>
 
-      <div class="mb-2">
+      
+      <div class="rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400 mb-2">
         <input 
           name="entry-tags" 
           bind:value={currentTag} 
-          class={inputClass} 
+          class='rounded-[3px] w-full px-2 py-1 bg-white'
           on:keydown={onTagKeydown} 
           on:input={() => onTagInput()}
         />
       </div>
+      
 
       <div class="h-12">
         {#each entry.tags as tag}

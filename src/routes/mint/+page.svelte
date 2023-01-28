@@ -2,7 +2,7 @@
   import { onDestroy } from 'svelte';
   import { midi, sendMidiToOutput } from '$lib/stores/midi';
   import { signer, signerAddress } from 'svelte-ethers-store';
-  import ImageInput from '$lib/components/ImageInput.svelte';
+  import ImageInput from '$lib/components/inputs/ImageInput.svelte';
   import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
   import type { Entry } from '$lib/types/entry';
   import AddEntry from '$lib/components/AddEntry.svelte';
@@ -16,17 +16,16 @@
 	import MintStep from '$lib/components/MintStep.svelte';
 	import Tag from '$lib/components/Tag.svelte';
 	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
+	import Input from '$lib/components/inputs/Input.svelte';
+	import TextArea from '$lib/components/inputs/TextArea.svelte';
 
   let name = '';
   let description = '';
   let image: FileList | undefined;
 
-  let devices: {name: string, manufacturer: string}[] = [
-    {
-      name: '',
-      manufacturer: ''
-    }
-  ]
+  let devices: {name: Readonly<string>, manufacturer: Readonly<string>}[] = []
+  let deviceInput = '';
+  let manufacturerInput = ''
 
   let amount: string;
   let dialogVisible = false;
@@ -34,7 +33,6 @@
   let pollAttempts = 0;
   let createdMidiId: number;
 
-  const inputClass = 'border border-gray-300 px-2 rounded border-2'
   const labelClass = 'text-gray-500 text-sm font-semibold'
   const inputContainerClass = 'flex flex-col mb-4'
   const tdClass = 'border border-gray-200 px-2'
@@ -143,10 +141,12 @@
 
   const addDevice = () => {
     devices.push({
-      name: '',
-      manufacturer: ''
+      name: deviceInput,
+      manufacturer: manufacturerInput
     })
     devices = devices
+    deviceInput = ''
+    manufacturerInput = ''
   }
 
   const removeDevice = (i: number) => {
@@ -166,47 +166,59 @@
 
   <div>
 
-    <MintStep stepNumber={1} instruction="Connect Instrument" />
+    <MintStep stepNumber={1} instruction="Enter MIDI Devices" />
 
     <div class="mb-8">
-      
-      {#each devices as device, i}
-        
-        <div class="flex flex-col">
-          <div class={`${inputContainerClass}`}>
-            <label class={labelClass} for="manufacturer">Manufacturer</label>
 
-            <div class="rounded bg-gradient-to-b p-0.5 from-gray-200 to-gray-300 w-full">
-              <input 
-                id="manufacturer" 
-                name="manufacturer" 
-                bind:value="{device.manufacturer}" 
-                on:focus={(_) => console.log('focusing!!')}
-                class="rounded w-full px-4"
-                required 
-              />
-            </div>
-
-          </div>
-    
-          <div class={inputContainerClass}>
-            <label class={labelClass} for="device">Device</label>
-            <input 
-              id="device" 
-              name="device" 
-              bind:value="{device.name}" 
-              class={inputClass} 
-              required 
-            />
-          </div>
-
-          <button on:click|preventDefault={(_) => removeDevice(i)}>Remove Device</button>
-
+      <div class="flex flex-col">
+        <div class={`${inputContainerClass}`}>
+          <label class={labelClass} for="manufacturer">Manufacturer</label>
+          <Input id="manufacturer" name="manufacturer" bind:value={manufacturerInput} required={true} />
+        </div>
+  
+        <div class={inputContainerClass}>
+          <label class={labelClass} for="device">Device</label>
+          <Input id="device" name="device" bind:value={deviceInput} required={true} />
         </div>
 
-      {/each}
+        <button on:click|preventDefault={(_) => addDevice()}>Add Device</button>
 
-      <button on:click|preventDefault={(_) => addDevice()}>Add Another Device</button>
+      </div>
+
+      {#if devices.length > 0}
+        
+      <table>
+        <thead>
+          <tr>
+            <th>Manufacturer</th>
+            <th>Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each devices as device, i}
+          <tr>
+            <td>
+              {device.manufacturer}
+            </td>
+            <td>
+              {device.name}
+            </td>
+            <td>
+              <button on:click|preventDefault={(_) => removeDevice(i)}>
+                <TrashSolid color="#000" />
+              </button>
+            </td>
+          </tr>
+          {/each}
+        </tbody>
+      </table>
+
+      {:else}
+
+      <span>Add a device</span>
+
+      {/if}
 
     </div>
 
@@ -225,20 +237,20 @@
           <div class="flex">
 
             <div class={`${inputContainerClass} mr-4`}>
-              <label class={labelClass} for="name">Collection Name</label>
-              <input id="name" name="name" bind:value="{name}" class={inputClass} required />
+              <label class={labelClass} for="collectionName">Collection Name</label>
+              <Input id="collectionName" name="collectionName" required={true} bind:value={name} />
             </div>
     
             <div class={inputContainerClass}>
               <label class={labelClass} for="amount"># To Mint</label>
-              <input type="number" id="amount" name="amount" bind:value="{amount}" class={inputClass} />
+              <Input type="number" id="amount" name="amount" bind:value="{amount}" required={true} />
             </div>
 
           </div>
   
           <div class={inputContainerClass}>
             <label class={labelClass} for="description">Description</label>
-            <textarea id="description" name="description" bind:value="{description}" class={inputClass} />
+            <TextArea id="description" name="description" bind:value="{description}" />
           </div>
 
         </div>
