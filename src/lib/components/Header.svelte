@@ -23,8 +23,8 @@
         <h1>
           <a href="/" class="flex align-items">
             <Logo />
-            <div class="ml-2 h-9 w-[62px] flex -mt-1">
-              <img src="/images/midi-link.png" alt="MIDI.link" />
+            <div class="ml-2 h-8 flex">
+              <img src="/images/sono-bay-logo.png" alt="Sonobay.xyz" />
             </div>
           </a>
         </h1>

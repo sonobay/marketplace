@@ -16,6 +16,8 @@
     defaultEvmStores.setProvider(provider)
   }
 
+  const baseClass = 'bg-midiYellow text-black rounded-lg py-2 px-4 uppercase text-sm'
+
 </script>
 
 {#if !$connected}
@@ -23,14 +25,14 @@
 <button 
   type="button" 
   on:click={(e) => connect()}
-  class="bg-gold text-black rounded-lg py-2 px-4 uppercase text-sm"
+  class={`${baseClass}`}
 >
   Connect Wallet
 </button>
 
 {:else}
 
-<div class="bg-gold text-black rounded-lg py-2 px-4 uppercase text-sm font-bold">
+<div class={`${baseClass} font-bold`}>
   {truncateAddress($signerAddress)}
 </div>
 
