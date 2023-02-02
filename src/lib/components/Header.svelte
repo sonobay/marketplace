@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ConnectButton from "$lib/components/ConnectButton.svelte";
   import { midi } from '$lib/stores/midi';
   import { onDestroy } from "svelte";
+	import ConnectButtonWrapper from "./connect/ConnectButtonWrapper.svelte";
 	import Logo from "./Logo.svelte";
 
   let selectedInput: WebMidi.MIDIInput | undefined;
@@ -30,9 +30,11 @@
         </h1>
       </div>
   
-      <div>
-        <ConnectButton />
-        <a href="/mint">Mint</a>
+      <div class="flex">
+        <div class="flex items-center">
+          <a href="/mint" class="mr-2">Mint</a>
+        </div>
+        <ConnectButtonWrapper />
       </div>
     </div>
     <div class="float-left">
