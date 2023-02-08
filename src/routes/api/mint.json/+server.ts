@@ -11,6 +11,13 @@ interface Entry {
 	tags: string[];
 }
 
+export const fileToBlob = async (file: File) => {
+	const ab = await file.arrayBuffer();
+	const buffer = Buffer.from(ab);
+	const resizedLogo = await sharp(buffer).resize({ width: 500 }).webp().toBuffer();
+	return new Blob([resizedLogo]);
+};
+
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export const POST = async ({ request }: { request: Request }) => {
 	const { NFT_STORAGE_API_KEY } = process.env;
@@ -29,13 +36,8 @@ export const POST = async ({ request }: { request: Request }) => {
 		throw new Error('No logo file found');
 	}
 
-	const ab = await logo.arrayBuffer();
-	const buffer = Buffer.from(ab);
-	const resizedLogo = await sharp(buffer).resize({ width: 500 }).webp().toBuffer();
-	const blob = new Blob([resizedLogo]);
+	const image = await fileToBlob(logo);
 	const description = data.get('description')?.toString() ?? '';
-	// const device = data.get('device')?.toString();
-	// const manufacturer = data.get('manufacturer')?.toString() ?? '';
 	const devices = JSON.parse(data.get('devices')?.toString() ?? '[]');
 
 	if (!devices || devices.length <= 0) {
@@ -51,20 +53,22 @@ export const POST = async ({ request }: { request: Request }) => {
 		const image = data.has(`entries[${i}].image`)
 			? (data.get(`entries[${i}].image`) as File)
 			: undefined;
-		let blob: Blob | undefined;
+		let entryImage: Blob | undefined;
 
 		const tags = data.has(`entries[${i}].tags`)
 			? (JSON.parse(data.get(`entries[${i}].tags`) as string) as string[])
 			: [];
 
 		if (image) {
-			const ab = await image?.arrayBuffer();
-			const buffer = Buffer.from(ab);
-			const resizedLogo = await sharp(buffer).resize({ width: 500 }).webp().toBuffer();
-			blob = new Blob([resizedLogo]);
+			entryImage = await fileToBlob(image);
 		}
 
-		entries.push({ name, midi: JSON.parse(`[${midi?.toString() ?? ''}]`), image: blob, tags });
+		entries.push({
+			name,
+			midi: JSON.parse(`[${midi?.toString() ?? ''}]`),
+			image: entryImage,
+			tags
+		});
 
 		i++;
 	}
@@ -86,7 +90,7 @@ export const POST = async ({ request }: { request: Request }) => {
 	const nft = {
 		name,
 		description,
-		image: blob,
+		image,
 		properties: { devices, entries }
 	};
 
