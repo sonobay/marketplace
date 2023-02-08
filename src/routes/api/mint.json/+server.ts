@@ -15,7 +15,9 @@ export const fileToBlob = async (file: File) => {
 	const ab = await file.arrayBuffer();
 	const buffer = Buffer.from(ab);
 	const resizedLogo = await sharp(buffer).resize({ width: 500 }).webp().toBuffer();
-	return new Blob([resizedLogo]);
+	return new Blob([resizedLogo], {
+		type: 'image/webp'
+	});
 };
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
