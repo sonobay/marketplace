@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { NFTStorage } from 'nft.storage';
 import 'dotenv/config';
 import sharp from 'sharp';
-import { Blob } from '@web-std/blob';
+import { File, Blob } from '@web-std/file';
 
 interface Entry {
 	name: string;
@@ -68,7 +68,10 @@ export const POST = async ({ request }: { request: Request }) => {
 		entries.push({
 			name,
 			midi: JSON.parse(`[${midi?.toString() ?? ''}]`),
-			image: entryImage,
+			image:
+				entryImage && image
+					? new File([entryImage], `${encodeURIComponent(image.name)}.webp`, { type: 'image/webp' })
+					: undefined,
 			tags
 		});
 
@@ -92,7 +95,7 @@ export const POST = async ({ request }: { request: Request }) => {
 	const nft = {
 		name,
 		description,
-		image,
+		image: new File([image], `${encodeURIComponent(logo.name)}.webp`, { type: 'image/webp' }),
 		properties: { devices, entries }
 	};
 
