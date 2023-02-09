@@ -20,7 +20,7 @@
     defaultEvmStores.setProvider(provider)
   }
 
-  const baseClass = 'bg-midiYellow text-black rounded-lg py-2 px-4 uppercase text-sm'
+  const baseClass = 'bg-midiYellow border-midiYellow border-2 text-black rounded-xl py-2 px-4 uppercase text-sm'
 
   const dispatch = createEventDispatcher()
 

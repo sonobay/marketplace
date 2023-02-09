@@ -1,22 +1,13 @@
 <script lang="ts">
-  import { midi } from '$lib/stores/midi';
-  import { onDestroy } from "svelte";
 	import ConnectButtonWrapper from "./connect/ConnectButtonWrapper.svelte";
+	import DeviceNavButton from './DeviceNavButton.svelte';
 	import Logo from "./Logo.svelte";
 
-  let selectedInput: WebMidi.MIDIInput | undefined;
-  let selectedOutput: WebMidi.MIDIOutput | undefined;
 
-  const unsubscribe = midi.subscribe((store) => {
-    selectedInput = store.selectedInput
-    selectedOutput = store.selectedOutput
-  })
-
-  onDestroy(unsubscribe)
 
 </script>
 
-<header class="container mx-auto py-2 px-4">
+<header class="container mx-auto py-4 px-4">
   <div>
     <div class="flex justify-between">
       <div>
@@ -31,28 +22,15 @@
       </div>
   
       <div class="flex">
-        <div class="flex items-center">
-          <a href="/mint" class="mr-2">Mint</a>
+        <div class="flex items-center text-sm border border-black border-2 rounded-xl px-4">
+          <a href="/mint">Mint</a>
         </div>
+
+        
+        <DeviceNavButton />
+
         <ConnectButtonWrapper />
       </div>
-    </div>
-    <div class="float-left">
-      <a href="/config" class="flex flex-col text-sm shrink">
-        <div class="mb-0.5 h-4 flex items-center">
-          <span class={`flex justify-center items-center w-4 h-4 border-2  ${selectedInput ? 'border-emerald-300 bg-emerald-200 text-emerald-500' : 'border-gray-300 bg-gray-200 text-gray-400'}`}>I</span>
-          {#if selectedInput}
-            <span class="ml-2">{selectedInput.name}</span>
-          {/if}
-        </div>
-  
-        <div class="flex items-center h-4">
-          <span class={`flex justify-center items-center w-4 h-4 border-2  ${selectedOutput ? 'border-emerald-300 bg-emerald-200 text-emerald-500' : 'border-gray-300 bg-gray-200 text-gray-400'}`}>O</span>
-          {#if selectedOutput}
-            <span class="ml-2">{selectedOutput.name}</span>
-          {/if}
-        </div>
-      </a>
     </div>
   </div>
 </header>
