@@ -1,3 +1,4 @@
+import { variables } from '$lib/env';
 import type { MetaMaskInpageProvider } from '@metamask/providers';
 
 const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
@@ -23,6 +24,28 @@ declare global {
 	}
 }
 
+export const environmentNetwork = () => {
+	switch (+variables.networkId) {
+		case 1:
+			return {
+				chainName: 'Mainnet',
+				chainId: 1,
+				rpcUrls: ['https://mainnet.infura.io/v3/']
+			};
+
+		case 5:
+			return {
+				chainName: 'Goerli',
+				chainId: 5,
+				rpcUrls: ['https://goerli.infura.io/v3/']
+			};
+
+		default:
+			console.error(`Unsupported Network: ${+variables.networkId}`);
+			break;
+	}
+};
+
 export const promptSwitchNetwork = async ({
 	chainId,
 	chainName,
@@ -32,7 +55,7 @@ export const promptSwitchNetwork = async ({
 	chainName: string;
 	rpcUrls: string[];
 }) => {
-	if (!window.ethereum) {
+	if (!window?.ethereum) {
 		console.error('no window.ethereum found');
 		return;
 	}

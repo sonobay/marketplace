@@ -4,45 +4,24 @@
 	import Logo from "./Logo.svelte";
   import { chainId, connected } from 'svelte-ethers-store'
 	import { variables } from "$lib/env";
-	import { promptSwitchNetwork } from "$lib/utils";
+	import { environmentNetwork, promptSwitchNetwork } from "$lib/utils";
 
+  const correctNetwork = environmentNetwork()
   
 
-  const correctNetwork = () => {
-    switch (+variables.networkId) {
-      case 1:
-        return {
-          chainName: 'Mainnet',
-          chainId: 1,
-          rpcUrls: ['https://mainnet.infura.io/v3/']
-        }
-
-      case 5: 
-        return {
-          chainName: 'Goerli',
-          chainId: 5,
-          rpcUrls: ['https://goerli.infura.io/v3/']
-        }
-    
-      default:
-        console.error(`Unsupported Network: ${+variables.networkId}`)
-        break;
-    }
-  }
-
   const switchNetwork = () => {
-    const targetNetwork = correctNetwork()
-    if (!targetNetwork) {
+    correctNetwork
+    if (!correctNetwork) {
       return;
     }
-    promptSwitchNetwork(targetNetwork)
+    promptSwitchNetwork(correctNetwork)
   }
 
 </script>
 
 {#if $connected && +($chainId) !== +(variables.networkId)}
   <button on:click|preventDefault={(_) => switchNetwork()} class="w-full bg-orange-500 text-white text-center py-2">
-    <b>Switch Network To {correctNetwork()?.chainName}</b>
+    <b>Switch Network To {correctNetwork?.chainName}</b>
   </button>
 {/if}
 
