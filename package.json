@@ -15,7 +15,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.22.2",
 		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "next",
+		"@sveltejs/kit": "^1.5.3",
 		"@types/node": "^18.13.0",
 		"@types/sharp": "^0.30.5",
 		"@types/webmidi": "^2.0.6",
