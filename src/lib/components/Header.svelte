@@ -2,10 +2,32 @@
 	import ConnectButtonWrapper from "./connect/ConnectButtonWrapper.svelte";
 	import DeviceNavButton from './DeviceNavButton.svelte';
 	import Logo from "./Logo.svelte";
+  import { chainId, connected } from 'svelte-ethers-store'
+	import { variables } from "$lib/env";
 
+  
 
+  const correctNetwork = () => {
+    switch (+variables.networkId) {
+      case 1:
+        return 'Mainnet'
+
+      case 5: 
+        return 'Goerli'
+    
+      default:
+        console.error(`Unsupported Network: ${+variables.networkId}`)
+        return ''
+    }
+  }
 
 </script>
+
+{#if $connected && +($chainId) !== +(variables.networkId)}
+  <div class="w-full bg-orange-500 text-white text-center py-2">
+    <b>Switch Network To {correctNetwork()}</b>
+  </div>
+{/if}
 
 <header class="container mx-auto py-4 px-4">
   <div>
