@@ -1,5 +1,6 @@
+// TODO this seems unused
+
 // import type { LoadInput, LoadOutput } from '@sveltejs/kit';
-import { Contract, getDefaultProvider } from 'ethers';
 import { addresses } from '$lib/constants/addresses';
 import type { LoadEvent } from '@sveltejs/kit';
 // import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
