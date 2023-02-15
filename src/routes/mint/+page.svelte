@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
-  import { midi, sendMidiToOutput } from '$lib/stores/midi';
+  import { sendMidiToOutput } from '$lib/stores/midi';
   import { signer, signerAddress } from 'svelte-ethers-store';
   import ImageInput from '$lib/components/inputs/ImageInput.svelte';
   import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
@@ -18,14 +17,18 @@
 	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
 	import Input from '$lib/components/inputs/Input.svelte';
 	import TextArea from '$lib/components/inputs/TextArea.svelte';
+	import type { Device } from '$lib/types/device';
+	import DeviceSelect from '$lib/components/DeviceSelect.svelte';
+	import Label from '$lib/components/inputs/Label.svelte';
 
   let name = '';
   let description = '';
   let image: FileList | undefined;
+  export let data: {devices: Device[]};
+  const { devices } = data;
 
-  let devices: {name: Readonly<string>, manufacturer: Readonly<string>}[] = []
-  let deviceInput = '';
-  let manufacturerInput = ''
+  let collectionDevices: {name: Readonly<string>, manufacturer: Readonly<string>}[] = []
+  let selectedDevice: {manufacturer: string, device: string}
 
   let amount: string;
   let dialogVisible = false;
@@ -33,7 +36,6 @@
   let pollAttempts = 0;
   let createdMidiId: number;
 
-  const labelClass = 'text-gray-500 text-sm font-semibold'
   const inputContainerClass = 'flex flex-col mb-4'
   const tdClass = 'border border-gray-200 px-2'
 
@@ -48,8 +50,8 @@
     entries = entries;
   }
 
-  $: isValid = signer && devices.length > 0 
-    && devices[0].manufacturer.length > 0 && devices[0].name.length > 0 
+  $: isValid = signer && selectedDevice
+    && selectedDevice.manufacturer.length > 0 && selectedDevice.device.length > 0 
     && name.length > 0 
     && image && image.length > 0 && entries.length > 0
     && isPositiveInteger(amount)
@@ -70,10 +72,13 @@
   
     const formData = new FormData();
 
+    collectionDevices.push({name: selectedDevice.device, manufacturer: selectedDevice.manufacturer})
+    collectionDevices = collectionDevices
+
     formData.append('name', name)
     formData.append('description', description)
     formData.append('logo', image[0])
-    formData.append('devices', JSON.stringify(devices))
+    formData.append('devices', JSON.stringify(collectionDevices))
 
     entries.forEach((entry, i) => {
       formData.append(`entries[${i}].name`, entry.name)
@@ -105,7 +110,6 @@
      * We poll MIDI from our DB to get indexed device data
      */
     pollMIDI(receipt.events[0].args.id)
-
   }
 
   const pollMIDI = async (id: number) => {
@@ -128,34 +132,6 @@
     }
   }
 
-  // const unsubscribe = midi.subscribe((store) => {
-  //   if (!store.selectedInput) {
-  //     manufacturer = '';
-  //     device = '';
-  //     return;
-  //   }
-
-  //   manufacturer = store.selectedInput.manufacturer ?? ''
-  //   device = store.selectedInput.name ?? ''
-  // })
-
-  const addDevice = () => {
-    devices.push({
-      name: deviceInput,
-      manufacturer: manufacturerInput
-    })
-    devices = devices
-    deviceInput = ''
-    manufacturerInput = ''
-  }
-
-  const removeDevice = (i: number) => {
-    devices.splice(i, 1)
-    devices = devices
-  }
-
-  // onDestroy(unsubscribe)
-
 </script>
 
 <div>
@@ -166,59 +142,11 @@
 
   <div>
 
-    <MintStep stepNumber={1} instruction="Enter MIDI Devices" />
+    <MintStep stepNumber={1} instruction="Select MIDI Devices" />
 
     <div class="mb-8">
 
-      <div class="flex flex-col">
-        <div class={`${inputContainerClass}`}>
-          <label class={labelClass} for="manufacturer">Manufacturer</label>
-          <Input id="manufacturer" name="manufacturer" bind:value={manufacturerInput} required={true} />
-        </div>
-  
-        <div class={inputContainerClass}>
-          <label class={labelClass} for="device">Device</label>
-          <Input id="device" name="device" bind:value={deviceInput} required={true} />
-        </div>
-
-        <button on:click|preventDefault={(_) => addDevice()}>Add Device</button>
-
-      </div>
-
-      {#if devices.length > 0}
-        
-      <table>
-        <thead>
-          <tr>
-            <th>Manufacturer</th>
-            <th>Name</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each devices as device, i}
-          <tr>
-            <td>
-              {device.manufacturer}
-            </td>
-            <td>
-              {device.name}
-            </td>
-            <td>
-              <button on:click|preventDefault={(_) => removeDevice(i)}>
-                <TrashSolid color="#000" />
-              </button>
-            </td>
-          </tr>
-          {/each}
-        </tbody>
-      </table>
-
-      {:else}
-
-      <span>Add a device</span>
-
-      {/if}
+      <DeviceSelect {devices} on:change={(_device) => selectedDevice = _device.detail} />
 
     </div>
 
@@ -237,19 +165,19 @@
           <div class="flex">
 
             <div class={`${inputContainerClass} mr-4`}>
-              <label class={labelClass} for="collectionName">Collection Name</label>
+              <Label targetFor="collectionName" text="Collection Name" />
               <Input id="collectionName" name="collectionName" required={true} bind:value={name} />
             </div>
     
             <div class={inputContainerClass}>
-              <label class={labelClass} for="amount"># To Mint</label>
+              <Label targetFor="amount" text="# To Mint" />
               <Input type="number" id="amount" name="amount" bind:value="{amount}" required={true} />
             </div>
 
           </div>
   
           <div class={inputContainerClass}>
-            <label class={labelClass} for="description">Description</label>
+            <Label targetFor="description" text="Description" />
             <TextArea id="description" name="description" bind:value="{description}" />
           </div>
 

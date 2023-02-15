@@ -6,7 +6,7 @@ export type Device = {
 	manufacturer: string;
 	id: string;
 	imageSrc?: string;
-	midi_devices: {
+	midi_devices?: {
 		id?: number;
 		device?: string;
 		midi: MIDI;

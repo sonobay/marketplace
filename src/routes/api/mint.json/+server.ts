@@ -11,7 +11,7 @@ interface Entry {
 	tags: string[];
 }
 
-export const fileToBlob = async (file: File) => {
+const fileToBlob = async (file: File) => {
 	const ab = await file.arrayBuffer();
 	const buffer = Buffer.from(ab);
 	const resizedLogo = await sharp(buffer).resize({ width: 500 }).webp().toBuffer();
