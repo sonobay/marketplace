@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { sendMidiToOutput } from '$lib/stores/midi';
-  import { signer, signerAddress } from 'svelte-ethers-store';
-  import ImageInput from '$lib/components/inputs/ImageInput.svelte';
-  import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
-  import type { Entry } from '$lib/types/entry';
-  import AddEntry from '$lib/components/AddEntry.svelte';
-  import { BigNumber } from 'ethers'
-  import { isPositiveInteger, truncateAddress } from '$lib/utils';
+	import { sendMidiToOutput } from '$lib/stores/midi';
+	import { signer, signerAddress } from 'svelte-ethers-store';
+	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
+	import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
+	import type { Entry } from '$lib/types/entry';
+	import AddEntry from '$lib/components/AddEntry.svelte';
+	import { BigNumber } from 'ethers';
+	import { isPositiveInteger, truncateAddress } from '$lib/utils';
 	import { midiContract } from '$lib/utils/midi.contract';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { variables } from '$lib/env';
-  import type { MIDI } from '$lib/types/midi';
+	import type { MIDI } from '$lib/types/midi';
 	import MintStep from '$lib/components/MintStep.svelte';
 	import Tag from '$lib/components/Tag.svelte';
 	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
@@ -20,253 +20,323 @@
 	import type { Device } from '$lib/types/device';
 	import DeviceSelect from '$lib/components/DeviceSelect.svelte';
 	import Label from '$lib/components/inputs/Label.svelte';
+	import DialogProgressCheckbox from '$lib/components/DialogProgressCheckbox.svelte';
+	import Pack from '$lib/components/Pack.svelte';
 
-  let name = '';
-  let description = '';
-  let image: FileList | undefined;
-  export let data: {devices: Device[]};
-  const { devices } = data;
+	let name = '';
+	let description = '';
+	let image: FileList | undefined;
+	export let data: { devices: Device[] };
+	const { devices } = data;
 
-  let collectionDevices: {name: Readonly<string>, manufacturer: Readonly<string>}[] = []
-  let selectedDevice: {manufacturer: string, device: string}
+	let collectionDevices: { name: Readonly<string>; manufacturer: Readonly<string> }[] = [];
+	let selectedDevice: { manufacturer: string; device: string };
 
-  let amount: string;
-  let dialogVisible = false;
-  let mintProcessing = false;
-  let pollAttempts = 0;
-  let createdMidiId: number;
+	let amount: string;
+	let dialogVisible = false;
+	let mintProcessing = false;
+	let pollAttempts = 0;
+	let createdMidiId: number;
 
-  const inputContainerClass = 'flex flex-col mb-4'
-  const tdClass = 'border border-gray-200 px-2'
+	let metadataUploaded = false;
+	let mintTxSigned = false; // this is when metamask is prompted and waiting for feedback to mint
+	let txProcessed = false;
+	let metadataIndexed = false;
 
-  let entries: Entry[] = []
+	const inputContainerClass = 'flex flex-col mb-4';
+	const tdClass = 'border border-gray-200 px-2';
 
-  const addEntry = (entry: Entry) => {
-    entries = [...entries, entry]
-  }
+	let entries: Entry[] = [];
+	const addEntry = (entry: Entry) => {
+		entries = [...entries, entry];
+	};
 
-  const removeEntry = (index: number) => {
-    entries.splice(index, 1);
-    entries = entries;
-  }
+	const removeEntry = (index: number) => {
+		entries.splice(index, 1);
+		entries = entries;
+	};
 
-  $: isValid = signer && selectedDevice
-    && selectedDevice.manufacturer.length > 0 && selectedDevice.device.length > 0 
-    && name.length > 0 
-    && image && image.length > 0 && entries.length > 0
-    && isPositiveInteger(amount)
+	$: isValid =
+		signer &&
+		selectedDevice &&
+		selectedDevice.manufacturer.length > 0 &&
+		selectedDevice.device.length > 0 &&
+		name.length > 0 &&
+		image &&
+		image.length > 0 &&
+		entries.length > 0 &&
+		isPositiveInteger(amount);
 
-  const handleSubmit = async () => {
+	const handleSubmit = async () => {
+		if (!$signer) {
+			console.error('not connected');
+			return;
+		}
 
-    if (!$signer) {
-      console.error('not connected')
-      return;
-    }
+		if (!image || (image && image.length <= 0)) {
+			console.error('image required');
+			return;
+		}
 
-    if (!image || image && image.length <= 0) {
-      console.error('image required')
-      return;
-    }
+		mintProcessing = true;
 
-    mintProcessing = true;
-  
-    const formData = new FormData();
+		const formData = new FormData();
 
-    collectionDevices.push({name: selectedDevice.device, manufacturer: selectedDevice.manufacturer})
-    collectionDevices = collectionDevices
+		collectionDevices.push({
+			name: selectedDevice.device,
+			manufacturer: selectedDevice.manufacturer
+		});
+		collectionDevices = collectionDevices;
 
-    formData.append('name', name)
-    formData.append('description', description)
-    formData.append('logo', image[0])
-    formData.append('devices', JSON.stringify(collectionDevices))
+		formData.append('name', name);
+		formData.append('description', description);
+		formData.append('logo', image[0]);
+		formData.append('devices', JSON.stringify(collectionDevices));
 
-    entries.forEach((entry, i) => {
-      formData.append(`entries[${i}].name`, entry.name)
-      formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '')
-      formData.append(`entries[${i}].tags`, JSON.stringify(entry.tags))
-      if (entry.image) {
-        formData.append(`entries[${i}].image`, entry.image[0])
-      }
-    })
+		entries.forEach((entry, i) => {
+			formData.append(`entries[${i}].name`, entry.name);
+			formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '');
+			formData.append(`entries[${i}].tags`, JSON.stringify(entry.tags));
+			if (entry.image) {
+				formData.append(`entries[${i}].image`, entry.image[0]);
+			}
+		});
 
-    const res = await fetch("api/mint.json", {
-        method: "POST",
-        headers: {
-          "accept": "application/json"
-        },
-        body: formData,
-    });
+		const res = await fetch('api/mint.json', {
+			method: 'POST',
+			headers: {
+				accept: 'application/json'
+			},
+			body: formData
+		});
 
-    const json: {metadata: string} = await res.json();
+		const json: { metadata: string } = await res.json();
 
-    /**
-     * Mint on Ethereum
-     */
-    const midi = midiContract($signer)
-    const tx = await midi.mint($signerAddress, BigNumber.from(amount), json.metadata, [])
-    const receipt = await tx.wait()
+		metadataUploaded = true;
 
-    /**
-     * We poll MIDI from our DB to get indexed device data
-     */
-    pollMIDI(receipt.events[0].args.id)
-  }
+		/**
+		 * Mint on Ethereum
+		 */
+		const midi = midiContract($signer);
+		const tx = await midi.mint($signerAddress, BigNumber.from(amount), json.metadata, []);
 
-  const pollMIDI = async (id: number) => {
-    pollAttempts += 1;
-    if (pollAttempts <= 10) {
+		mintTxSigned = true;
 
-      try {
-        const { apiEndpoint } = variables;
-        const res = await fetch(`${apiEndpoint}/midi/${id}`)
-        if (!res.ok) {
-          throw new Error(`error fetching ${id}`)
-        }
-        const midi = await res.json() as MIDI;
-        createdMidiId = midi.id;
+		const receipt = await tx.wait();
 
-      } catch (error) {
-        setTimeout(() => pollMIDI(id), 10 * 1000) // every 10 seconds
-      }
+		txProcessed = true;
 
-    }
-  }
+		/**
+		 * We poll MIDI from our DB to get indexed device data
+		 */
+		pollMIDI(receipt.events[0].args.id);
+	};
 
+	const pollMIDI = async (id: number) => {
+		pollAttempts += 1;
+		if (pollAttempts <= 10) {
+			try {
+				const { apiEndpoint } = variables;
+				const res = await fetch(`${apiEndpoint}/midi/${id}`);
+				if (!res.ok) {
+					throw new Error(`error fetching ${id}`);
+				}
+				const midi = (await res.json()) as MIDI;
+				createdMidiId = midi.id;
+				metadataIndexed = true;
+			} catch (error) {
+				setTimeout(() => pollMIDI(id), 10 * 1000); // every 10 seconds
+			}
+		}
+	};
 </script>
 
 <div>
-  <div class="text-center mb-8">
-    <h2 class="text-4xl mb-1 text-charcoal font-semibold">Start Minting Now</h2>
-    <span class="text-gray-400">Follow the MIDI.link workflow below to build <br /> your catalogue of MIDI NFTs.</span>
-  </div>
+	<div class="text-center mb-8">
+		<h2 class="text-4xl mb-1 text-charcoal font-semibold">Start Minting Now</h2>
+		<span class="text-gray-400"
+			>Follow the MIDI.link workflow below to build <br /> your catalogue of MIDI NFTs.</span
+		>
+	</div>
 
-  <div>
+	<div>
+		<MintStep stepNumber={1} instruction="Select MIDI Devices" />
 
-    <MintStep stepNumber={1} instruction="Select MIDI Devices" />
+		<div class="mb-8">
+			<DeviceSelect {devices} on:change={(_device) => (selectedDevice = _device.detail)} />
+		</div>
 
-    <div class="mb-8">
+		<MintStep stepNumber={2} instruction="Create Collection" />
 
-      <DeviceSelect {devices} on:change={(_device) => selectedDevice = _device.detail} />
+		<div class="mb-8">
+			<div class="flex">
+				<div class="mt-5">
+					<ImageInput {image} id="logo" on:imageUpdated={(e) => (image = e.detail.image)} />
+				</div>
 
-    </div>
+				<div class="flex flex-col w-full">
+					<div class="flex">
+						<div class={`${inputContainerClass} mr-4`}>
+							<Label targetFor="collectionName" text="Collection Name" />
+							<Input id="collectionName" name="collectionName" required={true} bind:value={name} />
+						</div>
 
-    <MintStep stepNumber={2} instruction="Create Collection" />
+						<div class={inputContainerClass}>
+							<Label targetFor="amount" text="# To Mint" />
+							<Input type="number" id="amount" name="amount" bind:value={amount} required={true} />
+						</div>
+					</div>
 
-    <div class="mb-8">
-      
-      <div class="flex">
+					<div class={inputContainerClass}>
+						<Label targetFor="description" text="Description" />
+						<TextArea id="description" name="description" bind:value={description} />
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <div class="mt-5">
-          <ImageInput image={image} id="logo" on:imageUpdated={((e) => image = e.detail.image)} />
-        </div>
+		<MintStep stepNumber={3} instruction="Add MIDI to your collection" />
 
-        <div class="flex flex-col w-full">
+		<div class="mb-8">
+			<AddEntry on:addEntry={(e) => addEntry(e.detail.entry)} />
+		</div>
 
-          <div class="flex">
+		<table class="w-full border border-collapse rounded">
+			<tbody>
+				{#each entries as entry, i}
+					<tr>
+						<td class={tdClass}>
+							{#if entry.image}
+								<img class="w-12" src={URL.createObjectURL(entry.image[0])} alt="Device Logo" />
+							{:else}
+								<ImageRegular size={24} color="rgb(156 163 175)" />
+							{/if}
+						</td>
+						<td class={tdClass}>{entry.name}</td>
+						<td class={tdClass}>
+							{#each entry.tags as tag}
+								<Tag label={tag} />
+							{/each}
+						</td>
+						<td class={tdClass}>
+							<button
+								on:click|preventDefault={(_) => sendMidiToOutput(entry.midi ?? new Uint8Array(0))}
+								>Test</button
+							>
+						</td>
+						<td class={`${tdClass} w-12`}>
+							<button class="w-full" on:click|preventDefault={(_) => removeEntry(i)}>
+								<TrashSolid color="#000" />
+							</button>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 
-            <div class={`${inputContainerClass} mr-4`}>
-              <Label targetFor="collectionName" text="Collection Name" />
-              <Input id="collectionName" name="collectionName" required={true} bind:value={name} />
-            </div>
-    
-            <div class={inputContainerClass}>
-              <Label targetFor="amount" text="# To Mint" />
-              <Input type="number" id="amount" name="amount" bind:value="{amount}" required={true} />
-            </div>
-
-          </div>
-  
-          <div class={inputContainerClass}>
-            <Label targetFor="description" text="Description" />
-            <TextArea id="description" name="description" bind:value="{description}" />
-          </div>
-
-        </div>
-    
-      </div>
-
-    </div>
-
-    <MintStep stepNumber={3} instruction="Add MIDI to your collection" />
-
-    <div class="mb-8">
-
-      <AddEntry on:addEntry={((e) => addEntry(e.detail.entry))} />
-
-    </div>
-
-    <table class="w-full border border-collapse rounded">
-      <tbody>
-        {#each entries as entry, i}
-          <tr>
-            <td class={tdClass}>
-              {#if entry.image}
-                <img class="w-12" src={URL.createObjectURL(entry.image[0])} alt="Device Logo" />
-              {:else}
-                <ImageRegular size={24} color="rgb(156 163 175)" />
-              {/if}
-            </td>
-            <td class={tdClass}>{entry.name}</td>
-            <td class={tdClass}>
-              {#each entry.tags as tag}
-                <Tag label={tag} />
-              {/each}
-            </td>
-            <td class={tdClass}>
-              <button on:click|preventDefault={(_) => sendMidiToOutput(entry.midi ?? new Uint8Array(0))}>Test</button>
-            </td>
-            <td class={`${tdClass} w-12`}>
-              <button class="w-full" on:click|preventDefault={(_) => removeEntry(i) }>
-                <TrashSolid color="#000" />
-              </button>
-            </td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-
-    <button class={`text-white px-4 ${isValid ? 'bg-pink-500' : 'bg-gray-400'}`} on:click={(_) => dialogVisible = true} disabled={!isValid}>Mint</button>
-
-  </div>
-
+		<button
+			class={`text-white px-4 ${isValid ? 'bg-pink-500' : 'bg-gray-400'}`}
+			on:click={(_) => (dialogVisible = true)}
+			disabled={!isValid}>Mint</button
+		>
+	</div>
 </div>
 
 <!-- modal -->
-<Dialog
-  visible={dialogVisible} 
-  on:close={() => dialogVisible = false} 
-  headerText={`Mint ${amount} ${name}`}
->
-    <!-- Modal body -->
-    <div class="p-6 space-y-6">
+<Dialog visible={dialogVisible} on:close={() => (dialogVisible = false)}>
+	<!-- Modal body -->
+	<div class="p-6 space-y-6">
+		<div class="flex">
+			<!-- <div class="w-1/2 relative">
+				<div class="rounded-xl overflow-hidden w-72 h-72">
+					{#if image}
+						<img class="w-full" src={URL.createObjectURL(image[0])} alt={name} />
+					{:else}
+						<span>No image found</span>
+					{/if}
+				</div>
 
-      <div class="font-xl text-white">
-        <span>Name:</span>
-        <span>{name}</span>
-      </div>
+        <div class="absolute bottom-0 left-0">
 
-      <div class="font-xl text-white">
-        <span>Amount:</span>
-        <span>{amount}</span>
-      </div>
+          <span>{amount}</span>
 
-      <div class="font-xl text-white">
-        <span>To:</span>
-        <span>{$signerAddress ? truncateAddress($signerAddress) : ''}</span>
-      </div>
+          <span>{entries.length}</span>
 
-      <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-        lorem ipsum about listing MIDI NFT
-      </p>
+          <span class="">{name}</span>
 
-    </div>
+        </div>
 
-    <!-- Modal footer -->
-    <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-      {#if createdMidiId}
-        <a href={`/midi/${createdMidiId}`}>🎉 View NFT 🎉</a>
-      {:else}
-        <Button on:click={(_) => handleSubmit()} text="Mint MIDI NFT" loading={mintProcessing} disabled={mintProcessing} />
-      {/if}
-    </div>
+			</div> -->
+			<div class="w-1/2">
+				<Pack
+					image={image ? URL.createObjectURL(image[0]) : undefined}
+					{name}
+					numberMinted={+amount}
+					{entries}
+				/>
+			</div>
+
+			<div class="w-1/2 flex flex-col justify-between">
+				<div>
+					<div class="mb-4">
+						<DialogProgressCheckbox
+							text="Uploading Metadata to IPFS"
+							completed={metadataUploaded}
+						/>
+					</div>
+					<div class="mb-4">
+						<DialogProgressCheckbox
+							text="Waiting for wallet to sign transaction"
+							completed={mintTxSigned}
+						/>
+					</div>
+					<div class="mb-4">
+						<DialogProgressCheckbox text="Transaction processed onchain" completed={txProcessed} />
+					</div>
+					<div class="mb-4">
+						<DialogProgressCheckbox
+							text="Metadata indexed on Sonobay"
+							completed={metadataIndexed}
+						/>
+					</div>
+				</div>
+
+				<div class="flex w-full rounded-b pl-2">
+					{#if createdMidiId}
+						<div
+							class="flex items-center font-medium rounded-xl text-sm py-2.5 text-center w-full justify-center px-5 text-white bg-green-500"
+						>
+							<a href={`/midi/${createdMidiId}`}>🎉 View NFT 🎉</a>
+						</div>
+					{:else}
+						<Button
+							on:click={(_) => handleSubmit()}
+							text="Mint NFT MIDI Pack"
+							loading={mintProcessing}
+							disabled={mintProcessing}
+						/>
+					{/if}
+				</div>
+			</div>
+		</div>
+
+		<!-- <div class="font-xl text-white">
+			<span>Name:</span>
+			<span>{name}</span>
+		</div>
+
+		<div class="font-xl text-white">
+			<span>Amount:</span>
+			<span>{amount}</span>
+		</div>
+
+		<div class="font-xl text-white">
+			<span>To:</span>
+			<span>{$signerAddress ? truncateAddress($signerAddress) : ''}</span>
+		</div>
+
+		<p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+			lorem ipsum about listing MIDI NFT
+		</p> -->
+	</div>
 </Dialog>
