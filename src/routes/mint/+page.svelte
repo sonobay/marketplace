@@ -6,7 +6,7 @@
 	import type { Entry } from '$lib/types/entry';
 	import AddEntry from '$lib/components/AddEntry.svelte';
 	import { BigNumber } from 'ethers';
-	import { isPositiveInteger, truncateAddress } from '$lib/utils';
+	import { isPositiveInteger } from '$lib/utils';
 	import { midiContract } from '$lib/utils/midi.contract';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -22,6 +22,7 @@
 	import Label from '$lib/components/inputs/Label.svelte';
 	import DialogProgressCheckbox from '$lib/components/DialogProgressCheckbox.svelte';
 	import Pack from '$lib/components/Pack.svelte';
+	import NounClose from '$lib/components/icons/NounClose.svelte';
 
 	let name = '';
 	let description = '';
@@ -30,7 +31,6 @@
 	const { devices } = data;
 
 	let collectionDevices: { name: Readonly<string>; manufacturer: Readonly<string> }[] = [];
-	let selectedDevice: { manufacturer: string; device: string };
 
 	let amount: string;
 	let dialogVisible = false;
@@ -58,9 +58,7 @@
 
 	$: isValid =
 		signer &&
-		selectedDevice &&
-		selectedDevice.manufacturer.length > 0 &&
-		selectedDevice.device.length > 0 &&
+		collectionDevices.length > 0 &&
 		name.length > 0 &&
 		image &&
 		image.length > 0 &&
@@ -81,12 +79,6 @@
 		mintProcessing = true;
 
 		const formData = new FormData();
-
-		collectionDevices.push({
-			name: selectedDevice.device,
-			manufacturer: selectedDevice.manufacturer
-		});
-		collectionDevices = collectionDevices;
 
 		formData.append('name', name);
 		formData.append('description', description);
@@ -149,6 +141,19 @@
 			}
 		}
 	};
+
+	const addDevice = ({ name, manufacturer }: { name: string; manufacturer: string }) => {
+		collectionDevices.push({
+			name,
+			manufacturer
+		});
+		collectionDevices = collectionDevices;
+	};
+
+	const removeDevice = (index: number) => {
+		collectionDevices.splice(index, 1);
+		collectionDevices = collectionDevices;
+	};
 </script>
 
 <div>
@@ -160,10 +165,40 @@
 	</div>
 
 	<div>
-		<MintStep stepNumber={1} instruction="Select MIDI Devices" />
+		<MintStep
+			stepNumber={1}
+			instruction="Select MIDI Devices"
+			toolTipText="Users have the option to include any additional devices which are also compatible with the original production device."
+		/>
 
-		<div class="mb-8">
-			<DeviceSelect {devices} on:change={(_device) => (selectedDevice = _device.detail)} />
+		<div class="mb-8 flex flex-col">
+			<DeviceSelect {devices} on:addDevice={(_device) => addDevice(_device.detail)} />
+
+			<div class="flex mt-4">
+				{#if collectionDevices.length <= 0}
+					<div
+						class="rounded-xl bg-amber-100 text-amber-500 border-2 border-amber-500 text-center w-full py-8"
+					>
+						Add device
+					</div>
+				{:else}
+					<div class="flex">
+						{#each collectionDevices as _device, i}
+							<div
+								class="bg-amber-100 text-amber-500 border-2 border-amber-500 pl-4 pr-2 py-2 rounded-xl flex mr-2"
+							>
+								<span>{_device.manufacturer}: {_device.name}</span>
+								<button
+									class="ml-4 hover:bg-amber-200 rounded pr-1"
+									on:click|preventDefault={(e) => removeDevice(i)}
+								>
+									<NounClose size={12} color="#FF9999" />
+								</button>
+							</div>
+						{/each}
+					</div>
+				{/if}
+			</div>
 		</div>
 
 		<MintStep stepNumber={2} instruction="Create Collection" />
@@ -247,26 +282,6 @@
 	<!-- Modal body -->
 	<div class="p-6 space-y-6">
 		<div class="flex">
-			<!-- <div class="w-1/2 relative">
-				<div class="rounded-xl overflow-hidden w-72 h-72">
-					{#if image}
-						<img class="w-full" src={URL.createObjectURL(image[0])} alt={name} />
-					{:else}
-						<span>No image found</span>
-					{/if}
-				</div>
-
-        <div class="absolute bottom-0 left-0">
-
-          <span>{amount}</span>
-
-          <span>{entries.length}</span>
-
-          <span class="">{name}</span>
-
-        </div>
-
-			</div> -->
 			<div class="w-1/2">
 				<Pack
 					image={image ? URL.createObjectURL(image[0]) : undefined}
@@ -319,24 +334,5 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- <div class="font-xl text-white">
-			<span>Name:</span>
-			<span>{name}</span>
-		</div>
-
-		<div class="font-xl text-white">
-			<span>Amount:</span>
-			<span>{amount}</span>
-		</div>
-
-		<div class="font-xl text-white">
-			<span>To:</span>
-			<span>{$signerAddress ? truncateAddress($signerAddress) : ''}</span>
-		</div>
-
-		<p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-			lorem ipsum about listing MIDI NFT
-		</p> -->
 	</div>
 </Dialog>
