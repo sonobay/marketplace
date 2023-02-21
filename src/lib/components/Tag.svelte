@@ -7,7 +7,7 @@
 
 	const bg = color === 'gray' ? 'bg-gray-100' : 'bg-amber-100';
 	const textColor = color === 'gray' ? 'text-gray-500' : 'text-amber-500';
-	const borderColor = color === 'gray' ? 'border-gray-500' : 'border-amber-500';
+	const borderColor = color === 'gray' ? 'border-gray-400' : 'border-amber-500';
 
 	const dispatch = createEventDispatcher();
 </script>
