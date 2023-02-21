@@ -5,6 +5,9 @@
 	import { midi } from '$lib/stores/midi';
 	import Tag from './Tag.svelte';
 	import Input from './inputs/Input.svelte';
+	import CircleCheck from './icons/CircleCheck.svelte';
+	import TriangleExclamation from './icons/TriangleExclamation.svelte';
+	import Button from './Button.svelte';
 
 	const labelClass = 'text-gray-500 text-sm font-semibold';
 	const inputContainerClass = 'flex flex-col mb-4';
@@ -117,25 +120,27 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="float-left self-start flex">
+			<div class="mr-2">
+				<Button on:click={(_) => submitEntry()} text="Add to Pack" disabled={!isValid} />
+			</div>
+
+			<div class="flex items-center text-sm border border-black border-2 relative rounded-xl  px-4">
+				{#if entry.midi && entry.midi.length > 10}
+					<span>MIDI Received</span>
+				{:else}
+					<span>Awaiting MIDI</span>
+				{/if}
+
+				<div class="absolute -top-2 -right-2">
+					{#if entry.midi && entry.midi.length > 10}
+						<span><CircleCheck /></span>
+					{:else}
+						<span><TriangleExclamation /></span>
+					{/if}
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-
-<span>
-	{#if entry.midi}
-		[
-		{#each entry.midi as byte}
-			{byte}
-		{/each}
-		]
-	{:else}
-		[]
-	{/if}
-</span>
-
-<br />
-
-<button
-	class={`text-white px-4 ${isValid ? 'bg-pink-500' : 'bg-gray-400'}`}
-	on:click|preventDefault={(_) => submitEntry()}
-	disabled={!isValid}>Add MIDI</button
->
