@@ -171,7 +171,7 @@
 			toolTipText="Users have the option to include any additional devices which are also compatible with the original production device."
 		/>
 
-		<div class="mb-8 flex flex-col">
+		<div class="mb-12 flex flex-col">
 			<DeviceSelect {devices} on:addDevice={(_device) => addDevice(_device.detail)} />
 
 			<div class="flex mt-4">
@@ -203,7 +203,7 @@
 
 		<MintStep stepNumber={2} instruction="Create Collection" />
 
-		<div class="mb-8">
+		<div class="mb-12">
 			<div class="flex">
 				<div class="mt-5">
 					<ImageInput {image} id="logo" on:imageUpdated={(e) => (image = e.detail.image)} />
@@ -232,7 +232,7 @@
 
 		<MintStep stepNumber={3} instruction="Add MIDI to your collection" />
 
-		<div class="mb-8">
+		<div class="mb-12">
 			<AddEntry on:addEntry={(e) => addEntry(e.detail.entry)} />
 		</div>
 
