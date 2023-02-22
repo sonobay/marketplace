@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { sendMidiToOutput } from '$lib/stores/midi';
 	import { signer, signerAddress } from 'svelte-ethers-store';
 	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
-	import TrashSolid from '$lib/components/icons/TrashSolid.svelte';
 	import type { Entry } from '$lib/types/entry';
 	import AddEntry from '$lib/components/AddEntry.svelte';
 	import { BigNumber } from 'ethers';
@@ -13,8 +11,6 @@
 	import { variables } from '$lib/env';
 	import type { MIDI } from '$lib/types/midi';
 	import MintStep from '$lib/components/MintStep.svelte';
-	import Tag from '$lib/components/Tag.svelte';
-	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
 	import Input from '$lib/components/inputs/Input.svelte';
 	import TextArea from '$lib/components/inputs/TextArea.svelte';
 	import type { Device } from '$lib/types/device';
@@ -23,6 +19,7 @@
 	import DialogProgressCheckbox from '$lib/components/DialogProgressCheckbox.svelte';
 	import Pack from '$lib/components/Pack.svelte';
 	import NounClose from '$lib/components/icons/NounClose.svelte';
+	import PatchTable from '$lib/components/PatchTable.svelte';
 
 	let name = '';
 	let description = '';
@@ -44,7 +41,6 @@
 	let metadataIndexed = false;
 
 	const inputContainerClass = 'flex flex-col mb-4';
-	const tdClass = 'border border-gray-200 px-2';
 
 	let entries: Entry[] = [];
 	const addEntry = (entry: Entry) => {
@@ -236,43 +232,16 @@
 			<AddEntry on:addEntry={(e) => addEntry(e.detail.entry)} />
 		</div>
 
-		<table class="w-full border border-collapse rounded">
-			<tbody>
-				{#each entries as entry, i}
-					<tr>
-						<td class={tdClass}>
-							{#if entry.image}
-								<img class="w-12" src={URL.createObjectURL(entry.image[0])} alt="Device Logo" />
-							{:else}
-								<ImageRegular size={24} color="rgb(156 163 175)" />
-							{/if}
-						</td>
-						<td class={tdClass}>{entry.name}</td>
-						<td class={tdClass}>
-							{#each entry.tags as tag}
-								<Tag label={tag} />
-							{/each}
-						</td>
-						<td class={tdClass}>
-							<button
-								on:click|preventDefault={(_) => sendMidiToOutput(entry.midi ?? new Uint8Array(0))}
-								>Test</button
-							>
-						</td>
-						<td class={`${tdClass} w-12`}>
-							<button class="w-full" on:click|preventDefault={(_) => removeEntry(i)}>
-								<TrashSolid color="#000" />
-							</button>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+		<div class="mb-4">
+			<PatchTable {entries} on:removeEntry={(e) => removeDevice(e.detail.index)} />
+		</div>
 
 		<button
-			class={`text-white px-4 ${isValid ? 'bg-pink-500' : 'bg-gray-400'}`}
+			class={isValid
+				? 'bg-midiYellow border-midiYellow border-2 text-black rounded-xl py-2 px-4 uppercase text-sm'
+				: 'bg-gray-100 border-gray-400 border-2 text-gray-400 rounded-xl py-2 px-4 uppercase text-sm'}
 			on:click={(_) => (dialogVisible = true)}
-			disabled={!isValid}>Mint</button
+			disabled={!isValid}>Mint Pack</button
 		>
 	</div>
 </div>
