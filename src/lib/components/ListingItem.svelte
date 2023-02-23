@@ -8,9 +8,9 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { BigNumber } from 'ethers';
 	import { fetchBalanceOf } from '$lib/utils/midi.contract';
+	import { environmentNetwork, truncateAddress } from '$lib/utils';
 
 	export let listing: Listing;
-	export let name: string;
 
 	const dispatch = createEventDispatcher();
 	let dialogVisible = false;
@@ -50,30 +50,67 @@
 		listed = await fetchListed(listing.listing);
 	};
 
+	const correctNetwork = environmentNetwork();
+
+	const etherscanBaseUrl =
+		correctNetwork?.chainId === 1 ? `https://etherscan.io` : `https://goerli.etherscan.io`;
+
 	onMount(() => {
 		_fetchAvailableAmount();
 		_fetchListed();
 	});
+
+	const labelClass = 'text-xs text-gray-500 font-bold';
 </script>
 
-<div class="flex flex-col border mb-4 py-4 px-8">
+<div class="flex flex-col shadow-lg rounded border mb-4 py-4 px-8">
 	<a class="flex flex-col" href={`/listing/${listing.listing}`}>
-		<span>listing address: {listing.listing}</span>
+		<div class="flex flex-col mb-1">
+			<span class={labelClass}>Listing Address</span>
+			<a
+				href={`${etherscanBaseUrl}/address/${listing.listing}`}
+				target="_blank"
+				rel="noreferrer"
+				class="text-link">{truncateAddress(listing.listing)}</a
+			>
+		</div>
 
-		{#if listed}
-			{#if availableAmount}
-				<span>Available: {availableAmount.toString()}</span>
-			{:else}
-				<span>Available: ...</span>
-			{/if}
-		{:else}
-			<div>Available: <span class="font-bold text-yellow-600">Listing Canceled</span></div>
-		{/if}
+		<div class="flex mb-1">
+			<div class="flex flex-col mr-8">
+				<span class={labelClass}>Available</span>
+				{#if listed}
+					{#if availableAmount}
+						<span>{availableAmount.toString()}</span>
+					{:else}
+						<span>-</span>
+					{/if}
+				{:else}
+					<div>
+						<span class="font-bold text-yellow-600">Listing Canceled</span>
+					</div>
+				{/if}
+			</div>
 
-		<span>Total Amount: {listing.amount}</span>
-		<span>price: {utils.formatEther(listing.price)} ETH</span>
-		<span>tokenId: {listing.tokenId}</span>
-		<span>listed by user: {listing.user}</span>
+			<div class="flex flex-col">
+				<span class={labelClass}>Total Amount</span>
+				<span>{listing.amount}</span>
+			</div>
+		</div>
+
+		<div class="flex flex-col mb-1">
+			<span class={labelClass}>Price</span>
+			<span>{utils.formatEther(listing.price)} ETH</span>
+		</div>
+
+		<div class="flex flex-col mb-2">
+			<span class={labelClass}>Listed By</span>
+			<a
+				href={`${etherscanBaseUrl}/address/${listing.user}`}
+				target="_blank"
+				rel="noreferrer"
+				class="text-link">{truncateAddress(listing.user)}</a
+			>
+		</div>
 	</a>
 
 	{#if listed}

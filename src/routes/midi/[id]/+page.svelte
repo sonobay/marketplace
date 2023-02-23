@@ -4,15 +4,14 @@
 	import { onDestroy } from 'svelte';
 	import { page } from '$app/stores';
 	import { isApprovedForAll, midiContract, setApprovalForAll } from '$lib/utils/midi.contract';
-	import { createListing, fetchListingEvents } from '$lib/utils/market.contract';
+	import { createListing } from '$lib/utils/market.contract';
 	import { BigNumber } from 'ethers';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import { addresses } from '$lib/constants/addresses';
 	import Button from '$lib/components/Button.svelte';
-	import type { Listing } from '$lib/types/listing';
 	import type { MIDI } from '$lib/types/midi';
 	import PatchTable from '$lib/components/PatchTable.svelte';
-	import { environmentNetwork } from '$lib/utils';
+	import MidiPatchBasicInfo from '$lib/components/MIDIPatchBasicInfo.svelte';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
@@ -21,14 +20,7 @@
 	let listingPrice = 1;
 	let isApproved = false;
 	let approvalIsLoading = false;
-	let listings: Listing[] = [];
 	const tokenId = $page.params.id;
-
-	const correctNetwork = environmentNetwork();
-	const tokenIdLink =
-		correctNetwork?.chainId === 1
-			? `https://etherscan.io/token/0xe88bc69c554ffb8457f499055ed23d03a5515944?a=${midi.id}`
-			: `https://goerli.etherscan.io/token/0xe88bc69c554ffb8457f499055ed23d03a5515944?a=${midi.id}`;
 
 	const checkOwner = async () => {
 		if (!$signerAddress) {
@@ -75,10 +67,6 @@
 		approvalIsLoading = false;
 	};
 
-	const _fetchListings = async () => {
-		listings = await fetchListingEvents(+$page.params.id);
-	};
-
 	const list = async () => {
 		if (!tokenId) {
 			console.error('no token id');
@@ -102,54 +90,7 @@
 </script>
 
 <div>
-	<div class="flex justify-between mb-4">
-		<div class="flex">
-			<div class="rounded-xl overflow-hidden w-72 h-72">
-				{#if midi.metadata.image}
-					<img class="w-full" src={midi.metadata.image} alt={midi.metadata.name} />
-				{:else}
-					<span>No image found</span>
-				{/if}
-			</div>
-
-			<div class="px-4">
-				<h2 class="font-bold text-2xl">{midi.metadata.name}</h2>
-
-				<div>
-					<span class="text-sm text-gray-400">by </span>
-					<a href={`/users/${midi.createdBy}`} class="text-link text-sm">{midi.createdBy}</a>
-				</div>
-
-				<div class="mb-2">
-					<span class="text-sm text-gray-400">token ID </span>
-					<a href={tokenIdLink} target="_blank" rel="noreferrer" class="text-link text-sm"
-						>{midi.id}</a
-					>
-				</div>
-
-				<div class="flex w-full mb-2">
-					{#each midi.midi_devices as midiDevice}
-						<a class="float-left" href={`/devices/${midiDevice.device.id}`}>
-							<div
-								class="bg-amber-100 text-amber-500 border-2 border-amber-500 pl-4 pr-4 py-2 rounded-xl flex mr-2"
-							>
-								<span>{midiDevice.device.manufacturer}: {midiDevice.device.name}</span>
-							</div>
-						</a>
-					{/each}
-				</div>
-				<p>{midi.metadata.description}</p>
-			</div>
-		</div>
-		<div>
-			{#if tokenBalance.gt(0)}
-				<div>
-					<span>Balance: {tokenBalance.toString()}</span>
-				</div>
-				<button on:click|preventDefault={(_) => toggleModal()}>Create Listing</button>
-			{/if}
-		</div>
-	</div>
+	<MidiPatchBasicInfo {midi} {tokenBalance} />
 
 	<!-- Sub nav-->
 	<div class="flex mb-4">
