@@ -15,7 +15,7 @@
 	import type { Listing } from '$lib/types/listing';
 	import ListingItem from '$lib/components/ListingItem.svelte';
 	import type { MIDI } from '$lib/types/midi';
-	import { each } from 'svelte/internal';
+	import PatchTable from '$lib/components/PatchTable.svelte';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
@@ -110,15 +110,34 @@
 <div>
 	<div class="flex justify-between mb-4">
 		<div class="flex">
-			<Avatar path={midi.metadata.image} size="md" alt={midi.metadata.name} />
-			<div>
-				<p>name: {midi.metadata.name}</p>
-				{#each midi.midi_devices as midiDevice}
-					<a href={`/devices/${midiDevice.device.id}`}>
-						<span>{midiDevice.device.manufacturer} {midiDevice.device.name}</span>
-					</a>
-				{/each}
-				<p>desc: {midi.metadata.description}</p>
+			<div class="rounded-xl overflow-hidden w-72 h-72">
+				{#if midi.metadata.image}
+					<img class="w-full" src={midi.metadata.image} alt={midi.metadata.name} />
+				{:else}
+					<span>No image found</span>
+				{/if}
+			</div>
+
+			<div class="px-4">
+				<h2 class="font-bold text-2xl">{midi.metadata.name}</h2>
+
+				<div class="mb-2">
+					<span class="text-sm text-gray-400">by </span>
+					<a href={`/users/${midi.createdBy}`} class="text-link text-sm">{midi.createdBy}</a>
+				</div>
+
+				<div class="flex w-full mb-2">
+					{#each midi.midi_devices as midiDevice}
+						<a class="float-left" href={`/devices/${midiDevice.device.id}`}>
+							<div
+								class="bg-amber-100 text-amber-500 border-2 border-amber-500 pl-4 pr-4 py-2 rounded-xl flex mr-2"
+							>
+								<span>{midiDevice.device.manufacturer}: {midiDevice.device.name}</span>
+							</div>
+						</a>
+					{/each}
+				</div>
+				<p>{midi.metadata.description}</p>
 			</div>
 		</div>
 		<div>
@@ -131,16 +150,7 @@
 		</div>
 	</div>
 
-	{#each midi.metadata.properties.entries as entry}
-		<div class="border py-4 px-8">
-			<span>{entry.name}</span>
-			<Avatar path={entry.image} size="md" alt={entry.name} />
-
-			<button on:click|preventDefault={(_) => loadMIDI(entry)}>Load</button>
-
-			<!-- <pre>{JSON.stringify(entry.midi)}</pre> -->
-		</div>
-	{/each}
+	<PatchTable entries={midi.metadata.properties.entries} />
 
 	<div>
 		{#each listings as listing}

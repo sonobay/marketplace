@@ -1,8 +1,4 @@
-export interface Entry {
-	name: string;
-	midi: Uint8Array;
-	image: string | undefined;
-}
+import type { Entry } from './entry';
 
 export interface IPFSMetadata {
 	name: string;

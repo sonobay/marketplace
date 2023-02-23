@@ -5,6 +5,7 @@
 	import ImageRegular from './icons/ImageRegular.svelte';
 
 	export let entries: Entry[];
+	export let isEditable = false;
 	const tdClass = 'px-2';
 	const btnClass =
 		'w-full text-gray-400 border-2 border-gray-400 hover:bg-gray-100 rounded-xl py-1 text-xs uppercase';
@@ -49,14 +50,16 @@
 									>Send To Device</button
 								>
 							</td>
-							<td class={`${tdClass} w-12`}>
-								<button
-									class={`${btnClass} px-6`}
-									on:click|preventDefault={(_) => dispatch('removeEntry', { index: i })}
-								>
-									Delete
-								</button>
-							</td>
+							{#if isEditable}
+								<td class={`${tdClass} w-12`}>
+									<button
+										class={`${btnClass} px-6`}
+										on:click|preventDefault={(_) => dispatch('removeEntry', { index: i })}
+									>
+										Delete
+									</button>
+								</td>
+							{/if}
 						</tr>
 					{/each}
 				</tbody>
