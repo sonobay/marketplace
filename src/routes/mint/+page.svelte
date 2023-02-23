@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { signer, signerAddress } from 'svelte-ethers-store';
 	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
-	import type { Entry } from '$lib/types/entry';
+	import type { MintEntry } from '$lib/types/entry';
 	import AddEntry from '$lib/components/AddEntry.svelte';
 	import { BigNumber } from 'ethers';
 	import { isPositiveInteger } from '$lib/utils';
@@ -42,8 +42,8 @@
 
 	const inputContainerClass = 'flex flex-col mb-4';
 
-	let entries: Entry[] = [];
-	const addEntry = (entry: Entry) => {
+	let entries: MintEntry[] = [];
+	const addEntry = (entry: MintEntry) => {
 		entries = [...entries, entry];
 	};
 

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { sendMidiToOutput } from '$lib/stores/midi';
-	import type { Entry } from '$lib/types/entry';
+	import type { MintEntry, IPFSEntry } from '$lib/types/entry';
 	import { createEventDispatcher } from 'svelte';
 	import ImageRegular from './icons/ImageRegular.svelte';
 
-	export let entries: Entry[];
+	export let entries: MintEntry[] | IPFSEntry[];
 	export let isEditable = false;
 	const tdClass = 'px-2';
 	const btnClass =
@@ -25,7 +25,9 @@
 								{#if entry.image}
 									<img
 										class="w-8 rounded"
-										src={URL.createObjectURL(entry.image[0])}
+										src={typeof entry.image === 'string'
+											? entry.image
+											: URL.createObjectURL(entry.image[0])}
 										alt="Device Logo"
 									/>
 								{:else}

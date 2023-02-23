@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let data: { midi: MIDI };
 	import { signerAddress, signer } from 'svelte-ethers-store';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { isApprovedForAll, midiContract, setApprovalForAll } from '$lib/utils/midi.contract';
 	import { createListing, fetchListingEvents } from '$lib/utils/market.contract';
@@ -10,8 +10,8 @@
 	import { addresses } from '$lib/constants/addresses';
 	import Button from '$lib/components/Button.svelte';
 	import type { Listing } from '$lib/types/listing';
+	import ListingItem from '$lib/components/ListingItem.svelte';
 	import type { MIDI } from '$lib/types/midi';
-	import PatchTable from '$lib/components/PatchTable.svelte';
 	import { environmentNetwork } from '$lib/utils';
 
 	let { midi } = data;
@@ -94,9 +94,14 @@
 			return;
 		}
 
+		_fetchListings();
 		fetchBalance();
 		dialogVisible = false;
 	};
+
+	onMount(() => {
+		_fetchListings();
+	});
 
 	onDestroy(sub);
 </script>
@@ -154,17 +159,21 @@
 	<!-- Sub nav-->
 	<div class="flex mb-4">
 		<a
-			class="bg-amber-500 text-white py-1 px-4 rounded-lg mr-4 border-amber-500 border-2"
+			class="border-2 border-amber-500 text-amber-500 hover:bg-amber-100 py-1 px-4 rounded-lg mr-4"
 			href={`/midi/${midi.id}`}>Patches</a
 		>
 		<a
-			class="border-2 border-amber-500 text-amber-500 hover:bg-amber-100 py-1 px-4 rounded-lg mr-4"
+			class="bg-amber-500 text-white py-1 px-4 rounded-lg mr-4 border-amber-500 border-2"
 			href={`/midi/${midi.id}/listings`}>Listings</a
 		>
 	</div>
 
-	<!-- Patch Table -->
-	<PatchTable entries={midi.metadata.properties.entries} />
+	<!-- Listings -->
+	<div>
+		{#each listings as listing}
+			<ListingItem {listing} name={midi.metadata.name} on:purchaseComplete={() => fetchBalance()} />
+		{/each}
+	</div>
 </div>
 
 <!-- modal -->

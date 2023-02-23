@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { Entry } from '$lib/types/entry';
+	import type { IPFSEntry, MintEntry } from '$lib/types/entry';
 	import NounMidi from './icons/NounMIDI.svelte';
 	import NounMint from './icons/NounMint.svelte';
 
 	export let image: string | undefined = undefined;
 	export let name: string;
 	export let numberMinted: number;
-	export let entries: Entry[];
+	export let entries: IPFSEntry[] | MintEntry[];
 </script>
 
 <div class="relative w-72 h-72">

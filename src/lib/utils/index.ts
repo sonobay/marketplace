@@ -1,4 +1,5 @@
 import { variables } from '$lib/env';
+import type { MIDI } from '$lib/types/midi';
 import type { MetaMaskInpageProvider } from '@metamask/providers';
 
 const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
@@ -86,4 +87,26 @@ export const promptSwitchNetwork = async ({
 			console.error('other switch error: ', switchError);
 		}
 	}
+};
+
+export const loadMIDIData = async (id: string, apiEndpoint: string) => {
+	if (!id) {
+		throw new Error('No ID found');
+	}
+
+	const res = await fetch(`${apiEndpoint}/midi/${id}`);
+	if (!res.ok) {
+		throw new Error(`error fetching ${id}`);
+	}
+	const midi = (await res.json()) as MIDI;
+
+	midi.metadata.image = midi.metadata.image.replace('ipfs://', 'https://nftstorage.link/ipfs/');
+	midi.metadata.properties.entries = midi.metadata.properties.entries.map((entry) => {
+		if (entry.image) {
+			entry.image = entry.image?.replace('ipfs://', 'https://nftstorage.link/ipfs/');
+		}
+		return entry;
+	});
+
+	return midi;
 };

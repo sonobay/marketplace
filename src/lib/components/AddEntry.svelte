@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
-	import type { Entry } from '$lib/types/entry';
+	import type { MintEntry } from '$lib/types/entry';
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { midi } from '$lib/stores/midi';
 	import Tag from './Tag.svelte';
@@ -13,18 +13,18 @@
 	const inputContainerClass = 'flex flex-col mb-4';
 	let currentTag = '';
 
-	const initEntry = (): Entry => ({
+	const initEntry = (): MintEntry => ({
 		name: '',
 		midi: undefined,
 		image: undefined,
 		tags: []
 	});
 
-	let entry: Entry = initEntry();
+	let entry: MintEntry = initEntry();
 
 	$: isValid = entry.midi && entry.midi?.length > 0 && entry.name.length > 0;
 
-	const dispatch = createEventDispatcher<{ addEntry: { entry: Entry } }>();
+	const dispatch = createEventDispatcher<{ addEntry: { entry: MintEntry } }>();
 
 	const onTagKeydown = (e: KeyboardEvent) => {
 		if (e.code === 'Space' || e.code === 'Enter') {

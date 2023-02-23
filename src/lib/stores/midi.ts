@@ -1,4 +1,3 @@
-import type { Entry } from '$lib/types/entry';
 import { writable, get } from 'svelte/store';
 
 interface MidiStore {
