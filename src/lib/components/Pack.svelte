@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { IPFSEntry, MintEntry } from '$lib/types/entry';
+	import NounErrorPage from './icons/NounErrorPage.svelte';
 	import NounMidi from './icons/NounMIDI.svelte';
 	import NounMint from './icons/NounMint.svelte';
 
@@ -10,11 +11,11 @@
 </script>
 
 <div class="relative w-72 h-72">
-	<div class="rounded-xl overflow-hidden w-72 h-72">
+	<div class="rounded-xl overflow-hidden w-72 h-72 items-center justify-center flex bg-gray-100">
 		{#if image}
 			<img class="w-full" src={image} alt={name} />
 		{:else}
-			<span>No image found</span>
+			<NounErrorPage size={36} />
 		{/if}
 	</div>
 

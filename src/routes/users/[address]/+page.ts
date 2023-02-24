@@ -132,7 +132,7 @@ export const load = async ({ params }: LoadEvent) => {
 	}
 	userTokens.reverse();
 
-	const ipfs = await getMetadata({ userTokens, page: 0, limit: 10 });
+	const ipfs = await getMetadata({ userTokens, page: 0, limit: 12 });
 
 	return { userTokens, ipfs };
 };
