@@ -12,6 +12,7 @@
 	import type { MIDI } from '$lib/types/midi';
 	import PatchTable from '$lib/components/PatchTable.svelte';
 	import MidiPatchBasicInfo from '$lib/components/MIDIPatchBasicInfo.svelte';
+	import MidiSubNav from '$lib/components/MIDISubNav.svelte';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
@@ -93,16 +94,12 @@
 	<MidiPatchBasicInfo {midi} {tokenBalance} />
 
 	<!-- Sub nav-->
-	<div class="flex mb-4">
-		<a
-			class="bg-amber-500 text-white py-1 px-4 rounded-lg mr-4 border-amber-500 border-2"
-			href={`/midi/${midi.id}`}>Patches</a
-		>
-		<a
-			class="border-2 border-amber-500 text-amber-500 hover:bg-amber-100 py-1 px-4 rounded-lg mr-4"
-			href={`/midi/${midi.id}/listings`}>Listings</a
-		>
-	</div>
+	<MidiSubNav
+		midiID={midi.id}
+		active="PATCHES"
+		createListingDisabled={!tokenBalance || tokenBalance.lte(0)}
+		on:launchCreateListingModal={() => (dialogVisible = true)}
+	/>
 
 	<!-- Patch Table -->
 	<PatchTable entries={midi.metadata.properties.entries} />

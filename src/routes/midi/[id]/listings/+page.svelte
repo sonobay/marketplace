@@ -13,6 +13,7 @@
 	import ListingItem from '$lib/components/ListingItem.svelte';
 	import type { MIDI } from '$lib/types/midi';
 	import MidiPatchBasicInfo from '$lib/components/MIDIPatchBasicInfo.svelte';
+	import MidiSubNav from '$lib/components/MIDISubNav.svelte';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
@@ -40,7 +41,6 @@
 	};
 
 	const fetchBalance = async () => {
-		console.log('fetching balance: ');
 		if (!$signerAddress) {
 			return;
 		}
@@ -104,19 +104,14 @@
 	<MidiPatchBasicInfo {midi} {tokenBalance} />
 
 	<!-- Sub nav-->
-	<div class="flex mb-4">
-		<a
-			class="border-2 border-amber-500 text-amber-500 hover:bg-amber-100 py-1 px-4 rounded-lg mr-4"
-			href={`/midi/${midi.id}`}>Patches</a
-		>
-		<a
-			class="bg-amber-500 text-white py-1 px-4 rounded-lg mr-4 border-amber-500 border-2"
-			href={`/midi/${midi.id}/listings`}>Listings</a
-		>
-	</div>
+	<MidiSubNav
+		midiID={midi.id}
+		active="LISTINGS"
+		on:launchCreateListingModal={() => (dialogVisible = true)}
+		createListingDisabled={!tokenBalance || tokenBalance.lte(0)}
+	/>
 
 	<!-- Listings -->
-
 	{#if listings.length > 0}
 		<div class="grid grid-cols-3 gap-4">
 			{#each listings as listing}
