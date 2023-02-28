@@ -6,6 +6,10 @@
 	import { onDestroy, onMount } from 'svelte';
 	import type { Unsubscriber } from 'svelte/store';
 	import { environmentNetwork, promptSwitchNetwork } from '$lib/utils';
+	import type { Device } from '$lib/types/device';
+
+	export let data: { devices: Device[] };
+	const { devices } = data;
 
 	const correctNetwork = environmentNetwork();
 	let unsubscriber: Unsubscriber = () => {};
@@ -25,7 +29,7 @@
 	onDestroy(unsubscriber);
 </script>
 
-<Header />
+<Header {devices} />
 
 <main class="container mx-auto py-12 px-4">
 	<slot />

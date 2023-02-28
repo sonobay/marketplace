@@ -1,4 +1,5 @@
 import { variables } from '$lib/env';
+import type { Device } from '$lib/types/device';
 import type { MIDI } from '$lib/types/midi';
 import type { MetaMaskInpageProvider } from '@metamask/providers';
 
@@ -21,6 +22,8 @@ export const isPositiveInteger = (n: string) => {
 
 declare global {
 	interface Window {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore
 		ethereum?: MetaMaskInpageProvider;
 	}
 }
@@ -109,4 +112,14 @@ export const loadMIDIData = async (id: string, apiEndpoint: string) => {
 	});
 
 	return midi;
+};
+
+export const getManufacturersList = (devices: Device[]) => {
+	return devices.reduce((manufacturers: string[], device) => {
+		if (!manufacturers.includes(device.manufacturer)) {
+			manufacturers.push(device.manufacturer);
+		}
+
+		return manufacturers;
+	}, []);
 };

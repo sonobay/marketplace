@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Device } from '$lib/types/device';
+	import { getManufacturersList } from '$lib/utils';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import Button from './Button.svelte';
 	import Input from './inputs/Input.svelte';
@@ -7,16 +8,7 @@
 
 	export let devices: Device[];
 
-	const manufacturers =
-		devices && devices.length > 0
-			? devices.reduce((manufacturers: string[], device) => {
-					if (!manufacturers.includes(device.manufacturer)) {
-						manufacturers.push(device.manufacturer);
-					}
-
-					return manufacturers;
-			  }, [])
-			: [];
+	const manufacturers = devices && devices.length > 0 ? getManufacturersList(devices) : [];
 
 	manufacturers.unshift('-');
 	let selectedManufacturer = manufacturers[0] ?? '';
@@ -26,6 +18,8 @@
 	let setDeviceManually = false;
 	const inputContainerClass = 'flex flex-col mb-4';
 	const selectClass = 'rounded-[3px] w-full px-2 py-1.5 bg-white';
+	const selectContainerClass =
+		'rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400 w-full flex mb-1';
 	const dispatch = createEventDispatcher<{
 		addDevice: { manufacturer: string; name: string };
 	}>();
@@ -107,7 +101,7 @@
 			</div>
 		{:else}
 			<div>
-				<div class="rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400 w-full flex mb-1">
+				<div class={selectContainerClass}>
 					<select
 						bind:value={selectedManufacturer}
 						on:change={(_) => {
@@ -162,7 +156,7 @@
 			</div>
 		{:else}
 			<div>
-				<div class="rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400 w-full flex mb-1">
+				<div class={selectContainerClass}>
 					<select bind:value={selectedDevice} id={`device`} name={`device`} class={selectClass}>
 						{#each manufacturerDevices as device}
 							<option value={device.name}>{device.name}</option>
