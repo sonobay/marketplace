@@ -29,7 +29,7 @@
 
 			<div>
 				<span class="text-sm text-gray-400">By: </span>
-				<a href={`/users/${midi.createdBy}`} class="text-link text-sm">{midi.createdBy}</a>
+				<a href={`/users/${midi.createdBy}/listings`} class="text-link text-sm">{midi.createdBy}</a>
 			</div>
 
 			<div>
