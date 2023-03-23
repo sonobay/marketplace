@@ -233,11 +233,7 @@
 		</div>
 
 		<div class="mb-4">
-			<PatchTable
-				{entries}
-				on:removeEntry={(e) => removeDevice(e.detail.index)}
-				isEditable={true}
-			/>
+			<PatchTable {entries} on:removeEntry={(e) => removeEntry(e.detail.index)} isEditable={true} />
 		</div>
 
 		<button
