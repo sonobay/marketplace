@@ -1,16 +1,24 @@
-// TODO this seems unused
+import { variables } from '$lib/env';
+import type { ListingRow } from '$lib/types/listing-row';
 
-// import type { LoadInput, LoadOutput } from '@sveltejs/kit';
-import { addresses } from '$lib/constants/addresses';
-import type { LoadEvent } from '@sveltejs/kit';
-// import * as midiArtifact from '$lib/data/artifacts/contracts/MIDI.sol/MIDI.json';
+export const load = async () => {
+	const { apiEndpoint } = variables;
 
-export const load = async ({ params, data }: LoadEvent) => {
-	// const { INFURA_ENDPOINT } = process.env;
-	// const midi = new Contract(addresses.midi, midiArtifact.abi, getDefaultProvider(INFURA_ENDPOINT));
+	const listingsRes = await fetch(`${apiEndpoint}/listings`);
+	let { listings } = (await listingsRes.json()) as { listings: ListingRow[] };
 
-	// const totalSupply = await midi.totalSupply();
-	// console.log('total supply is: ', totalSupply);
+	if (listings && listings.length > 0) {
+		listings = listings.map((_listing) => {
+			if (_listing.midi) {
+				_listing.midi.metadata.image = _listing.midi.metadata.image.replace(
+					'ipfs://',
+					'https://nftstorage.link/ipfs/'
+				);
+			}
 
-	return { metadata: '' };
+			return _listing;
+		});
+	}
+
+	return { listings };
 };

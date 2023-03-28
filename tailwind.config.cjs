@@ -17,6 +17,14 @@ module.exports = {
 				gold: '#FFCA09',
 				midiYellow: '#F2E06B'
 			}
+		},
+		container: {
+			screens: {
+				sm: '640px',
+				md: '768px',
+				lg: '1024px'
+				// xl: '768px'
+			}
 		}
 	},
 	plugins: []
