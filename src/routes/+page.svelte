@@ -13,7 +13,7 @@
 	{#if listings && listings.length > 0}
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8">
 			{#each listings as listing}
-				<a href={`/listing/${listing.token_id}`}>
+				<a href={`/listing/${listing.listing_address}`}>
 					<Pack
 						image={listing.midi ? listing?.midi.metadata.image : undefined}
 						name={listing.midi ? listing.midi.metadata.name : ''}
