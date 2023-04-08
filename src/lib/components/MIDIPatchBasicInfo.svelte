@@ -2,7 +2,9 @@
 	import type { MIDI } from '$lib/types/midi';
 	import { environmentNetwork } from '$lib/utils';
 	import type { BigNumber } from 'ethers';
+	import { createEventDispatcher } from 'svelte';
 	import { connected } from 'svelte-ethers-store';
+	import TransferMidi from './TransferMIDI.svelte';
 
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
@@ -12,6 +14,7 @@
 		correctNetwork?.chainId === 1
 			? `https://etherscan.io/token/0xe88bc69c554ffb8457f499055ed23d03a5515944?a=${midi.id}`
 			: `https://goerli.etherscan.io/token/0xe88bc69c554ffb8457f499055ed23d03a5515944?a=${midi.id}`;
+	const dispatch = createEventDispatcher();
 </script>
 
 <div class="flex justify-between mb-4">
@@ -29,7 +32,7 @@
 
 			<div>
 				<span class="text-sm text-gray-400">By: </span>
-				<a href={`/users/${midi.createdBy}/listings`} class="text-link text-sm">{midi.createdBy}</a>
+				<a href={`/users/${midi.createdBy}`} class="text-link text-sm">{midi.createdBy}</a>
 			</div>
 
 			<div>
@@ -49,6 +52,17 @@
 					<span class="text-gray-500 text-sm">-</span>
 				{/if}
 			</div>
+
+			{#if tokenBalance && +tokenBalance > 0}
+				<div>
+					<TransferMidi
+						balance={tokenBalance}
+						id={midi.id}
+						on:midiTransferred={() => dispatch('refreshBalance')}
+					/>
+					<button>Burn</button>
+				</div>
+			{/if}
 
 			<div class="flex w-full mb-2">
 				{#each midi.midi_devices as midiDevice}

@@ -39,7 +39,6 @@
 	};
 
 	const fetchBalance = async () => {
-		console.log('fetching balance: ');
 		if (!$signerAddress) {
 			return;
 		}
@@ -91,7 +90,7 @@
 </script>
 
 <div>
-	<MidiPatchBasicInfo {midi} {tokenBalance} />
+	<MidiPatchBasicInfo {midi} {tokenBalance} on:refreshBalance={() => fetchBalance()} />
 
 	<!-- Sub nav-->
 	<MidiSubNav
@@ -106,7 +105,7 @@
 </div>
 
 <!-- modal -->
-<Dialog visible={dialogVisible} on:close={toggleModal}>
+<Dialog id="listings-dialog" visible={dialogVisible} on:close={toggleModal}>
 	<!-- Modal body -->
 	<div class="p-6 space-y-6">
 		<div class="mb-6">

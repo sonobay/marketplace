@@ -128,7 +128,7 @@
 </div>
 
 <!-- modal -->
-<Dialog visible={dialogVisible} on:close={() => (dialogVisible = false)}>
+<Dialog id="purchase-dialog" visible={dialogVisible} on:close={() => (dialogVisible = false)}>
 	<!-- Modal body -->
 	<div class="p-6 space-y-6">
 		<div class="mb-6">

@@ -247,7 +247,7 @@
 </div>
 
 <!-- modal -->
-<Dialog visible={dialogVisible} on:close={() => (dialogVisible = false)}>
+<Dialog id="mint-modal" visible={dialogVisible} on:close={() => (dialogVisible = false)}>
 	<!-- Modal body -->
 	<div class="p-6 space-y-6">
 		<div class="flex">

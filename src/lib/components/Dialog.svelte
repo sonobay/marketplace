@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	export let visible: boolean;
+	export let id: string;
 
 	const dispatch = createEventDispatcher();
 </script>
 
 <div
-	id="dialog"
+	{id}
 	class={`${
 		visible ? '' : 'hidden'
-	} overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full items-center justify-center flex`}
+	} overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 md:h-full items-center justify-center flex bg-gray-400/50`}
 	tabindex="-1"
 	aria-hidden={!visible}
 >
