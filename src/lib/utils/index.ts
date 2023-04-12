@@ -37,11 +37,11 @@ export const environmentNetwork = () => {
 				rpcUrls: ['https://mainnet.infura.io/v3/']
 			};
 
-		case 5:
+		case 11155111:
 			return {
-				chainName: 'Goerli',
-				chainId: 5,
-				rpcUrls: ['https://goerli.infura.io/v3/']
+				chainName: 'Sepolia',
+				chainId: 11155111,
+				rpcUrls: ['https://sepolia.infura.io/v3/']
 			};
 
 		default:

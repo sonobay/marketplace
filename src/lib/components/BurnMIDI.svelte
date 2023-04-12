@@ -18,7 +18,7 @@
 	const correctNetwork = environmentNetwork();
 
 	const explorerBase =
-		correctNetwork?.chainId === 1 ? `https://etherscan.io/tx` : `https://goerli.etherscan.io/tx`;
+		correctNetwork?.chainId === 1 ? `https://etherscan.io/tx` : `https://sepolia.etherscan.io/tx`;
 
 	const toggleModal = () => {
 		dialogVisible = !dialogVisible;

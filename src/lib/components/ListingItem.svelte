@@ -53,7 +53,7 @@
 	const correctNetwork = environmentNetwork();
 
 	const etherscanBaseUrl =
-		correctNetwork?.chainId === 1 ? `https://etherscan.io` : `https://goerli.etherscan.io`;
+		correctNetwork?.chainId === 1 ? `https://etherscan.io` : `https://sepolia.etherscan.io`;
 
 	onMount(() => {
 		_fetchAvailableAmount();

@@ -12,7 +12,7 @@
 	let ensName: string | null;
 	let ensNameLoading = true;
 	const etherscanBaseUrl =
-		environmentNetwork()?.chainId === 1 ? `https://etherscan.io` : `https://goerli.etherscan.io`;
+		environmentNetwork()?.chainId === 1 ? `https://etherscan.io` : `https://sepolia.etherscan.io`;
 
 	// for testing with ENS data...
 	// 0x280f3EdCDF23E5a645f55AdF143baAa177c214FB

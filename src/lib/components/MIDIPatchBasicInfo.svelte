@@ -20,7 +20,7 @@
 	const tokenIdLink =
 		correctNetwork?.chainId === 1
 			? `https://etherscan.io/token/${midiAddress}?a=${midi.id}`
-			: `https://goerli.etherscan.io/token/${midiAddress}?a=${midi.id}`;
+			: `https://sepolia.etherscan.io/token/${midiAddress}?a=${midi.id}`;
 	const dispatch = createEventDispatcher();
 
 	const _fetchTotalSupply = async () => {
