@@ -1,20 +1,36 @@
 <script lang="ts">
+	import { addresses } from '$lib/constants/addresses';
 	import type { MIDI } from '$lib/types/midi';
 	import { environmentNetwork } from '$lib/utils';
-	import type { BigNumber } from 'ethers';
-	import { createEventDispatcher } from 'svelte';
+	import type { BigNumber, constants } from 'ethers';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { connected } from 'svelte-ethers-store';
 	import TransferMidi from './TransferMIDI.svelte';
+	import BurnMidi from './BurnMIDI.svelte';
+	import { fetchTotalSupply } from '$lib/utils/midi.contract';
 
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
 
 	const correctNetwork = environmentNetwork();
+	let totalSupply: BigNumber | undefined = undefined;
+
+	const midiAddress = addresses.midi;
+
 	const tokenIdLink =
 		correctNetwork?.chainId === 1
-			? `https://etherscan.io/token/0xe88bc69c554ffb8457f499055ed23d03a5515944?a=${midi.id}`
-			: `https://goerli.etherscan.io/token/0xe88bc69c554ffb8457f499055ed23d03a5515944?a=${midi.id}`;
+			? `https://etherscan.io/token/${midiAddress}?a=${midi.id}`
+			: `https://goerli.etherscan.io/token/${midiAddress}?a=${midi.id}`;
 	const dispatch = createEventDispatcher();
+
+	const _fetchTotalSupply = async () => {
+		totalSupply = await fetchTotalSupply(midi.id);
+	};
+
+	/** fetch total supply on load */
+	onMount(() => {
+		_fetchTotalSupply();
+	});
 </script>
 
 <div class="flex justify-between mb-4">
@@ -42,27 +58,10 @@
 				>
 			</div>
 
-			<div class="mb-2">
-				<span class="text-sm text-gray-400">Your Balance: </span>
-				{#if tokenBalance}
-					<span class="text-gray-500 text-sm">{tokenBalance.toString()}</span>
-				{:else if $connected}
-					<span class="text-gray-500 text-sm">0</span>
-				{:else}
-					<span class="text-gray-500 text-sm">-</span>
-				{/if}
+			<div class="mb-1">
+				<span class="text-sm text-gray-400">Total Supply: </span>
+				<span class="text-sm text-gray-400">{totalSupply ? totalSupply.toString() : '-'}</span>
 			</div>
-
-			{#if tokenBalance && +tokenBalance > 0}
-				<div>
-					<TransferMidi
-						balance={tokenBalance}
-						id={midi.id}
-						on:midiTransferred={() => dispatch('refreshBalance')}
-					/>
-					<button>Burn</button>
-				</div>
-			{/if}
 
 			<div class="flex w-full mb-2">
 				{#each midi.midi_devices as midiDevice}
@@ -75,7 +74,41 @@
 					</a>
 				{/each}
 			</div>
-			<p>{midi.metadata.description}</p>
+			<p class="mb-4">{midi.metadata.description}</p>
+
+			{#if $connected}
+				<div class="bg-gray-100 rounded shadow-sm pt-2 pb-4 px-4">
+					<div class="mb-2">
+						<span class="text-sm text-gray-400">Your Balance: </span>
+						{#if tokenBalance}
+							<span class="text-gray-500 text-sm">{tokenBalance.toString()}</span>
+						{:else if $connected}
+							<span class="text-gray-500 text-sm">0</span>
+						{:else}
+							<span class="text-gray-500 text-sm">-</span>
+						{/if}
+					</div>
+
+					{#if tokenBalance && +tokenBalance > 0}
+						<div class="grid grid-cols-2 gap-4">
+							<TransferMidi
+								balance={tokenBalance}
+								id={midi.id}
+								on:midiTransferred={() => dispatch('refreshBalance')}
+							/>
+
+							<BurnMidi
+								balance={tokenBalance}
+								id={midi.id}
+								on:midiBurned={() => {
+									dispatch('refreshBalance');
+									_fetchTotalSupply();
+								}}
+							/>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

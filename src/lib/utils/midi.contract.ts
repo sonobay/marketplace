@@ -70,3 +70,10 @@ export const fetchTotalReceived = async (address: string, tokenId: number): Prom
 
 	return balance;
 };
+
+/** Fetch total supply by id */
+export const fetchTotalSupply = async (tokenId: number): Promise<BigNumber> => {
+	const contract = midiContract();
+	const totalSupply = await contract.totalSupply(tokenId);
+	return totalSupply;
+};
