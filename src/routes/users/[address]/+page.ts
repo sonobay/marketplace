@@ -1,7 +1,7 @@
 import type { LoadEvent } from '@sveltejs/kit';
 import { get } from '$lib/api/metadata/ipfs';
 import { getDefaultProvider, Contract, BigNumber } from 'ethers';
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
 import * as midiArtifact from '$lib/data/artifacts/contracts/midi/MIDI.sol/MIDI.json';
 import type { UserToken } from '$lib/types/user-token';
@@ -47,8 +47,8 @@ const getMetadata = async ({
 export const load = async ({ params }: LoadEvent) => {
 	const { address } = params;
 
-	const { infuraEndpoint } = variables;
-	const midi = new Contract(addresses.midi, midiArtifact.abi, getDefaultProvider(infuraEndpoint));
+	const { providerEndpoint } = environment;
+	const midi = new Contract(addresses.midi, midiArtifact.abi, getDefaultProvider(providerEndpoint));
 
 	const transferFromSingleEvents = await midi.queryFilter(
 		midi.filters.TransferSingle(null, address, null, null, null),

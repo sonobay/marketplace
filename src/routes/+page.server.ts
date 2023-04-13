@@ -1,8 +1,8 @@
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import type { ListingRow } from '$lib/types/listing-row';
 
 export const load = async () => {
-	const { apiEndpoint } = variables;
+	const { apiEndpoint } = environment;
 
 	const listingsRes = await fetch(`${apiEndpoint}/listings`);
 	let { listings } = (await listingsRes.json()) as { listings: ListingRow[] };

@@ -1,5 +1,5 @@
 import type { LoadEvent } from '@sveltejs/kit';
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import { loadMIDIData } from '$lib/utils';
 
 export const load = async ({ params }: LoadEvent) => {
@@ -8,7 +8,7 @@ export const load = async ({ params }: LoadEvent) => {
 		throw new Error('No ID found');
 	}
 
-	const { apiEndpoint } = variables;
+	const { apiEndpoint } = environment;
 
 	const midi = await loadMIDIData(id, apiEndpoint);
 

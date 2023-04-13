@@ -1,9 +1,9 @@
 import type { LoadEvent } from '@sveltejs/kit';
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import type { ListingRow } from '$lib/types/listing-row';
 
 export const load = async ({ params, fetch }: LoadEvent) => {
-	const { apiEndpoint } = variables;
+	const { apiEndpoint } = environment;
 	const { address } = params;
 
 	const listingsRes = await fetch(`${apiEndpoint}/listings?userId=${address}`);

@@ -3,7 +3,7 @@
 	import DeviceNavButton from './DeviceNavButton.svelte';
 	import Logo from './Logo.svelte';
 	import { chainId, connected } from 'svelte-ethers-store';
-	import { variables } from '$lib/env';
+	import { environment } from '$lib/env';
 	import { environmentNetwork, getManufacturersList, promptSwitchNetwork } from '$lib/utils';
 	import type { Device } from '$lib/types/device';
 	import { onMount } from 'svelte';
@@ -45,7 +45,7 @@
 	};
 </script>
 
-{#if $connected && +$chainId !== +variables.networkId}
+{#if $connected && +$chainId !== +environment.networkId}
 	<button
 		on:click|preventDefault={(_) => switchNetwork()}
 		class="w-full bg-orange-500 text-white text-center py-2"

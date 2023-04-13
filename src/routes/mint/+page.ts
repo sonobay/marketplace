@@ -1,8 +1,8 @@
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import type { Device } from '$lib/types/device';
 
 export const load = async () => {
-	const { apiEndpoint } = variables;
+	const { apiEndpoint } = environment;
 
 	const res = await fetch(`${apiEndpoint}/devices`);
 	if (!res.ok) {

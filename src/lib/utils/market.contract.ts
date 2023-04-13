@@ -1,15 +1,15 @@
 import * as marketArtifact from '$lib/data/artifacts/contracts/market/Market.sol/Market.json';
 import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
 import { Contract, getDefaultProvider, Signer, utils, BigNumber, constants } from 'ethers';
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import type { Listing } from '$lib/types/listing';
 
 export const marketContract = (signer?: Signer) => {
-	const { infuraEndpoint } = variables;
+	const { providerEndpoint } = environment;
 	return new Contract(
 		addresses.market,
 		marketArtifact.abi,
-		signer ?? getDefaultProvider(infuraEndpoint)
+		signer ?? getDefaultProvider(providerEndpoint)
 	);
 };
 

@@ -2,12 +2,12 @@ import { addresses } from '$lib/constants/addresses';
 import { Contract, getDefaultProvider } from 'ethers';
 import * as midiArtifact from '$lib/data/artifacts/contracts/midi/MIDI.sol/MIDI.json';
 import type { IPFSMetadata } from '$lib/types/ipfs-metadata';
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 
 export const get = async (id: string) => {
-	const { infuraEndpoint } = variables;
+	const { providerEndpoint } = environment;
 
-	const midi = new Contract(addresses.midi, midiArtifact.abi, getDefaultProvider(infuraEndpoint));
+	const midi = new Contract(addresses.midi, midiArtifact.abi, getDefaultProvider(providerEndpoint));
 	let uri: string = await midi.uri(id);
 	uri = uri.replace('ipfs://', 'https://nftstorage.link/ipfs/');
 	const res = await fetch(`${uri}`);

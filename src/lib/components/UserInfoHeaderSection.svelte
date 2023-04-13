@@ -3,7 +3,7 @@
 	import Avatar from './Avatar.svelte';
 	import Spinner from './Spinner.svelte';
 	import { providers } from 'ethers';
-	import { variables } from '$lib/env';
+	import { environment } from '$lib/env';
 	import { onMount } from 'svelte';
 
 	export let address: string;
@@ -18,12 +18,12 @@
 	// 0x280f3EdCDF23E5a645f55AdF143baAa177c214FB
 	const fetchEnsData = async () => {
 		ensNameLoading = true;
-		const test = new providers.JsonRpcProvider(
-			variables.infuraEndpoint,
+		const provider = new providers.JsonRpcProvider(
+			environment.providerEndpoint,
 			environmentNetwork()?.chainId
 		);
 
-		ensName = await test.lookupAddress(address);
+		ensName = await provider.lookupAddress(address);
 
 		ensNameLoading = false;
 
@@ -31,7 +31,7 @@
 			return;
 		}
 
-		const resolver = await test.getResolver(ensName);
+		const resolver = await provider.getResolver(ensName);
 
 		avatarPath = await resolver?.getText('avatar');
 	};

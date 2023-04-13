@@ -8,7 +8,7 @@
 	import { midiContract } from '$lib/utils/midi.contract';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { variables } from '$lib/env';
+	import { environment } from '$lib/env';
 	import type { MIDI } from '$lib/types/midi';
 	import MintStep from '$lib/components/MintStep.svelte';
 	import Input from '$lib/components/inputs/Input.svelte';
@@ -124,7 +124,7 @@
 		pollAttempts += 1;
 		if (pollAttempts <= 10) {
 			try {
-				const { apiEndpoint } = variables;
+				const { apiEndpoint } = environment;
 				const res = await fetch(`${apiEndpoint}/midi/${id}`);
 				if (!res.ok) {
 					throw new Error(`error fetching ${id}`);

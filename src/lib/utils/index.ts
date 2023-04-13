@@ -1,4 +1,4 @@
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import type { Device } from '$lib/types/device';
 import type { MIDI } from '$lib/types/midi';
 import type { MetaMaskInpageProvider } from '@metamask/providers';
@@ -29,7 +29,7 @@ declare global {
 }
 
 export const environmentNetwork = () => {
-	switch (+variables.networkId) {
+	switch (+environment.networkId) {
 		case 1:
 			return {
 				chainName: 'Mainnet',

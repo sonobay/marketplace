@@ -1,4 +1,4 @@
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 import type { Device } from '$lib/types/device';
 import type { RequestEvent } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
@@ -10,7 +10,7 @@ interface GetParams extends Record<string, string> {
 export const GET = async (event: RequestEvent<GetParams>) => {
 	const params = event.params;
 
-	const { apiEndpoint } = variables;
+	const { apiEndpoint } = environment;
 	const { id } = params;
 	const res = await fetch(`${apiEndpoint}/devices/${id}`);
 	const device = (await res.json()) as Device;

@@ -1,14 +1,14 @@
 import * as midiArtifact from '$lib/data/artifacts/contracts/midi/MIDI.sol/MIDI.json';
 import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
 import { Contract, getDefaultProvider, Signer, BigNumber } from 'ethers';
-import { variables } from '$lib/env';
+import { environment } from '$lib/env';
 
 export const midiContract = (signer?: Signer) => {
-	const { infuraEndpoint } = variables;
+	const { providerEndpoint } = environment;
 	return new Contract(
 		addresses.midi,
 		midiArtifact.abi,
-		signer ?? getDefaultProvider(infuraEndpoint)
+		signer ?? getDefaultProvider(providerEndpoint)
 	);
 };
 
