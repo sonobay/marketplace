@@ -12,12 +12,7 @@ const config = {
 	],
 
 	kit: {
-		adapter: adapter(),
-		// testing increasing maxPayload to 10MB
-		serverOptions: {
-			maxPayload: 10 * 1024 * 1024
-			// other options
-		}
+		adapter: adapter()
 	}
 };
 
