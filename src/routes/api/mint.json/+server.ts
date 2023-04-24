@@ -2,7 +2,6 @@ import { json, error } from '@sveltejs/kit';
 import { NFTStorage, File, Blob } from 'nft.storage';
 import 'dotenv/config';
 import sharp from 'sharp';
-// import { File, Blob } from '@web-std/file';
 
 interface Entry {
 	name: string;
@@ -22,8 +21,6 @@ const fileToBlob = async (file: File) => {
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export const POST = async ({ request }: { request: Request }) => {
-	console.log('hello world from mint server route');
-
 	const { NFT_STORAGE_API_KEY } = process.env;
 
 	if (!NFT_STORAGE_API_KEY) {
@@ -34,27 +31,22 @@ export const POST = async ({ request }: { request: Request }) => {
 
 	const name = data.get('name')?.toString();
 
-	console.log('name is: ', name);
-
 	if (!name) {
-		console.error('no name found');
-		throw error(500, { message: 'No name provided' });
+		return json({ message: 'No name provided' }, { status: 400 });
 	}
 
 	const logo = data.get('logo') as File;
 	if (!logo) {
-		throw error(400, { message: 'No logo file found' });
+		return json({ message: 'No logo file found' }, { status: 400 });
 	}
 
 	const image = await fileToBlob(logo);
 	const description = data.get('description')?.toString() ?? '';
 
-	console.log('description is: ', description);
-
 	const devices = JSON.parse(data.get('devices')?.toString() ?? '[]');
 
 	if (!devices || devices.length <= 0) {
-		throw error(400, { message: 'No devices set' });
+		return json({ message: 'No devices set' }, { status: 400 });
 	}
 
 	const entries: Entry[] = [];
@@ -96,8 +88,6 @@ export const POST = async ({ request }: { request: Request }) => {
 		properties: { devices, entries }
 	};
 
-	console.log('NFT API KEY IS: ', NFT_STORAGE_API_KEY);
-
 	const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 	try {
@@ -106,8 +96,6 @@ export const POST = async ({ request }: { request: Request }) => {
 			metadata: metadata.url
 		});
 	} catch (err) {
-		console.log('inside error');
-		console.error(err);
 		return json({ message: err }, { status: 500 });
 	}
 };

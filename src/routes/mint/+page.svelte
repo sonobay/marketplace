@@ -99,7 +99,7 @@
 		});
 
 		if (res.status !== 200) {
-			console.error(res);
+			console.error(await res.json());
 			txProcessed = false;
 			return;
 		}
