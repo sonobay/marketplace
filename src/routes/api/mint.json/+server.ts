@@ -96,6 +96,8 @@ export const POST = async ({ request }: { request: Request }) => {
 		properties: { devices, entries }
 	};
 
+	console.log('NFT API KEY IS: ', NFT_STORAGE_API_KEY);
+
 	const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 	try {
