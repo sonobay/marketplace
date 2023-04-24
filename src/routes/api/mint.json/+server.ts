@@ -23,6 +23,11 @@ const fileToBlob = async (file: File) => {
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export const POST = async ({ request }: { request: Request }) => {
 	const { NFT_STORAGE_API_KEY } = process.env;
+
+	if (!NFT_STORAGE_API_KEY) {
+		throw error(500, 'No NFT_STORAGE_API_KEY found');
+	}
+
 	const data = await request.formData(); // or .json(), or .text(), etc
 
 	const name = data.get('name')?.toString();
@@ -74,10 +79,6 @@ export const POST = async ({ request }: { request: Request }) => {
 		});
 
 		i++;
-	}
-
-	if (!NFT_STORAGE_API_KEY) {
-		throw error(500, 'No NFT_STORAGE_API_KEY found');
 	}
 
 	if (!logo) {
