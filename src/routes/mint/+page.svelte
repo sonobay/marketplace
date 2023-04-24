@@ -98,7 +98,7 @@
 			body: formData
 		});
 
-		console.log('res', res);
+		console.log('res', await res.body);
 
 		const json: { metadata: string } = await res.json();
 

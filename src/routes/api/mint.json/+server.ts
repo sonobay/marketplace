@@ -22,6 +22,8 @@ const fileToBlob = async (file: File) => {
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export const POST = async ({ request }: { request: Request }) => {
+	console.log('hello world from mint server route');
+
 	const { NFT_STORAGE_API_KEY } = process.env;
 
 	if (!NFT_STORAGE_API_KEY) {
