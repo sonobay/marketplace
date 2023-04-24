@@ -98,15 +98,13 @@
 			body: formData
 		});
 
-		console.log('res', await res.body);
-
-		const json: { metadata: string } = await res.json();
-
 		if (res.status !== 200) {
-			console.error(res.json());
+			console.error(res);
 			txProcessed = false;
 			return;
 		}
+
+		const json: { metadata: string } = await res.json();
 
 		metadataUploaded = true;
 

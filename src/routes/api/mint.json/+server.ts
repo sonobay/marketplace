@@ -38,12 +38,12 @@ export const POST = async ({ request }: { request: Request }) => {
 
 	if (!name) {
 		console.error('no name found');
-		throw error(500, 'No name provided');
+		throw error(500, { message: 'No name provided' });
 	}
 
 	const logo = data.get('logo') as File;
 	if (!logo) {
-		throw error(400, 'No logo file found');
+		throw error(400, { message: 'No logo file found' });
 	}
 
 	const image = await fileToBlob(logo);
@@ -54,7 +54,7 @@ export const POST = async ({ request }: { request: Request }) => {
 	const devices = JSON.parse(data.get('devices')?.toString() ?? '[]');
 
 	if (!devices || devices.length <= 0) {
-		throw error(400, 'No devices set');
+		throw error(400, { message: 'No devices set' });
 	}
 
 	const entries: Entry[] = [];
@@ -90,7 +90,7 @@ export const POST = async ({ request }: { request: Request }) => {
 	}
 
 	if (!logo) {
-		throw error(400, 'No logo provided');
+		throw error(400, { message: 'No logo provided' });
 	}
 
 	const nft = {
@@ -109,6 +109,6 @@ export const POST = async ({ request }: { request: Request }) => {
 		});
 	} catch (err) {
 		console.error(err);
-		throw error(500, `Error uploading to NFT Storage ${err}`);
+		throw error(500, { message: `Error uploading to NFT Storage ${err}` });
 	}
 };
