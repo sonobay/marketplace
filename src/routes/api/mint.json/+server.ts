@@ -1,8 +1,8 @@
 import { json, error } from '@sveltejs/kit';
-import { NFTStorage } from 'nft.storage';
+import { NFTStorage, File, Blob } from 'nft.storage';
 import 'dotenv/config';
 import sharp from 'sharp';
-import { File, Blob } from '@web-std/file';
+// import { File, Blob } from '@web-std/file';
 
 interface Entry {
 	name: string;
@@ -87,10 +87,6 @@ export const POST = async ({ request }: { request: Request }) => {
 		});
 
 		i++;
-	}
-
-	if (!logo) {
-		throw error(400, { message: 'No logo provided' });
 	}
 
 	const nft = {
