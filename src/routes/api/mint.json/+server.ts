@@ -93,9 +93,14 @@ export const POST = async ({ request }: { request: Request }) => {
 	};
 
 	const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
-	const metadata = await client.store(nft);
 
-	return json({
-		metadata: metadata.url
-	});
+	try {
+		const metadata = await client.store(nft);
+		return json({
+			metadata: metadata.url
+		});
+	} catch (err) {
+		console.error(err);
+		throw error(500, `Error uploading to NFT Storage ${err}`);
+	}
 };
