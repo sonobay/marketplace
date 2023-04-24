@@ -106,6 +106,6 @@ export const POST = async ({ request }: { request: Request }) => {
 	} catch (err) {
 		console.log('inside error');
 		console.error(err);
-		return json({ message: `Error uploading to NFT Storage ${err}` }, { status: 500 });
+		return json({ message: err }, { status: 500 });
 	}
 };
