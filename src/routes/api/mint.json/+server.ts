@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { json, error } from '@sveltejs/kit';
 import { NFTStorage } from 'nft.storage';
 import 'dotenv/config';
 import sharp from 'sharp';
@@ -28,14 +28,12 @@ export const POST = async ({ request }: { request: Request }) => {
 	const name = data.get('name')?.toString();
 	if (!name) {
 		console.error('no name found');
-		throw new Error(
-			'@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)'
-		);
+		throw error(500, 'No name provided');
 	}
 
 	const logo = data.get('logo') as File;
 	if (!logo) {
-		throw new Error('No logo file found');
+		throw error(400, 'No logo file found');
 	}
 
 	const image = await fileToBlob(logo);
@@ -43,7 +41,7 @@ export const POST = async ({ request }: { request: Request }) => {
 	const devices = JSON.parse(data.get('devices')?.toString() ?? '[]');
 
 	if (!devices || devices.length <= 0) {
-		throw new Error('No devices set');
+		throw error(400, 'No devices set');
 	}
 
 	const entries: Entry[] = [];
@@ -79,17 +77,11 @@ export const POST = async ({ request }: { request: Request }) => {
 	}
 
 	if (!NFT_STORAGE_API_KEY) {
-		console.error('no API_KEY found');
-		throw new Error(
-			'@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)'
-		);
+		throw error(500, 'No NFT_STORAGE_API_KEY found');
 	}
 
 	if (!logo) {
-		console.error('no image found');
-		throw new Error(
-			'@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)'
-		);
+		throw error(400, 'No logo provided');
 	}
 
 	const nft = {

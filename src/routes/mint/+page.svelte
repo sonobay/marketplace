@@ -100,6 +100,12 @@
 
 		const json: { metadata: string } = await res.json();
 
+		if (res.status !== 200) {
+			console.error(res.json());
+			txProcessed = false;
+			return;
+		}
+
 		metadataUploaded = true;
 
 		/**
