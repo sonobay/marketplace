@@ -98,6 +98,8 @@
 			body: formData
 		});
 
+		console.log('res', res);
+
 		const json: { metadata: string } = await res.json();
 
 		if (res.status !== 200) {

@@ -31,6 +31,9 @@ export const POST = async ({ request }: { request: Request }) => {
 	const data = await request.formData(); // or .json(), or .text(), etc
 
 	const name = data.get('name')?.toString();
+
+	console.log('name is: ', name);
+
 	if (!name) {
 		console.error('no name found');
 		throw error(500, 'No name provided');
@@ -43,6 +46,9 @@ export const POST = async ({ request }: { request: Request }) => {
 
 	const image = await fileToBlob(logo);
 	const description = data.get('description')?.toString() ?? '';
+
+	console.log('description is: ', description);
+
 	const devices = JSON.parse(data.get('devices')?.toString() ?? '[]');
 
 	if (!devices || devices.length <= 0) {
