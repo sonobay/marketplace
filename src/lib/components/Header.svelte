@@ -69,56 +69,19 @@
 			</div>
 
 			<div class="flex">
-				<div class="flex items-center text-sm border border-black border-2 rounded-xl px-4">
-					<a href="/mint">Mint</a>
-				</div>
+				<a
+					class="flex items-center text-sm border border-black border-2 rounded-xl px-4 mr-2"
+					href="/mint">Mint</a
+				>
+
+				<a
+					class="flex items-center text-sm border border-black border-2 rounded-xl px-4"
+					href="/devices">Browse Devices</a
+				>
 
 				<DeviceNavButton />
 
 				<ConnectButtonWrapper />
-			</div>
-		</div>
-
-		<div class="flex bg-gray-100 py-4 px-8 rounded-lg">
-			<div class="flex flex-col mr-4 w-full">
-				<Label targetFor={`manufacturer-nav`} text="Manufacturer" />
-				<div class={selectContainerClass}>
-					<select
-						bind:value={selectedManufacturer}
-						on:change={(_) => filterManufacturerDevices()}
-						id={`manufacturer-nav`}
-						name={`manufacturer-nav`}
-						class={selectClass}
-					>
-						{#each manufacturers as manufacturer}
-							<option value={manufacturer}>{manufacturer}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			<div class="flex flex-col mr-4 w-full">
-				<Label targetFor={`manufacturer-device-nav`} text="Device" />
-				<div class={selectContainerClass}>
-					<select
-						bind:value={selectedDeviceId}
-						id={`manufacturer-device-nav`}
-						name={`manufacturer-device-nav`}
-						class={selectClass}
-					>
-						{#each manufacturerDevices as device}
-							<option value={device.id}>{device.name}</option>
-						{/each}
-					</select>
-				</div>
-			</div>
-
-			<div class="mt-5 block">
-				<a
-					href={`/devices/${selectedDeviceId}`}
-					class="bg-midiBlue hover:bg-midiBlueLink text-white h-9 px-4 rounded flex items-center w-36 justify-center"
-					>View Packs</a
-				>
 			</div>
 		</div>
 	</div>

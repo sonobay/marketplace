@@ -31,6 +31,6 @@
 
 <Header {devices} />
 
-<main class="container mx-auto py-12 px-4">
+<main class="container mx-auto py-8 px-4">
 	<slot />
 </main>

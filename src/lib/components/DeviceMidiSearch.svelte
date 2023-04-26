@@ -5,7 +5,7 @@
 	let searchTerm = '';
 </script>
 
-<div class="flex bg-gray-100 py-4 px-4 rounded-lg">
+<div class="flex bg-gray-100 py-4 px-4 rounded-lg mb-4">
 	<Input id="deviceSearch" name="deviceSearch" bind:value={searchTerm} />
 
 	<a
