@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import { onDestroy } from 'svelte';
 	import DeviceSubNav from '$lib/components/DeviceSubNav.svelte';
+	import DeviceMidiSearch from '$lib/components/DeviceMidiSearch.svelte';
 
 	export let data: { device: Device };
 
@@ -40,6 +41,8 @@
 
 <div>
 	<h2 class="font-bold text-2xl mb-2">{device.manufacturer} {device.name}</h2>
+
+	<DeviceMidiSearch {deviceId} />
 
 	<DeviceSubNav active="MINTED" deviceID={deviceId} />
 

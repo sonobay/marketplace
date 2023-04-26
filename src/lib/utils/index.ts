@@ -123,3 +123,7 @@ export const getManufacturersList = (devices: Device[]) => {
 		return manufacturers;
 	}, []);
 };
+
+export const clearImageExtensions = (image: string) => {
+	return image.replace('.png', '').replace('.jpg', '').replace('.jpeg', '');
+};

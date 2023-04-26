@@ -2,6 +2,7 @@ import { json, error } from '@sveltejs/kit';
 import { NFTStorage, File, Blob } from 'nft.storage';
 import 'dotenv/config';
 import sharp from 'sharp';
+import { clearImageExtensions } from '$lib/utils';
 
 interface Entry {
 	name: string;
@@ -73,7 +74,9 @@ export const POST = async ({ request }: { request: Request }) => {
 			midi: JSON.parse(`[${midi?.toString() ?? ''}]`),
 			image:
 				entryImage && image
-					? new File([entryImage], `${encodeURIComponent(image.name)}.webp`, { type: 'image/webp' })
+					? new File([entryImage], `${clearImageExtensions(image.name)}.webp`, {
+							type: 'image/webp'
+					  })
 					: undefined,
 			tags
 		});
@@ -84,7 +87,9 @@ export const POST = async ({ request }: { request: Request }) => {
 	const nft = {
 		name,
 		description,
-		image: new File([image], `${encodeURIComponent(logo.name)}.webp`, { type: 'image/webp' }),
+		image: new File([image], `${clearImageExtensions(logo.name)}.webp`, {
+			type: 'image/webp'
+		}),
 		properties: { devices, entries }
 	};
 
