@@ -45,7 +45,7 @@ export const environmentNetwork = () => {
 			};
 
 		default:
-			console.error(`Unsupported Network: ${+variables.networkId}`);
+			console.error(`Unsupported Network: ${+environment.networkId}`);
 			break;
 	}
 };
