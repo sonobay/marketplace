@@ -1,17 +1,15 @@
 <script lang="ts">
+	import Input from './inputs/Input.svelte';
+
+	export let deviceId: string;
 	let searchTerm = '';
-
-	const handleSearch = () => {
-		if (searchTerm.length < 3) {
-			return;
-		}
-
-		console.log('searchTerm is: ', searchTerm);
-	};
 </script>
 
-<div>
-	<input bind:value={searchTerm} />
+<div class="flex bg-gray-100 py-4 px-4 rounded-lg">
+	<Input id="deviceSearch" name="deviceSearch" bind:value={searchTerm} />
 
-	<button disabled={searchTerm.length < 3} on:click={(_) => handleSearch()}>Search</button>
+	<a
+		class="bg-midiBlue hover:bg-midiBlueLink text-white h-9 px-4 rounded flex items-center w-36 justify-center ml-4"
+		href={`/devices/${deviceId}/search?query=${searchTerm}`}>Search</a
+	>
 </div>

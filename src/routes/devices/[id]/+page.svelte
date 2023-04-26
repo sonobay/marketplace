@@ -42,7 +42,7 @@
 <div>
 	<h2 class="font-bold text-2xl mb-2">{device.manufacturer} {device.name}</h2>
 
-	<DeviceMidiSearch />
+	<DeviceMidiSearch {deviceId} />
 
 	<DeviceSubNav active="MINTED" deviceID={deviceId} />
 
