@@ -6,7 +6,7 @@
 
 	export let image: string | undefined = undefined;
 	export let name: string;
-	export let numberMinted: number;
+	export let totalSupply: number;
 	export let entries: IPFSEntry[] | MintEntry[];
 </script>
 
@@ -23,7 +23,7 @@
 		<div class="mb-2">
 			<div class="bg-white/75 text-black rounded-lg py-1 px-3 text-sm flex float-left items-center">
 				<NounMint size={16} />
-				<span class="ml-2">{numberMinted}</span>
+				<span class="ml-2">{totalSupply}</span>
 			</div>
 		</div>
 

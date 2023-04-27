@@ -22,11 +22,15 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8">
 			{#each userTokens as userToken}
 				<a class="flex justify-left" href={`/midi/${userToken.id}`}>
+					<!-- total supply here is confusing
+						as it should refer to total supply of token,
+						not amount user holds
+					-->
 					<Pack
 						name={ipfs.get(userToken.id)?.name ?? '-'}
 						image={ipfs.get(userToken.id)?.image}
 						entries={ipfs.get(userToken.id)?.properties.entries ?? []}
-						numberMinted={userToken.balance.toNumber()}
+						totalSupply={userToken.balance.toNumber()}
 					/>
 				</a>
 			{/each}

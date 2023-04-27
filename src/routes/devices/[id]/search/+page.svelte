@@ -23,7 +23,7 @@
 				name={m.metadata.name}
 				image={m.metadata.image}
 				entries={m.metadata.properties.entries}
-				numberMinted={0}
+				totalSupply={m.totalSupply}
 			/>
 		{/each}
 	</div>

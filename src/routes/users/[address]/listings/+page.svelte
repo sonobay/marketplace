@@ -24,7 +24,7 @@
 						name={listing.midi?.metadata.name ?? ''}
 						image={listing.midi?.metadata.image}
 						entries={listing.midi?.metadata.properties.entries ?? []}
-						numberMinted={listing.amount}
+						totalSupply={listing.amount}
 					/>
 				</a>
 			{/each}

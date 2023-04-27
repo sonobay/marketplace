@@ -18,7 +18,7 @@
 						image={listing.midi ? listing?.midi.metadata.image : undefined}
 						name={listing.midi ? listing.midi.metadata.name : ''}
 						entries={listing.midi ? listing.midi.metadata.properties.entries : []}
-						numberMinted={0}
+						totalSupply={listing.midi?.totalSupply ?? 0}
 					/>
 				</a>
 			{/each}

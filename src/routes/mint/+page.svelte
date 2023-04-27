@@ -261,7 +261,7 @@
 				<Pack
 					image={image ? URL.createObjectURL(image[0]) : undefined}
 					{name}
-					numberMinted={+amount}
+					totalSupply={+amount}
 					{entries}
 				/>
 			</div>

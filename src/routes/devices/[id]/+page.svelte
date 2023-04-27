@@ -54,7 +54,7 @@
 						image={midiDevice.midi.metadata.image}
 						name={midiDevice.midi.metadata.name}
 						entries={midiDevice.midi.metadata.properties.entries}
-						numberMinted={0}
+						totalSupply={midiDevice.midi.totalSupply}
 					/>
 				</a>
 			{/each}
