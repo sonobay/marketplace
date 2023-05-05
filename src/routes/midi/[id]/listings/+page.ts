@@ -1,6 +1,6 @@
 import type { LoadEvent } from '@sveltejs/kit';
-import { environment } from '$lib/env';
-import { loadMIDIData } from '$lib/utils';
+import { midi } from '@sonobay/sdk';
+import { envChainId } from '$lib/utils';
 
 export const load = async ({ params }: LoadEvent) => {
 	const { id } = params;
@@ -8,9 +8,7 @@ export const load = async ({ params }: LoadEvent) => {
 		throw new Error('No ID found');
 	}
 
-	const { apiEndpoint } = environment;
+	const _midi = await midi({ chainId: envChainId() }).fetchOne({ id: +id });
 
-	const midi = await loadMIDIData(id, apiEndpoint);
-
-	return { midi };
+	return { midi: _midi };
 };
