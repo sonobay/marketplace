@@ -8,8 +8,8 @@
 	import CircleCheck from './icons/CircleCheck.svelte';
 	import TriangleExclamation from './icons/TriangleExclamation.svelte';
 	import Button from './Button.svelte';
+	import Label from './inputs/Label.svelte';
 
-	const labelClass = 'text-gray-500 text-sm font-semibold';
 	const inputContainerClass = 'flex flex-col mb-4';
 	let currentTag = '';
 
@@ -86,7 +86,7 @@
 	<div class="flex flex-col w-full">
 		<div class="w-64">
 			<div class={inputContainerClass}>
-				<label class={labelClass} for="entry-name"> MIDI Name </label>
+				<Label targetFor="entry-name" text="MIDI Name" />
 				<Input name="entry-name" id="entry-name" bind:value={entry.name} required={true} />
 			</div>
 		</div>
@@ -94,7 +94,7 @@
 		<div class={inputContainerClass}>
 			<div class="w-64">
 				<div class="flex items-center">
-					<label class={labelClass} for="entry-name"> Tags </label>
+					<Label targetFor="entry-tags" text="Tags" />
 				</div>
 
 				<div class="rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400">

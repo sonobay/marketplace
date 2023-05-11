@@ -43,6 +43,7 @@ export const POST = async ({ request }: { request: Request }) => {
 
 	const image = await fileToBlob(logo);
 	const description = data.get('description')?.toString() ?? '';
+	const packTags = JSON.parse(data.get('packTags')?.toString() ?? '[]');
 
 	const devices = JSON.parse(data.get('devices')?.toString() ?? '[]');
 
@@ -90,7 +91,7 @@ export const POST = async ({ request }: { request: Request }) => {
 		image: new File([image], `${clearImageExtensions(logo.name)}.webp`, {
 			type: 'image/webp'
 		}),
-		properties: { devices, entries }
+		properties: { devices, entries, tags: packTags }
 	};
 
 	const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });

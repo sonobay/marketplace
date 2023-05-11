@@ -20,6 +20,7 @@
 	import Pack from '$lib/components/Pack.svelte';
 	import NounClose from '$lib/components/icons/NounClose.svelte';
 	import PatchTable from '$lib/components/PatchTable.svelte';
+	import Tag from '$lib/components/Tag.svelte';
 
 	let name = '';
 	let description = '';
@@ -42,7 +43,18 @@
 
 	const inputContainerClass = 'flex flex-col mb-4';
 
+	/**
+	 * General pack tags
+	 */
+	let packTags: string[] = [];
+
+	let currentTag = '';
+
+	/**
+	 * Individual patches
+	 */
 	let entries: MintEntry[] = [];
+
 	const addEntry = (entry: MintEntry) => {
 		entries = [...entries, entry];
 	};
@@ -80,6 +92,7 @@
 		formData.append('description', description);
 		formData.append('logo', image[0]);
 		formData.append('devices', JSON.stringify(collectionDevices));
+		formData.append('packTags', JSON.stringify(packTags));
 
 		entries.forEach((entry, i) => {
 			formData.append(`entries[${i}].name`, entry.name);
@@ -156,6 +169,32 @@
 		collectionDevices.splice(index, 1);
 		collectionDevices = collectionDevices;
 	};
+
+	const removeTag = (i: number) => {
+		packTags.splice(i, 1);
+		packTags = packTags;
+	};
+
+	const onTagInput = () => {
+		// remove spaces from pasted text
+		currentTag = currentTag.replaceAll(' ', '');
+	};
+
+	const onTagKeydown = (e: KeyboardEvent) => {
+		if (e.code === 'Space' || e.code === 'Enter') {
+			/**
+			 * disallow multiple of the same tag
+			 * UI restrict max of 5 tags per patch
+			 */
+			if (packTags.includes(currentTag) || packTags.length >= 5) {
+				return;
+			}
+
+			packTags.push(currentTag);
+			currentTag = '';
+			packTags = packTags;
+		}
+	};
 </script>
 
 <div>
@@ -227,6 +266,36 @@
 					<div class={inputContainerClass}>
 						<Label targetFor="description" text="Description" />
 						<TextArea id="description" name="description" bind:value={description} />
+					</div>
+
+					<div class={inputContainerClass}>
+						<div class="w-64">
+							<div class="flex items-center">
+								<Label targetFor="pack-tags" text="Tags" />
+							</div>
+
+							<div class="rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400">
+								<input
+									name="entry-tags"
+									bind:value={currentTag}
+									class="rounded-[3px] w-full px-2 py-1 bg-white"
+									on:keydown={onTagKeydown}
+									on:input={() => onTagInput()}
+									disabled={packTags.length >= 5}
+								/>
+							</div>
+						</div>
+
+						<div>
+							<div class="text-xs text-gray-400 font-semibold mb-2 mt-1">
+								Add up to 5 tags per pack
+							</div>
+							<div class="flex">
+								{#each packTags as tag, i}
+									<Tag label={tag} color="gray" on:remove={() => removeTag(i)} />
+								{/each}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
