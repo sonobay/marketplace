@@ -43,6 +43,13 @@ export const environmentNetwork = () => {
 				rpcUrls: ['https://sepolia.infura.io/v3/']
 			};
 
+		case 80001:
+			return {
+				chainName: 'Polygon Mumbai',
+				chainId: 80001,
+				rpcUrls: ['https://polygon-mumbai.infura.io/v3/']
+			};
+
 		default:
 			console.error(`Unsupported Network: ${+environment.networkId}`);
 			break;
@@ -105,13 +112,16 @@ export const clearImageExtensions = (image: string) => {
 	return image.replace('.png', '').replace('.jpg', '').replace('.jpeg', '');
 };
 
-export const envChainId = (): 1 | 11155111 => {
+export const envChainId = (): 1 | 11155111 | 80001 => {
 	switch (+environment.networkId) {
 		case 1:
 			return 1;
 
 		case 11155111:
 			return 11155111;
+
+		case 80001:
+			return 80001;
 
 		default:
 			return 1;
