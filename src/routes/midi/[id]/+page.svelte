@@ -7,12 +7,12 @@
 	import { createListing } from '$lib/utils/market.contract';
 	import { BigNumber } from 'ethers';
 	import Dialog from '$lib/components/Dialog.svelte';
-	import { addresses } from '$lib/constants/addresses';
 	import Button from '$lib/components/Button.svelte';
 	import type { MIDI } from '$lib/types/midi';
 	import PatchTable from '$lib/components/PatchTable.svelte';
 	import MidiPatchBasicInfo from '$lib/components/MIDIPatchBasicInfo.svelte';
 	import MidiSubNav from '$lib/components/MIDISubNav.svelte';
+	import { environment } from '$lib/env';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
@@ -22,6 +22,7 @@
 	let isApproved = false;
 	let approvalIsLoading = false;
 	const tokenId = $page.params.id;
+	const { marketAddress } = environment;
 
 	const checkOwner = async () => {
 		if (!$signerAddress) {
@@ -34,7 +35,7 @@
 		 * check if marketplace approved
 		 */
 		if (tokenBalance.gt(0)) {
-			isApproved = await isApprovedForAll({ account: $signerAddress, operator: addresses.market });
+			isApproved = await isApprovedForAll({ account: $signerAddress, operator: marketAddress });
 		}
 	};
 
@@ -59,7 +60,7 @@
 	const approve = async () => {
 		approvalIsLoading = true;
 		const approved = await setApprovalForAll({
-			operator: addresses.market,
+			operator: marketAddress,
 			approved: true,
 			signer: $signer
 		});

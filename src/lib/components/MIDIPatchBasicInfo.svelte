@@ -1,21 +1,20 @@
 <script lang="ts">
-	import { addresses } from '$lib/constants/addresses';
 	import type { MIDI } from '$lib/types/midi';
 	import { environmentNetwork } from '$lib/utils';
-	import type { BigNumber, constants } from 'ethers';
+	import type { BigNumber } from 'ethers';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { connected } from 'svelte-ethers-store';
 	import TransferMidi from './TransferMIDI.svelte';
 	import BurnMidi from './BurnMIDI.svelte';
 	import { fetchTotalSupply } from '$lib/utils/midi.contract';
+	import { environment } from '$lib/env';
 
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
 
 	const correctNetwork = environmentNetwork();
 	let totalSupply: BigNumber | undefined = undefined;
-
-	const midiAddress = addresses.midi;
+	const { midiAddress } = environment;
 
 	const tokenIdLink =
 		correctNetwork?.chainId === 1

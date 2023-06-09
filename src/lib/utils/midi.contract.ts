@@ -1,12 +1,11 @@
 import * as midiArtifact from '$lib/data/artifacts/contracts/midi/MIDI.sol/MIDI.json';
-import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
 import { Contract, getDefaultProvider, Signer, BigNumber } from 'ethers';
 import { environment } from '$lib/env';
 
 export const midiContract = (signer?: Signer) => {
-	const { providerEndpoint } = environment;
+	const { providerEndpoint, midiAddress } = environment;
 	return new Contract(
-		addresses.midi,
+		midiAddress,
 		midiArtifact.abi,
 		signer ?? getDefaultProvider(providerEndpoint)
 	);
@@ -51,10 +50,11 @@ export const fetchBalanceOf = async (address: string, tokenId: number): Promise<
 
 export const fetchTotalReceived = async (address: string, tokenId: number): Promise<BigNumber> => {
 	const contract = midiContract();
+	const { midiDeployBlock } = environment;
 
 	const transferToSingleEvents = await contract.queryFilter(
 		contract.filters.TransferSingle(null, null, address, null, null),
-		MIDI_DEPLOY_BLOCK
+		+midiDeployBlock
 	);
 
 	/**

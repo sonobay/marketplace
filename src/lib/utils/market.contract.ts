@@ -1,13 +1,12 @@
 import * as marketArtifact from '$lib/data/artifacts/contracts/market/Market.sol/Market.json';
-import { addresses, MIDI_DEPLOY_BLOCK } from '$lib/constants/addresses';
 import { Contract, getDefaultProvider, Signer, utils, BigNumber, constants } from 'ethers';
 import { environment } from '$lib/env';
 import type { Listing } from '$lib/types/listing';
 
 export const marketContract = (signer?: Signer) => {
-	const { providerEndpoint } = environment;
+	const { providerEndpoint, marketAddress } = environment;
 	return new Contract(
-		addresses.market,
+		marketAddress,
 		marketArtifact.abi,
 		signer ?? getDefaultProvider(providerEndpoint)
 	);
@@ -46,13 +45,12 @@ export const createListing = async ({
 
 export const fetchListingEvents = async (tokenId: number) => {
 	const contract = marketContract();
-	// const listings = await contract.fetchListingsById(tokenId);
-	// console.log('listings are: ', listings);
-	// return listings;
+
+	const { midiDeployBlock } = environment;
 
 	const listingEventsById = await contract.queryFilter(
 		contract.filters.ListingCreated(tokenId, null, null, null, null),
-		MIDI_DEPLOY_BLOCK
+		+midiDeployBlock
 	);
 	console.log('listing events by id', listingEventsById);
 	const listings: Listing[] = listingEventsById
