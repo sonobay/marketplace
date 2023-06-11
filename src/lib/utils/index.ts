@@ -50,6 +50,13 @@ export const environmentNetwork = () => {
 				rpcUrls: ['https://polygon-mumbai.infura.io/v3/']
 			};
 
+		case 137:
+			return {
+				chainName: 'Polygon',
+				chainId: 137,
+				rpcUrls: ['https://polygon-mainnet.infura.io/v3/']
+			};
+
 		default:
 			console.error(`Unsupported Network: ${+environment.networkId}`);
 			break;
@@ -112,7 +119,7 @@ export const clearImageExtensions = (image: string) => {
 	return image.replace('.png', '').replace('.jpg', '').replace('.jpeg', '');
 };
 
-export const envChainId = (): 1 | 11155111 | 80001 => {
+export const envChainId = (): 1 | 11155111 | 80001 | 137 => {
 	switch (+environment.networkId) {
 		case 1:
 			return 1;
@@ -122,6 +129,9 @@ export const envChainId = (): 1 | 11155111 | 80001 => {
 
 		case 80001:
 			return 80001;
+
+		case 137:
+			return 137;
 
 		default:
 			return 1;
