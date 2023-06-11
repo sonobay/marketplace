@@ -15,10 +15,7 @@
 	onDestroy(unsubscribe);
 </script>
 
-<a
-	href="/config"
-	class="flex items-center text-sm border border-black border-2 relative rounded-xl mx-2 px-4"
->
+<a href="/config" class="flex items-center text-sm border-black border-2 relative rounded-xl px-4">
 	<span>Connect Device</span>
 
 	<div class="absolute -top-2 -right-2">

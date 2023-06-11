@@ -11,11 +11,14 @@ module.exports = {
 			colors: {
 				link: 'rgb(34 211 238)', // text-cyan-400
 				charcoal: '#414141',
-				midiBlue: '#70C1EC',
+				midiBlue: '#6EC6FF',
 				midiBlueLight: '#B2D1EE',
 				midiBlueLink: '#1A85C0',
 				gold: '#FFCA09',
-				midiYellow: '#F2E06B'
+				midiYellow: '#FFDD57',
+				midiYellowLight: '#FCE688',
+				midiGray: 'rgb(0 0 0 / 0.3)',
+				midiGrayLight: 'rgb(0 0 0 / 0.05)'
 			}
 		},
 		container: {
