@@ -8,7 +8,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { BigNumber } from 'ethers';
 	import { fetchBalanceOf } from '$lib/utils/midi.contract';
-	import { environmentNetwork, truncateAddress } from '$lib/utils';
+	import { environmentNetwork, etherscanBaseUrl, truncateAddress } from '$lib/utils';
 
 	export let listing: Listing;
 
@@ -50,11 +50,6 @@
 		listed = await fetchListed(listing.listing);
 	};
 
-	const correctNetwork = environmentNetwork();
-
-	const etherscanBaseUrl =
-		correctNetwork?.chainId === 1 ? `https://etherscan.io` : `https://sepolia.etherscan.io`;
-
 	onMount(() => {
 		_fetchAvailableAmount();
 		_fetchListed();
@@ -68,7 +63,9 @@
 		<div class="flex flex-col mb-1">
 			<span class={labelClass}>Listing Address</span>
 			<a
-				href={`${etherscanBaseUrl}/address/${listing.listing}`}
+				href={`${etherscanBaseUrl(environmentNetwork()?.chainId ?? 137)}/address/${
+					listing.listing
+				}`}
 				target="_blank"
 				rel="noreferrer"
 				class="text-link">{truncateAddress(listing.listing)}</a

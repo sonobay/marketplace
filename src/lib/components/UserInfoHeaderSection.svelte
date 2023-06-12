@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { environmentNetwork, truncateAddress } from '$lib/utils';
+	import { environmentNetwork, etherscanBaseUrl, truncateAddress } from '$lib/utils';
 	import Avatar from './Avatar.svelte';
 	import Spinner from './Spinner.svelte';
 	import { providers } from 'ethers';
@@ -11,8 +11,6 @@
 	let avatarPath: string | undefined;
 	let ensName: string | null;
 	let ensNameLoading = true;
-	const etherscanBaseUrl =
-		environmentNetwork()?.chainId === 1 ? `https://etherscan.io` : `https://sepolia.etherscan.io`;
 
 	// for testing with ENS data...
 	// 0x280f3EdCDF23E5a645f55AdF143baAa177c214FB
@@ -57,7 +55,9 @@
 							<h2 class="text-2xl font-bold mr-4">{ensName}</h2>
 
 							<a
-								href={`${etherscanBaseUrl}/address/${address}`}
+								href={`${etherscanBaseUrl(
+									environmentNetwork()?.chainId ?? 137
+								)}/address/${address}`}
 								target="_blank"
 								rel="noreferrer"
 								class="text-link">{truncateAddress(address)}</a

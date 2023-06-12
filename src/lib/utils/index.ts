@@ -137,3 +137,19 @@ export const envChainId = (): 1 | 11155111 | 80001 | 137 => {
 			return 1;
 	}
 };
+
+export const etherscanBaseUrl = (chainId: number) => {
+	switch (chainId) {
+		case 1:
+			return 'https://etherscan.io';
+
+		case 11155111:
+			return 'https://sepolia.etherscan.io';
+
+		case 137:
+			return 'https://polygonscan.com';
+
+		case 80001:
+			return 'https://mumbai.polygonscan.com';
+	}
+};

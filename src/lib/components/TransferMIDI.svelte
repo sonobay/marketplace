@@ -4,7 +4,7 @@
 	import Button from './Button.svelte';
 	import { midiContract } from '$lib/utils/midi.contract';
 	import { signer, signerAddress } from 'svelte-ethers-store';
-	import { environmentNetwork } from '$lib/utils';
+	import { environmentNetwork, etherscanBaseUrl } from '$lib/utils';
 	import { createEventDispatcher } from 'svelte';
 
 	export let balance: BigNumber;
@@ -15,15 +15,13 @@
 	let transferToAddress: string;
 	let isTransferring = false;
 	let transactionHash: string;
-	const correctNetwork = environmentNetwork();
 	const dispatch = createEventDispatcher();
 
 	const toggleModal = () => {
 		dialogVisible = !dialogVisible;
 	};
 
-	const explorerBase =
-		correctNetwork?.chainId === 1 ? `https://etherscan.io/tx` : `https://sepolia.etherscan.io/tx`;
+	const explorerBase = `${etherscanBaseUrl(environmentNetwork()?.chainId ?? 137)}/tx`;
 
 	const transfer = async () => {
 		/**

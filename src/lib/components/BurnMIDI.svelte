@@ -4,7 +4,7 @@
 	import Dialog from './Dialog.svelte';
 	import type { BigNumber } from 'ethers';
 	import Button from './Button.svelte';
-	import { environmentNetwork } from '$lib/utils';
+	import { environmentNetwork, etherscanBaseUrl } from '$lib/utils';
 	import { signer, signerAddress } from 'svelte-ethers-store';
 
 	export let balance: BigNumber;
@@ -15,10 +15,8 @@
 	let burnAmount: number;
 	let isTransferring = false;
 	let transactionHash: string;
-	const correctNetwork = environmentNetwork();
 
-	const explorerBase =
-		correctNetwork?.chainId === 1 ? `https://etherscan.io/tx` : `https://sepolia.etherscan.io/tx`;
+	const explorerBase = `${etherscanBaseUrl(environmentNetwork()?.chainId ?? 137)}/tx`;
 
 	const toggleModal = () => {
 		dialogVisible = !dialogVisible;

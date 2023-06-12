@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { MIDI } from '$lib/types/midi';
-	import { environmentNetwork } from '$lib/utils';
+	import { environmentNetwork, etherscanBaseUrl } from '$lib/utils';
 	import type { BigNumber } from 'ethers';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { connected } from 'svelte-ethers-store';
@@ -12,14 +12,13 @@
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
 
-	const correctNetwork = environmentNetwork();
 	let totalSupply: BigNumber | undefined = undefined;
 	const { midiAddress } = environment;
 
-	const tokenIdLink =
-		correctNetwork?.chainId === 1
-			? `https://etherscan.io/token/${midiAddress}?a=${midi.id}`
-			: `https://sepolia.etherscan.io/token/${midiAddress}?a=${midi.id}`;
+	const tokenIdLink = `${etherscanBaseUrl(
+		environmentNetwork()?.chainId ?? 137
+	)}/token/${midiAddress}?a=${midi.id}`;
+
 	const dispatch = createEventDispatcher();
 
 	const _fetchTotalSupply = async () => {
