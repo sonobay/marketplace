@@ -5,10 +5,11 @@
 	import { onDestroy } from 'svelte';
 	import DeviceSubNav from '$lib/components/DeviceSubNav.svelte';
 	import DeviceMidiSearch from '$lib/components/DeviceMidiSearch.svelte';
+	import type { MIDI } from '@sonobay/sdk';
 
-	export let data: { device: Device };
+	export let data: { device: Device; midi: MIDI[] };
 
-	let { device } = data;
+	let { device, midi } = data;
 	let deviceId = device.id;
 
 	/**
@@ -48,13 +49,13 @@
 
 	{#if device.midi_devices}
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8">
-			{#each device.midi_devices as midiDevice}
-				<a href={`/midi/${midiDevice.midi.id}`}>
+			{#each midi as _midi}
+				<a href={`/midi/${_midi.id}`}>
 					<Pack
-						image={midiDevice.midi.metadata.image}
-						name={midiDevice.midi.metadata.name}
-						entries={midiDevice.midi.metadata.properties.entries}
-						totalSupply={midiDevice.midi.totalSupply}
+						image={_midi.metadata.image}
+						name={_midi.metadata.name}
+						entries={_midi.metadata.properties.entries}
+						totalSupply={_midi.totalSupply}
 					/>
 				</a>
 			{/each}

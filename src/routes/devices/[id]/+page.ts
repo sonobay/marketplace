@@ -1,5 +1,5 @@
 import { error, type LoadEvent } from '@sveltejs/kit';
-import { devices } from '@sonobay/sdk';
+import { devices, midi } from '@sonobay/sdk';
 import { envChainId } from '$lib/utils';
 
 export const load = async ({ params }: LoadEvent) => {
@@ -10,6 +10,7 @@ export const load = async ({ params }: LoadEvent) => {
 	}
 
 	const _device = await devices({ chainId: envChainId() }).fetchOne({ id });
+	const _midi = await midi({ chainId: envChainId() }).fetchAll({ deviceId: id });
 
-	return { device: _device };
+	return { device: _device, midi: _midi };
 };

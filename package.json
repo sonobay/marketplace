@@ -41,7 +41,7 @@
 	"dependencies": {
 		"@metamask/detect-provider": "^1.2.0",
 		"@metamask/providers": "^10.2.1",
-		"@sonobay/sdk": "^0.0.7",
+		"@sonobay/sdk": "^0.0.8",
 		"@supabase/supabase-js": "^1.35.6",
 		"@web-std/blob": "^3.0.4",
 		"@web-std/file": "^3.0.2",
