@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { slide } from 'svelte/transition';
 	import ConnectButtonWrapper from './connect/ConnectButtonWrapper.svelte';
 	import DeviceNavButton from './DeviceNavButton.svelte';
 	import Logo from './Logo.svelte';
@@ -8,8 +9,11 @@
 	import type { Device } from '$lib/types/device';
 	import { onMount } from 'svelte';
 	import Label from './inputs/Label.svelte';
+	import XMark from './icons/XMark.svelte';
+	import Filter from './icons/Filter.svelte';
 	export let devices: Device[];
 
+	let openMenu = false;
 	const manufacturers = devices && devices.length > 0 ? getManufacturersList(devices) : [];
 	let selectedManufacturer = manufacturers[0] ?? '';
 	let selectedDeviceId: string | undefined;
@@ -54,35 +58,57 @@
 	</button>
 {/if}
 
-<header class="container mx-auto py-4 px-4">
-	<div>
+<header>
+	<nav class="hidden md:block container mx-auto py-4 px-4">
 		<div class="flex justify-between mb-4">
-			<div class="flex flex-col">
-				<h1>
-					<a href="/" class="flex align-items">
-						<Logo />
-						<div class="ml-2 h-8 flex">
-							<img src="/images/sono-bay-logo.png" alt="Sonobay.xyz" />
-						</div>
-					</a>
-				</h1>
+			<div class="flex gap-8">
+				<a href="/" class="flex items-center">
+					<Logo />
+					<img src="/images/sono-bay-logo.png" alt="Sonobay.xyz" class="h-8 ml-2" />
+				</a>
+				<a class="flex items-center text-sm " href="/devices">Browse Devices</a>
+				<a class="flex items-center text-sm " href="/mint">Mint</a>
 			</div>
-
-			<div class="flex">
-				<a
-					class="flex items-center text-sm border border-black border-2 rounded-xl px-4 mr-2"
-					href="/mint">Mint</a
-				>
-
-				<a
-					class="flex items-center text-sm border border-black border-2 rounded-xl px-4"
-					href="/devices">Browse Devices</a
-				>
-
+			<div class="flex gap-4">
 				<DeviceNavButton />
-
 				<ConnectButtonWrapper />
 			</div>
 		</div>
-	</div>
+	</nav>
+
+	<nav class="flex md:hidden fixed top-0 w-full z-20">
+		<div class="flex flex-col md:hidden w-full ">
+			<div class="flex justify-between w-full bg-midiYellow px-4 h-16 items-center">
+				<a href="/" class="flex align-items justify-center">
+					<Logo />
+					<div class="ml-2 h-8 flex">
+						<img src="/images/sono-bay-logo.png" alt="Sonobay.xyz" />
+					</div>
+				</a>
+				<button
+					on:click={() => {
+						openMenu = !openMenu;
+					}}
+				>
+					{#if openMenu}
+						<XMark width="24px" height="24px" color="#414141" />
+					{:else}
+						<Filter />
+					{/if}
+				</button>
+			</div>
+			{#if openMenu}
+				<div
+					in:slide={{ duration: 300 }}
+					out:slide={{ duration: 300 }}
+					class="w-full py-8 flex flex-col gap-4 bg-midiYellow px-4"
+				>
+					<a href="#">Mint</a>
+					<a href="#">Browse Device</a>
+					<a href="#">Connect Device</a>
+					<a href="">Connect Wallet</a>
+				</div>
+			{/if}
+		</div>
+	</nav>
 </header>

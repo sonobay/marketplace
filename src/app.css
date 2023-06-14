@@ -8,4 +8,24 @@
     -webkit-appearance: none;
     margin: 0;
   }
+  input[type=checkbox] {
+    accent-color: #1A85C0;
+  }
+
+    h1 {
+      font-weight: 700;
+      font-size: 1.875em;
+  
+    }
+    h2 {
+      font-weight: 700;
+      font-size: 1.4em;
+  
+    }
+    h3 {
+      font-weight: 700;
+      font-size: 1.25em;
+    }
 }
+
+
