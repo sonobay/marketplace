@@ -9,6 +9,5 @@ export const load = async () => {
 		throw new Error(`error fetching devices`);
 	}
 	const devices = (await res.json()) as Device[];
-
 	return { devices };
 };

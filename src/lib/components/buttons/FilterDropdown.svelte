@@ -1,6 +1,10 @@
 <script>
 	import { slide, scale } from 'svelte/transition';
 	import Filter from '../icons/Filter.svelte';
+
+	import CaretDown from '../icons/CaretDown.svelte';
+	import CaretUp from '../icons/CaretUp.svelte';
+
 	export let items = ['recent', 'popular', 'price lowest'];
 	export let placeholder = 'dropdown';
 	export let action = () => {};
@@ -21,7 +25,7 @@
 </script>
 
 <div
-	class="relative group w-full"
+	class="relative group w-full text-midiGray"
 	on:mouseleave={() => {
 		if (mouseOverMenu == false) showMenu = false;
 	}}
@@ -30,12 +34,16 @@
 		on:click={() => {
 			showMenu = !showMenu;
 		}}
-		class="rounded-2xl px-3 py-1 border-2 border-midiGray bg-white text-midiGray flex flex-row justify-between w-full items-center"
+		class="rounded-xl px-3 py-1 border border-midiGrayLight bg-transparent flex flex-row justify-between w-full items-center"
 	>
 		{placeholder}
 
 		{#if selected.length < 1}
-			<Filter color="rgb(0 0 0 / 0.3)" width="16px" height="16px" />
+			{#if showMenu}
+				<CaretUp color="rgb(127 127 127)" width="16px" height="16px" />
+			{:else}
+				<CaretDown color="rgb(127 127 127)" width="16px" height="16px" />
+			{/if}
 		{:else}
 			<div in:scale class="rounded-full bg-midiBlue text-white px-2">{selected.length}</div>
 		{/if}
@@ -54,11 +62,9 @@
 				mouseOverMenu = true;
 			}}
 		>
-			<div
-				class=" bg-white text-midiGray  rounded-md py-2 px-2 flex-col flex gap-1 mt-4 shadow-lg "
-			>
+			<div class=" bg-white  rounded-md py-2 px-2 flex-col flex gap-1 mt-4 shadow-lg ">
 				{#each items as item}
-					<label class="hover:bg-midiGrayLight pl-2 py-2 rounded-md list-none text-left">
+					<label class="hover:bg-midiGrayLight/25 pl-2 py-2 rounded-md list-none text-left">
 						<input
 							type="checkbox"
 							class="option mr-1"

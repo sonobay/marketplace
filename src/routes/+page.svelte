@@ -3,8 +3,11 @@
 	import FilterDropdown from '$lib/components/buttons/FilterDropdown.svelte';
 	import Dropdown from '$lib/components/buttons/Dropdown.svelte';
 	import type { listingsRow } from '$lib/types/listings[0]-row';
+	import type { Device } from '$lib/types/device';
+	import { getManufacturersList } from '$lib/utils';
 
-	export let data: { listingss: listingsRow[] };
+	export let data: { listingss: listingsRow[]; devices: Device[] };
+
 	let { listings } = data;
 </script>
 
@@ -25,10 +28,10 @@
 				type="text"
 				placeholder="search..."
 				aria-label="search for nfts"
-				class="rounded-2xl px-4 py-1 border-2 border-midiGray bg-white  focus:outline-none"
+				class="rounded-2xl px-4 py-1 border border-midiGrayLight bg-white  focus:outline-none"
 			/>
 			<div class="flex flex-row gap-2 md:gap-4 md:w-1/2 w-full">
-				<FilterDropdown placeholder="Filter device" />
+				<FilterDropdown placeholder="Filter device" items={getManufacturersList(data.devices)} />
 				<Dropdown placeholder="Sort by" />
 			</div>
 		</div>
