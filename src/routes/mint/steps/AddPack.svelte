@@ -10,17 +10,15 @@
 	import { isPositiveInteger } from '$lib/utils';
 	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
 
-	export let nextAction = (images: FileList) => {};
+	export let nextAction = () => {};
 	export let previousAction = () => {};
-
-	let images: FileList;
 
 	$: done =
 		$mint.description.length > 0 &&
 		$mint.packName.length > 0 &&
 		$mint.amountToMint > 0 &&
 		$mint.packTags.length > 0 &&
-		images != undefined;
+		$mint.image != undefined;
 
 	function addTag(tag: string) {
 		if (tag.length == 0 || tag.trim().length == 0) return;
@@ -42,17 +40,29 @@
 	function validateDescription(input: string) {
 		$mint.description = input;
 	}
+	function setBase64Image(file: File) {
+		var reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = function () {
+			if (reader.result != undefined) $mint.image = reader.result?.toString();
+		};
+		reader.onerror = function (error) {
+			console.error('Failed converting image: ', error);
+		};
+	}
 </script>
 
 <BlueBox>
 	<div class="flex lg:flex-row flex-col items-center md:items-start gap-6">
 		<div class="w-24 h-24">
 			<ImageInput
-				image={images}
+				image={$mint.image ?? undefined}
 				id="pack-logo"
 				on:imageUpdated={(e) => {
-					console.log(e.detail.image);
-					if (e.detail.image != undefined) images = e.detail.image;
+					console.log('old: ' + $mint.image);
+					if (e.detail.files != undefined) {
+						setBase64Image(e.detail.files[0]);
+					}
 				}}
 			/>
 		</div>
@@ -99,11 +109,5 @@
 </BlueBox>
 <div class="flex justify-end mt-12 gap-4">
 	<YellowButton text="BACK" action={previousAction} />
-	<BlueButton
-		text="GO TO NEXT"
-		disabled={done == false}
-		action={() => {
-			nextAction(images);
-		}}
-	/>
+	<BlueButton text="GO TO NEXT" disabled={done == false} action={nextAction} />
 </div>

@@ -95,7 +95,7 @@
 				{/each}
 			</div>
 
-			<div class="mt-8 mb-8 flex flex-col lg:flex-row gap-4 items-center">
+			<div class="mt-8 mb-8 flex flex-col sm:flex-row gap-4 items-center">
 				<YellowButton text="ADD TO PACK" disabled={!validEntry} action={addPatch} />
 				<div>
 					{#if entry.midi && entry.midi.length > 10}

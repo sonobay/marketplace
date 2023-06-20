@@ -45,10 +45,10 @@
 			<AddDevice devices={data.devices} nextAction={nextStep} />
 		{/if}
 		{#if $mint.step == 2}
-			<AddPack nextAction={setPackImage} previousAction={previousStep} />
+			<AddPack nextAction={nextStep} previousAction={previousStep} />
 		{/if}
 		{#if $mint.step == 3}
-			<AddMidi nextAction={setPatchImage} previousAction={previousStep} />
+			<AddMidi nextAction={nextStep} previousAction={previousStep} />
 		{/if}
 		{#if $mint.step == 4}
 			<MintNft {packImage} {patchImage} />
