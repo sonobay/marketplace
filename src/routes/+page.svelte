@@ -2,13 +2,28 @@
 	import Pack from '$lib/components/Pack.svelte';
 	import FilterDropdown from '$lib/components/buttons/FilterDropdown.svelte';
 	import Dropdown from '$lib/components/buttons/Dropdown.svelte';
-	import type { listingsRow } from '$lib/types/listings[0]-row';
 	import type { Device } from '$lib/types/device';
 	import { getManufacturersList } from '$lib/utils';
+	import CaretRight from '$lib/components/icons/CaretRight.svelte';
+	import CaretLeft from '$lib/components/icons/CaretLeft.svelte';
+	import type { ListingRow } from '$lib/types/listing-row';
 
-	export let data: { listingss: listingsRow[]; devices: Device[] };
+	export let data: { listings: ListingRow[]; devices: Device[] };
 
 	let { listings } = data;
+
+	let page = 0;
+	let listingsPerPage = 5;
+	let sliceIndex = 5;
+
+	$: sliceIndex = calculateSliceIndex(page);
+	$: visible = listings.slice(page, sliceIndex);
+
+	function calculateSliceIndex(page: number) {
+		if (page == 0) return listingsPerPage;
+		if (page + listingsPerPage > listings.length) return listings.length;
+		return page + listingsPerPage;
+	}
 </script>
 
 <div>
@@ -39,7 +54,7 @@
 
 	{#if listings && listings.length > 0}
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8">
-			{#each listings as listing}
+			{#each visible as listing, i}
 				<a href={`/listing/${listing.listing_address}`}>
 					<Pack
 						image={listing.midi ? listing?.midi.metadata.image : undefined}
@@ -58,3 +73,24 @@
 		</div>
 	{/if}
 </div>
+
+{#if listings && listingsPerPage < listings.length}
+	<div class="flex justify-end mt-4">
+		<div>
+			<button
+				class="rounded-xl border border-midiGrayLight bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				disabled={page <= 0}
+				on:click={() => {
+					page -= listingsPerPage;
+				}}><CaretLeft /></button
+			>
+			<button
+				disabled={sliceIndex == listings.length}
+				class="rounded-xl border border-midiGrayLight bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				on:click={() => {
+					page += listingsPerPage;
+				}}><CaretRight /></button
+			>
+		</div>
+	</div>
+{/if}
