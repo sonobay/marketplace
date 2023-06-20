@@ -13,8 +13,8 @@
 	let { listings } = data;
 
 	let page = 0;
-	let listingsPerPage = 5;
-	let sliceIndex = 5;
+	let listingsPerPage = 2;
+	let sliceIndex = listingsPerPage;
 
 	$: sliceIndex = calculateSliceIndex(page);
 	$: visible = listings.slice(page, sliceIndex);
