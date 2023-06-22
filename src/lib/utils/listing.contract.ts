@@ -8,6 +8,11 @@ export const listingContract = async (address: string, signer?: Signer) => {
 
 	if (!signer) {
 		const defaultProvider = getDefaultProvider(providerEndpoint);
+
+		defaultProvider.on('error', (error) => {
+			console.error(error);
+		});
+
 		await defaultProvider.ready;
 	}
 
