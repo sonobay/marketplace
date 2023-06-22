@@ -2,8 +2,15 @@ import * as listingArtifact from '$lib/data/artifacts/contracts/listing/Listing.
 import { Contract, getDefaultProvider, Signer, BigNumber } from 'ethers';
 import { environment } from '$lib/env';
 
-export const listingContract = (address: string, signer?: Signer) => {
+export const listingContract = async (address: string, signer?: Signer) => {
 	const { providerEndpoint } = environment;
+	console.log('provider endpoint: ', providerEndpoint);
+
+	if (!signer) {
+		const defaultProvider = getDefaultProvider(providerEndpoint);
+		await defaultProvider.ready;
+	}
+
 	return new Contract(address, listingArtifact.abi, signer ?? getDefaultProvider(providerEndpoint));
 };
 
@@ -19,7 +26,7 @@ export const buyItems = async ({
 	price: BigNumber;
 }) => {
 	try {
-		const contract = listingContract(address, signer);
+		const contract = await listingContract(address, signer);
 		const userAddress = await signer.getAddress();
 		const res = await contract.buyItems(amount, userAddress, { value: price.mul(amount) });
 		await res.wait();
@@ -31,32 +38,32 @@ export const buyItems = async ({
 };
 
 export const fetchPrice = async (address: string): Promise<BigNumber> => {
-	const contract = listingContract(address);
+	const contract = await listingContract(address);
 	const price = await contract.price();
 	return price;
 };
 
 export const fetchSeller = async (address: string): Promise<string> => {
-	const contract = listingContract(address);
+	const contract = await listingContract(address);
 	const seller = await contract.seller();
 	return seller;
 };
 
 export const fetchTokenId = async (address: string): Promise<BigNumber> => {
-	const contract = listingContract(address);
+	const contract = await listingContract(address);
 	const tokenId = await contract.tokenId();
 	return tokenId;
 };
 
 export const fetchListed = async (address: string): Promise<boolean> => {
-	const contract = listingContract(address);
+	const contract = await listingContract(address);
 	const listed = await contract.listed();
 	return listed;
 };
 
 export const cancelListing = async (address: string, signer: Signer) => {
 	try {
-		const contract = listingContract(address, signer);
+		const contract = await listingContract(address, signer);
 		const res = await contract.cancelListing();
 		await res.wait();
 		return true;
@@ -68,7 +75,7 @@ export const cancelListing = async (address: string, signer: Signer) => {
 
 export const withdraw = async (address: string, signer: Signer) => {
 	try {
-		const contract = listingContract(address, signer);
+		const contract = await listingContract(address, signer);
 		const res = await contract.withdraw();
 		await res.wait();
 		return true;

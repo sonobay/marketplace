@@ -16,6 +16,8 @@ export const load = async ({ params }: LoadEvent) => {
 	// 	fetchListed(address)
 	// ]);
 
+	console.log('listing address: ', address);
+
 	const price = await fetchPrice(address);
 	console.log('price is: ', price);
 	const seller = await fetchSeller(address);
