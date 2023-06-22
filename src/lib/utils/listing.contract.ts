@@ -16,6 +16,9 @@ export const listingContract = async (address: string, signer?: Signer) => {
 	// 	await defaultProvider.ready;
 	// }
 
+	const provider = new providers.JsonRpcProvider(providerEndpoint);
+	await provider.ready;
+
 	try {
 		return new Contract(
 			address,
