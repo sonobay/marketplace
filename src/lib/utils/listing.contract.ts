@@ -55,8 +55,11 @@ export const buyItems = async ({
 };
 
 export const fetchPrice = async (address: string): Promise<BigNumber> => {
+	console.log('fetching price');
 	const contract = await listingContract(address);
+	console.log('contract initialized');
 	const price = await contract.price();
+	console.log('price to return is: ', price.toString());
 	return price;
 };
 
