@@ -6,17 +6,26 @@ export const listingContract = async (address: string, signer?: Signer) => {
 	const { providerEndpoint } = environment;
 	console.log('provider endpoint: ', providerEndpoint);
 
-	if (!signer) {
-		const defaultProvider = getDefaultProvider(providerEndpoint);
+	// if (!signer) {
+	// 	const defaultProvider = getDefaultProvider(providerEndpoint);
 
-		defaultProvider.on('error', (error) => {
-			console.error(error);
-		});
+	// 	defaultProvider.on('error', (error) => {
+	// 		console.error(error);
+	// 	});
 
-		await defaultProvider.ready;
+	// 	await defaultProvider.ready;
+	// }
+
+	try {
+		return new Contract(
+			address,
+			listingArtifact.abi,
+			signer ?? getDefaultProvider(providerEndpoint)
+		);
+	} catch (error) {
+		console.log('error is: ', error?.toString());
+		throw new Error(error?.toString());
 	}
-
-	return new Contract(address, listingArtifact.abi, signer ?? getDefaultProvider(providerEndpoint));
 };
 
 export const buyItems = async ({
