@@ -1,5 +1,5 @@
 import * as listingArtifact from '$lib/data/artifacts/contracts/listing/Listing.sol/Listing.json';
-import { Contract, getDefaultProvider, Signer, BigNumber } from 'ethers';
+import { Contract, getDefaultProvider, Signer, BigNumber, providers } from 'ethers';
 import { environment } from '$lib/env';
 
 export const listingContract = async (address: string, signer?: Signer) => {
@@ -20,7 +20,7 @@ export const listingContract = async (address: string, signer?: Signer) => {
 		return new Contract(
 			address,
 			listingArtifact.abi,
-			signer ?? getDefaultProvider(providerEndpoint)
+			signer ?? new providers.JsonRpcProvider(providerEndpoint)
 		);
 	} catch (error) {
 		console.log('error is: ', error?.toString());
