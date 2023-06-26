@@ -18,6 +18,9 @@ export const load = async ({ params }: LoadEvent) => {
 		fetchListed(address)
 	]);
 
+	console.log('listing contract info successfully fetched');
+	console.log('fetching midi info');
+
 	// const price = await fetchPrice(address);
 	// console.log('price is: ', price);
 	// const seller = await fetchSeller(address);

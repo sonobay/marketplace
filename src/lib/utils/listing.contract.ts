@@ -6,6 +6,8 @@ export const listingContract = async (address: string, signer?: Signer) => {
 	const { providerEndpoint } = environment;
 	console.log('provider endpoint: ', providerEndpoint);
 	console.log('trimmed endpoint: ', providerEndpoint.trim());
+	console.log('address: ', address);
+	console.log('signer: ', signer);
 
 	try {
 		return new Contract(
