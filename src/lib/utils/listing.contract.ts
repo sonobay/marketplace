@@ -9,6 +9,9 @@ export const listingContract = async (address: string, signer?: Signer) => {
 	console.log('address: ', address);
 	console.log('signer: ', signer);
 
+	console.log('entire env is: ', environment);
+	console.log('listingArtifact.abi is: ', listingArtifact.abi);
+
 	try {
 		return new Contract(
 			address,
