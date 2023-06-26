@@ -6,19 +6,6 @@ export const listingContract = async (address: string, signer?: Signer) => {
 	const { providerEndpoint } = environment;
 	console.log('provider endpoint: ', providerEndpoint);
 
-	// if (!signer) {
-	// 	const defaultProvider = getDefaultProvider(providerEndpoint);
-
-	// 	defaultProvider.on('error', (error) => {
-	// 		console.error(error);
-	// 	});
-
-	// 	await defaultProvider.ready;
-	// }
-
-	const provider = new providers.JsonRpcProvider(providerEndpoint);
-	await provider.ready;
-
 	try {
 		return new Contract(
 			address,
