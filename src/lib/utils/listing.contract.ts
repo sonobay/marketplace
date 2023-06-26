@@ -5,12 +5,13 @@ import { environment } from '$lib/env';
 export const listingContract = async (address: string, signer?: Signer) => {
 	const { providerEndpoint } = environment;
 	console.log('provider endpoint: ', providerEndpoint);
+	console.log('trimmed endpoint: ', providerEndpoint.trim());
 
 	try {
 		return new Contract(
 			address,
 			listingArtifact.abi,
-			signer ?? new providers.JsonRpcProvider(providerEndpoint)
+			signer ?? new providers.JsonRpcProvider(providerEndpoint.trim())
 		);
 	} catch (error) {
 		console.log('error is: ', error?.toString());
