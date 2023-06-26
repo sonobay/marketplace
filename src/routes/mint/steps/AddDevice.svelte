@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Device } from '$lib/types/device';
 	import { getManufacturersList } from '$lib/utils';
-	import { onMount } from 'svelte';
 	import BlueButton from '$lib/components/buttons/BlueButton.svelte';
 	import BlueBox from '$lib/components/boxes/BlueBox.svelte';
 	import Input from '../components/Input.svelte';
@@ -9,7 +8,7 @@
 	import YellowButton from '$lib/components/buttons/YellowButton.svelte';
 	import { mint } from '$lib/stores/mint';
 	import XMark from '$lib/components/icons/XMark.svelte';
-
+	import { fade } from 'svelte/transition';
 	export let nextAction = () => {};
 	export let devices: Device[];
 	const manufacturers = devices && devices.length > 0 ? getManufacturersList(devices) : [];
@@ -79,123 +78,124 @@
 	};
 </script>
 
-<BlueBox>
-	{#if setManufacturerManually}
-		<div class="lg:flex items-start justify-start mb-6">
-			<p class="lg:mr-3 lg:w-1/6 lg:text-right">Manufacturer</p>
-			<div class="w-full md:w-80">
-				<Input
-					value={selectedManufacturer ? selectedManufacturer : ''}
-					placeholder="Enter Device Manufacturer (i.e Roland)"
-					max={40}
-					onInputAction={(value) => {
-						selectedManufacturer = value;
-					}}
-				/>
-				<div class="text-xs">
-					<button
-						class="text-link underline"
-						on:click|preventDefault={(_) => toggleSetManufacturerManually()}>Cancel</button
-					>
-				</div>
-			</div>
-		</div>
-	{:else}
-		<div class="lg:flex items-start justify-start mb-6">
-			<p class="lg:mr-3 lg:w-1/6 lg:text-right">Manufacturer</p>
-			<div class="w-full md:w-80">
-				<Dropdown
-					items={manufacturers}
-					placeholder={selectedManufacturer ? selectedManufacturer : 'Choose...'}
-					action={(value) => {
-						selectedManufacturer = value;
-						filterManufacturerDevices();
-						if (setDeviceManually) {
-							toggleSetDeviceManually();
-						}
-					}}
-				/>
-				<div class="text-xs">
-					<span>Can't find the manufacturer of your device? </span>
-					<button
-						class="text-link underline"
-						on:click|preventDefault={(_) => toggleSetManufacturerManually()}>Add</button
-					>
-				</div>
-			</div>
-		</div>
-	{/if}
-
-	{#if setDeviceManually}
-		<div class="lg:flex items-start justify-start">
-			<p class="lg:mr-3 lg:w-1/6 lg:text-right">Model</p>
-			<div class="w-full md:w-80">
-				<Input
-					value={selectedDevice ? selectedDevice : ''}
-					placeholder="Enter Device Name (i.e Jupiter 6)"
-					max={40}
-					onInputAction={(value) => {
-						selectedDevice = value;
-					}}
-				/>
-				{#if !setManufacturerManually}
+<div in:fade class="min-h-[365px]">
+	<BlueBox>
+		{#if setManufacturerManually}
+			<div class="lg:flex items-start justify-start mb-6">
+				<p class="lg:mr-3 lg:w-1/6 lg:text-right">Manufacturer</p>
+				<div class="w-full lg:w-80">
+					<Input
+						value={selectedManufacturer ? selectedManufacturer : ''}
+						placeholder="Enter Device Manufacturer (i.e Roland)"
+						max={40}
+						onInputAction={(value) => {
+							selectedManufacturer = value;
+						}}
+					/>
 					<div class="text-xs">
 						<button
 							class="text-link underline"
-							on:click|preventDefault={(_) => toggleSetDeviceManually()}>Cancel</button
+							on:click|preventDefault={(_) => toggleSetManufacturerManually()}>Cancel</button
 						>
 					</div>
-				{/if}
-			</div>
-		</div>
-	{:else}
-		<div class="lg:flex items-start justify-start">
-			<p class="lg:mr-3 lg:w-1/6 lg:text-right">Model</p>
-			<div class="w-full md:w-80">
-				<Dropdown
-					items={manufacturerDevices.map((m) => m.name)}
-					placeholder={selectedDevice ? selectedDevice : 'Choose...'}
-					action={(value) => {
-						selectedDevice = value;
-					}}
-				/>
-				<div class="text-xs">
-					<span>Can't find your device? </span>
-					<button
-						on:click|preventDefault={(_) => toggleSetDeviceManually()}
-						class="text-link underline">Add</button
-					>
 				</div>
 			</div>
-		</div>
-	{/if}
-
-	<div class="flex justify-start mt-8">
-		<div class="lg:mr-3 lg:w-1/6" />
-		<YellowButton text="ADD DEVICES" action={addDevice} />
-	</div>
-
-	<div class="flex justify-start mt-8">
-		<div class="lg:mr-3 lg:w-1/6" />
-		<div class="grid grid-cols md:grid-cols-2 gap-2">
-			{#each $mint.devices as device}
-				<div class="rounded-2xl  bg-white py-2 px-4 justify-between flex gap-2">
-					<p>
-						{device.manufacturer}: {device.name}
-					</p>
-					<button
-						on:click={() => {
-							removeDevice(device);
+		{:else}
+			<div class="lg:flex items-start justify-start mb-6">
+				<p class="lg:mr-3 lg:w-1/6 lg:text-right">Manufacturer</p>
+				<div class="w-full lg:w-80">
+					<Dropdown
+						items={manufacturers}
+						placeholder={selectedManufacturer ? selectedManufacturer : 'Choose...'}
+						action={(value) => {
+							selectedManufacturer = value;
+							filterManufacturerDevices();
+							if (setDeviceManually) {
+								toggleSetDeviceManually();
+							}
 						}}
-					>
-						<XMark color="rgb(65 65 65)" />
-					</button>
+					/>
+					<div class="text-xs">
+						<span>Can't find the manufacturer of your device? </span>
+						<button
+							class="text-link underline"
+							on:click|preventDefault={(_) => toggleSetManufacturerManually()}>Add</button
+						>
+					</div>
 				</div>
-			{/each}
-		</div>
-	</div>
-</BlueBox>
+			</div>
+		{/if}
 
+		{#if setDeviceManually}
+			<div class="lg:flex items-start justify-start">
+				<p class="lg:mr-3 lg:w-1/6 lg:text-right">Model</p>
+				<div class="w-full lg:w-80">
+					<Input
+						value={selectedDevice ? selectedDevice : ''}
+						placeholder="Enter Device Name (i.e Jupiter 6)"
+						max={40}
+						onInputAction={(value) => {
+							selectedDevice = value;
+						}}
+					/>
+					{#if !setManufacturerManually}
+						<div class="text-xs">
+							<button
+								class="text-link underline"
+								on:click|preventDefault={(_) => toggleSetDeviceManually()}>Cancel</button
+							>
+						</div>
+					{/if}
+				</div>
+			</div>
+		{:else}
+			<div class="lg:flex items-start justify-start">
+				<p class="lg:mr-3 lg:w-1/6 lg:text-right">Model</p>
+				<div class="w-full lg:w-80">
+					<Dropdown
+						items={manufacturerDevices.map((m) => m.name)}
+						placeholder={selectedDevice ? selectedDevice : 'Choose...'}
+						action={(value) => {
+							selectedDevice = value;
+						}}
+					/>
+					<div class="text-xs">
+						<span>Can't find your device? </span>
+						<button
+							on:click|preventDefault={(_) => toggleSetDeviceManually()}
+							class="text-link underline">Add</button
+						>
+					</div>
+				</div>
+			</div>
+		{/if}
+
+		<div class="flex justify-start mt-8">
+			<div class="lg:mr-3 lg:w-1/6" />
+			<YellowButton text="ADD DEVICES" action={addDevice} />
+		</div>
+
+		<div class="flex justify-start mt-8">
+			<div class="lg:mr-3 lg:w-1/6" />
+			<div class="grid grid-cols md:grid-cols-2 gap-2">
+				{#each $mint.devices as device}
+					<div class="rounded-2xl  bg-white py-2 px-4 justify-between flex gap-2">
+						<p>
+							{device.manufacturer}: {device.name}
+						</p>
+						<button
+							on:click={() => {
+								removeDevice(device);
+							}}
+						>
+							<XMark color="rgb(65 65 65)" />
+						</button>
+					</div>
+				{/each}
+			</div>
+		</div>
+	</BlueBox>
+</div>
 <div class="flex justify-end mt-12">
 	<BlueButton text="GO TO NEXT" action={nextAction} disabled={!done} />
 </div>

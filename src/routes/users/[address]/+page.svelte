@@ -9,8 +9,6 @@
 	export let data: { userTokens: UserToken[]; ipfs: Map<number, IPFSMetadata> };
 	const { userTokens, ipfs } = data;
 	const address = $page.params.address;
-
-	console.log(data);
 </script>
 
 <div>

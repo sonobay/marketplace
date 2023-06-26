@@ -17,12 +17,12 @@
 		on:keydown={(e) => {
 			if (e.key == 'Enter') setTag();
 		}}
-		class="rounded-xl border border-midiGrayLight bg-transparent px-3 py-1 focus:outline-none w-full"
+		class="rounded-xl border border-charcoal bg-transparent px-3 py-1 focus:outline-none w-full"
 		{placeholder}
 	/>
 	<button
 		on:click={setTag}
-		class="absolute right-4 top-0 bottom-0 m-auto w-6 h-6 flex items-center justify-center bg-midiGrayLight text-white rounded-md"
+		class="absolute right-4 top-0 bottom-0 m-auto w-6 h-6 flex items-center justify-center bg-charcoal text-white rounded-md"
 	>
 		+
 	</button>

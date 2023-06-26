@@ -9,22 +9,23 @@
 	const dispatch = createEventDispatcher<{ imageUpdated: { files: FileList | undefined } }>();
 </script>
 
-<div class="w-full h-full rounded bg-gray-200 flex overflow-hidden">
-	<label class="flex align-items w-full justify-center" for={id}>
-		{#if image}
-			<img class="w-full object-cover" src={image} alt="Entry Logo" />
-		{:else}
-			<div class="float-left cursor-pointer rounded-full px-4 py-2 flex items-center">
-				<ImageRegular size={42} color="rgb(156 163 175)" />
-			</div>
-		{/if}
-		<input
-			name={id}
-			{id}
-			type="file"
-			class="hidden"
-			bind:files
-			on:change={(e) => dispatch('imageUpdated', { files })}
-		/>
-	</label>
-</div>
+<label class="cursor-pointer flex flex-col justify-center gap-2" for={id}>
+	{#if image}
+		<div class="w-24 h-24">
+			<img class="w-full h-full object-cover rounded-xl" src={image} alt="Entry Logo" />
+		</div>
+	{:else}
+		<div class="p-2 bg-white rounded-xl w-24 h-24">
+			<img src="./placeholderImage.png" alt="placeholder" />
+		</div>
+	{/if}
+	<div class="bg-charcoal px-4 py-1 text-white rounded-2xl text-xs">Add image</div>
+	<input
+		name={id}
+		{id}
+		type="file"
+		class="hidden"
+		bind:files
+		on:change={(e) => dispatch('imageUpdated', { files })}
+	/>
+</label>

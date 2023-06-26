@@ -12,13 +12,13 @@
     accent-color: #1A85C0;
   }
   input::placeholder {
-    color: rgb(65 65 65);
+    color: #7F7F7F;
     opacity: 1;
   }
   input:-ms-input-placeholder,
   input::-ms-input-placeholder
   { 
-    color: rgb(65 65 65);
+    color: #7F7F7F;
   }
 
   textarea:-moz-placeholder, 
@@ -26,7 +26,7 @@ textarea::-moz-placeholder,
 textarea:-ms-input-placeholder, 
 textarea::-webkit-input-placeholder, 
 textarea::placeholder { 
-  color: rgb(65 65 65); 
+  color: #7F7F7F; 
 }
 
     h1 {

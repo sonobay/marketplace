@@ -11,9 +11,6 @@
 	import type { MIDI } from '$lib/types/midi';
 	import Greenbox from '$lib/components/boxes/Greenbox.svelte';
 
-	export let packImage: File;
-	export let patchImage: File;
-
 	let amount: string;
 	let mintProcessing = false;
 	let pollAttempts = 0;
@@ -30,18 +27,12 @@
 			return;
 		}
 
-		if (!packImage) {
-			console.error('image required');
-			return;
-		}
-
 		mintProcessing = true;
-
 		const formData = new FormData();
 
 		formData.append('name', $mint.packName);
 		formData.append('description', $mint.description);
-		formData.append('logo', packImage);
+		formData.append('logo', $mint.image);
 		formData.append('devices', JSON.stringify($mint.devices));
 		formData.append('packTags', JSON.stringify($mint.packTags));
 
@@ -116,16 +107,32 @@
 			<div class="flex flex-col justify-between w-full md:w-1/2">
 				<div>
 					<p class="flex gap-2 mb-6 items-center">
-						<CircleCheck width="28px" height="28px" /> Transmitting metadata...
+						{#if metadataUploaded}
+							<CircleCheck width="28px" height="28px" />
+						{:else}
+							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
+						{/if} Transmitting metadata...
 					</p>
 					<p class="flex gap-2 mb-6  items-center">
-						<CircleCheck width="28px" height="28px" /> Uploading images...
+						{#if mintTxSigned}
+							<CircleCheck width="28px" height="28px" />
+						{:else}
+							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
+						{/if} Uploading images...
 					</p>
 					<p class="flex gap-2 mb-6 items-center">
-						<CircleCheck width="28px" height="28px" /> Engaging metamask...
+						{#if metadataUploaded}
+							<CircleCheck width="28px" height="28px" />
+						{:else}
+							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
+						{/if} Engaging metamask...
 					</p>
 					<p class="flex gap-2 mb-6 items-center">
-						<CircleCheck width="28px" height="28px" /> minting NFT..
+						{#if mintTxSigned}
+							<CircleCheck width="28px" height="28px" />
+						{:else}
+							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
+						{/if} minting NFT..
 					</p>
 				</div>
 

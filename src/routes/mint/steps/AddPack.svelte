@@ -9,6 +9,7 @@
 	import TextArea from '../components/TextArea.svelte';
 	import { isPositiveInteger } from '$lib/utils';
 	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
+	import { fade } from 'svelte/transition';
 
 	export let nextAction = () => {};
 	export let previousAction = () => {};
@@ -52,62 +53,62 @@
 	}
 </script>
 
-<BlueBox>
-	<div class="flex lg:flex-row flex-col items-center md:items-start gap-6">
-		<div class="w-24 h-24">
+<div in:fade class="min-h-[365px]">
+	<BlueBox>
+		<div class="flex lg:flex-row flex-col items-center md:items-start gap-6">
 			<ImageInput
 				image={$mint.image ?? undefined}
 				id="pack-logo"
 				on:imageUpdated={(e) => {
-					console.log('old: ' + $mint.image);
 					if (e.detail.files != undefined) {
 						setBase64Image(e.detail.files[0]);
 					}
 				}}
 			/>
-		</div>
 
-		<div class="w-full lg:w-4/5">
-			<div class="w-full">
-				<div class="flex lg:flex-row flex-col lg:items-center gap-4 mb-4">
-					<div class="lg:w-3/4">
-						<Input
-							value={$mint.packName.length > 0 ? $mint.packName : ''}
-							placeholder="Pack name"
-							max={40}
-							onInputAction={validateNameInput}
-						/>
+			<div class="w-full lg:w-4/5">
+				<div class="w-full">
+					<div class="flex lg:flex-row flex-col lg:items-center gap-4 mb-4">
+						<div class="lg:w-3/4">
+							<Input
+								value={$mint.packName.length > 0 ? $mint.packName : ''}
+								placeholder="Pack name"
+								max={40}
+								onInputAction={validateNameInput}
+							/>
+						</div>
+						<div class="lg:w-1/4">
+							<Input
+								value={$mint.amountToMint > 0 ? $mint.amountToMint.toString() : ''}
+								number={true}
+								placeholder="# To Mint"
+								max={4}
+								min={1}
+								onInputAction={validateMintAmountInput}
+							/>
+						</div>
 					</div>
-					<div class="lg:w-1/4">
-						<Input
-							value={$mint.amountToMint > 0 ? $mint.amountToMint.toString() : ''}
-							number={true}
-							placeholder="# To Mint"
-							max={4}
-							min={1}
-							onInputAction={validateMintAmountInput}
-						/>
+					<TextArea
+						value={$mint.description.length > 0 ? $mint.description : ''}
+						placeholder="Description"
+						onInputAction={validateDescription}
+					/>
+					<div class="mt-4 lg:w-60">
+						<TagInput placeholder="Tags" action={addTag} />
 					</div>
 				</div>
-				<TextArea
-					value={$mint.description.length > 0 ? $mint.description : ''}
-					placeholder="Description"
-					onInputAction={validateDescription}
-				/>
-				<div class="mt-4 lg:w-60">
-					<TagInput placeholder="Tags" action={addTag} />
+
+				<div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
+					{#each $mint.packTags as tag}
+						<Tag text={tag} action={removeTag} />
+					{/each}
 				</div>
 			</div>
-
-			<div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
-				{#each $mint.packTags as tag}
-					<Tag text={tag} action={removeTag} />
-				{/each}
-			</div>
 		</div>
-	</div>
-</BlueBox>
+	</BlueBox>
+</div>
+
 <div class="flex justify-end mt-12 gap-4">
 	<YellowButton text="BACK" action={previousAction} />
-	<BlueButton text="GO TO NEXT" disabled={done == false} action={nextAction} />
+	<BlueButton text="GO TO NEXT" action={nextAction} disabled={!done} />
 </div>

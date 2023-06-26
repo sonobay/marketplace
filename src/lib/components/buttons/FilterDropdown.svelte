@@ -17,7 +17,6 @@
 		selected = [];
 		let options = document.getElementsByClassName('option');
 		for (let i = 0; i < options.length; i++) {
-			console.log(options[i]);
 			if (options[i].checked) selected.push(options[i].id);
 		}
 		action(selected);
@@ -25,7 +24,7 @@
 </script>
 
 <div
-	class="relative group w-full text-midiGray"
+	class="relative group w-full"
 	on:mouseleave={() => {
 		if (mouseOverMenu == false) showMenu = false;
 	}}
@@ -34,15 +33,15 @@
 		on:click={() => {
 			showMenu = !showMenu;
 		}}
-		class="rounded-xl px-3 py-1 border border-midiGrayLight bg-transparent flex flex-row justify-between w-full items-center"
+		class="rounded-xl px-3 py-1 border border-charcoal bg-transparent flex flex-row justify-between w-full items-center"
 	>
 		{placeholder}
 
 		{#if selected.length < 1}
 			{#if showMenu}
-				<CaretUp color="rgb(127 127 127)" width="16px" height="16px" />
+				<CaretUp color="rgb(65 65 65)" width="16px" height="16px" />
 			{:else}
-				<CaretDown color="rgb(127 127 127)" width="16px" height="16px" />
+				<CaretDown color="rgb(65 65 65)" width="16px" height="16px" />
 			{/if}
 		{:else}
 			<div in:scale class="rounded-full bg-midiBlue text-white px-2">{selected.length}</div>

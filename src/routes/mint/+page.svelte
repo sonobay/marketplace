@@ -9,23 +9,13 @@
 
 	export let data: { devices: Device[] };
 
-	let patchImage: File;
-	let packImage: File;
-
 	function nextStep() {
 		$mint.step++;
+		$mint.step = $mint.step;
 	}
 	function previousStep() {
 		$mint.step--;
-	}
-
-	function setPackImage(images: FileList) {
-		packImage = images[0];
-		nextStep();
-	}
-	function setPatchImage(images: FileList) {
-		patchImage = images[0];
-		nextStep();
+		$mint.step = $mint.step;
 	}
 </script>
 
@@ -51,7 +41,7 @@
 			<AddMidi nextAction={nextStep} previousAction={previousStep} />
 		{/if}
 		{#if $mint.step == 4}
-			<MintNft {packImage} {patchImage} />
+			<MintNft />
 		{/if}
 	</div>
 </section>

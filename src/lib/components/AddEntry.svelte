@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
 	import type { MintEntry } from '$lib/types/entry';
-	import { createEventDispatcher, onDestroy } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { midi } from '$lib/stores/midi';
 	import Tag from './Tag.svelte';
 	import Input from './inputs/Input.svelte';
@@ -47,15 +47,19 @@
 		currentTag = currentTag.replaceAll(' ', '');
 	};
 
-	const unsubscribe = midi.subscribe((store) => {
-		if (!store.selectedInput) {
-			return;
-		}
+	let unsubscribe;
 
-		store.selectedInput.onmidimessage = (msg) => {
-			entry.midi = msg.data;
-			entry = entry;
-		};
+	onMount(() => {
+		unsubscribe = midi.subscribe((store) => {
+			if (!store.selectedInput) {
+				return;
+			}
+
+			store.selectedInput.onmidimessage = (msg) => {
+				entry.midi = msg.data;
+				entry = entry;
+			};
+		});
 	});
 
 	const submitEntry = () => {

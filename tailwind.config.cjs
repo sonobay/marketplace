@@ -17,8 +17,9 @@ module.exports = {
 				gold: '#FFCA09',
 				midiYellow: '#FFDD57',
 				midiYellowLight: '#FCE688',
-				midiGray: '#595959',
-				midiGrayLight: '#7F7F7F',
+
+				midiGray: '#7F7F7F',
+				midiGrayLight: '#D9D9D9',
 				midiGreen: '#22c55e',
 				midiGreenLight: '#4ade80'
 			}
