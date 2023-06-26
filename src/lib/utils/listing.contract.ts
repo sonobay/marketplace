@@ -13,7 +13,7 @@ export const listingContract = async (address: string, signer?: Signer) => {
 		return new Contract(
 			address,
 			listingArtifact.abi,
-			signer ?? new providers.JsonRpcProvider(providerEndpoint.trim())
+			signer ?? getDefaultProvider(providerEndpoint)
 		);
 	} catch (error) {
 		console.log('error is: ', error?.toString());
@@ -47,27 +47,36 @@ export const buyItems = async ({
 export const fetchPrice = async (address: string): Promise<BigNumber> => {
 	console.log('fetching price');
 	const contract = await listingContract(address);
-	console.log('contract initialized');
+	console.log('fetchPrice contract initialized');
 	const price = await contract.price();
 	console.log('price to return is: ', price.toString());
 	return price;
 };
 
 export const fetchSeller = async (address: string): Promise<string> => {
+	console.log('fetching seller');
 	const contract = await listingContract(address);
+	console.log('fetchSeller contract initialized');
 	const seller = await contract.seller();
+	console.log('seller is: ', seller);
 	return seller;
 };
 
 export const fetchTokenId = async (address: string): Promise<BigNumber> => {
+	console.log('fetching tokenId');
 	const contract = await listingContract(address);
+	console.log('fetchTokenId contract initialized');
 	const tokenId = await contract.tokenId();
+	console.log('tokenId is: ', tokenId.toString());
 	return tokenId;
 };
 
 export const fetchListed = async (address: string): Promise<boolean> => {
+	console.log('fetching listed');
 	const contract = await listingContract(address);
+	console.log('fetchListed contract initialized');
 	const listed = await contract.listed();
+	console.log('listed is: ', listed);
 	return listed;
 };
 
