@@ -8,9 +8,10 @@
 	import { environmentNetwork, getManufacturersList, promptSwitchNetwork } from '$lib/utils';
 	import type { Device } from '$lib/types/device';
 	import { onMount } from 'svelte';
-	import Label from './inputs/Label.svelte';
+	import { midi } from '$lib/stores/midi';
 	import XMark from './icons/XMark.svelte';
 	import Filter from './icons/Filter.svelte';
+	import { onDestroy } from 'svelte';
 	export let devices: Device[];
 
 	let openMenu = false;
@@ -18,9 +19,6 @@
 	let selectedManufacturer = manufacturers[0] ?? '';
 	let selectedDeviceId: string | undefined;
 	let manufacturerDevices: Device[] = [];
-	const selectClass = 'rounded-[3px] w-full px-2 py-1.5 bg-white';
-	const selectContainerClass =
-		'rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400 w-full flex mb-1';
 
 	const filterManufacturerDevices = () => {
 		manufacturerDevices = devices.filter(
@@ -47,6 +45,14 @@
 		}
 		promptSwitchNetwork(correctNetwork);
 	};
+
+	let deviceConnected: boolean;
+
+	const unsubscribe = midi.subscribe((store) => {
+		deviceConnected = store.selectedInput != undefined && store.selectedOutput != undefined;
+	});
+
+	onDestroy(unsubscribe);
 </script>
 
 {#if $connected && +$chainId !== +environment.networkId}
@@ -67,10 +73,12 @@
 					<img src="/images/sono-bay-logo.png" alt="Sonobay.xyz" class="h-8 ml-2" />
 				</a>
 				<a class="flex items-center text-sm " href="/devices">Browse Devices</a>
-				<a class="flex items-center text-sm " href="/mint">Mint</a>
+				{#if deviceConnected}
+					<a class="flex items-center text-sm " href="/mint">Mint</a>
+				{/if}
 			</div>
 			<div class="flex gap-4">
-				<DeviceNavButton />
+				<DeviceNavButton connected={deviceConnected} />
 				<ConnectButtonWrapper />
 			</div>
 		</div>

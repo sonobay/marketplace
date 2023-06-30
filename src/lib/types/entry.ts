@@ -8,7 +8,7 @@ type Entry = {
 export type MintEntry = Entry & {
 	// name: string;
 	// midi: Uint8Array | undefined;
-	image: string | undefined;
+	image: File | undefined;
 	// tags: string[];
 };
 

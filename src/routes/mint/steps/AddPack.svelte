@@ -41,27 +41,17 @@
 	function validateDescription(input: string) {
 		$mint.description = input;
 	}
-	function setBase64Image(file: File) {
-		var reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = function () {
-			if (reader.result != undefined) $mint.image = reader.result?.toString();
-		};
-		reader.onerror = function (error) {
-			console.error('Failed converting image: ', error);
-		};
-	}
 </script>
 
 <div in:fade class="min-h-[365px]">
 	<BlueBox>
 		<div class="flex lg:flex-row flex-col items-center md:items-start gap-6">
 			<ImageInput
-				image={$mint.image ?? undefined}
+				image={$mint.image}
 				id="pack-logo"
 				on:imageUpdated={(e) => {
 					if (e.detail.files != undefined) {
-						setBase64Image(e.detail.files[0]);
+						$mint.image = e.detail.files[0];
 					}
 				}}
 			/>
@@ -110,5 +100,5 @@
 
 <div class="flex justify-end mt-12 gap-4">
 	<YellowButton text="BACK" action={previousAction} />
-	<BlueButton text="GO TO NEXT" action={nextAction} disabled={!done} />
+	<BlueButton text="NEXT" action={nextAction} disabled={!done} />
 </div>

@@ -43,7 +43,7 @@
 				type="text"
 				placeholder="search..."
 				aria-label="search for nfts"
-				class="rounded-2xl px-4 py-1 border border-midiGrayLight bg-white  focus:outline-none"
+				class="rounded-2xl px-4 py-1 border border-charcoal bg-white focus:outline-none"
 			/>
 			<div class="flex flex-row gap-2 md:gap-4 md:w-1/2 w-full">
 				<FilterDropdown placeholder="Filter device" items={getManufacturersList(data.devices)} />
@@ -78,7 +78,7 @@
 	<div class="flex justify-end mt-4">
 		<div>
 			<button
-				class="rounded-xl border border-midiGrayLight bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				class="bg-transparent p-2 focus:outline-none disabled:opacity-40"
 				disabled={page <= 0}
 				on:click={() => {
 					page -= listingsPerPage;
@@ -86,7 +86,7 @@
 			>
 			<button
 				disabled={sliceIndex == listings.length}
-				class="rounded-xl border border-midiGrayLight bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				class="bg-transparent p-2 focus:outline-none disabled:opacity-40"
 				on:click={() => {
 					page += listingsPerPage;
 				}}><CaretRight /></button

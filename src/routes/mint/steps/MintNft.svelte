@@ -4,80 +4,35 @@
 	import CircleCheck from '$lib/components/icons/CircleCheck.svelte';
 	import { signer, signerAddress } from 'svelte-ethers-store';
 	import { midiContract } from '$lib/utils/midi.contract';
-	import { mint } from '$lib/stores/mint';
-	import { onMount } from 'svelte';
+	import { getNewMint, mint } from '$lib/stores/mint';
+	import { onDestroy, onMount } from 'svelte';
 	import { BigNumber } from 'ethers';
 	import { environment } from '$lib/env';
 	import type { MIDI } from '$lib/types/midi';
 	import Greenbox from '$lib/components/boxes/Greenbox.svelte';
 
-	let amount: string;
-	let mintProcessing = false;
+	let minted: MIDI | null;
 	let pollAttempts = 0;
-	let createdMidiId: number;
 
 	let metadataUploaded = false;
 	let mintTxSigned = false; // this is when metamask is prompted and waiting for feedback to mint
-	let txProcessed = false;
 	let metadataIndexed = false;
 
 	onMount(async () => {
+		if ($mint.step != 4) return;
+
 		if (!$signer) {
 			console.error('not connected');
 			return;
 		}
-
-		mintProcessing = true;
-		const formData = new FormData();
-
-		formData.append('name', $mint.packName);
-		formData.append('description', $mint.description);
-		formData.append('logo', $mint.image);
-		formData.append('devices', JSON.stringify($mint.devices));
-		formData.append('packTags', JSON.stringify($mint.packTags));
-
-		$mint.patches.forEach((entry, i) => {
-			formData.append(`entries[${i}].name`, entry.name);
-			formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '');
-			formData.append(`entries[${i}].tags`, JSON.stringify(entry.tags));
-			if (entry.image) {
-				formData.append(`entries[${i}].image`, entry.image[0]);
-			}
-		});
-
-		const res = await fetch('api/mint.json', {
-			method: 'POST',
-			headers: {
-				accept: 'application/json'
-			},
-			body: formData
-		});
-
-		if (res.status !== 200) {
-			console.error(await res.json());
-			txProcessed = false;
+		const json = await uploadMetaData();
+		if (json == undefined) {
+			$mint.step = 3;
 			return;
 		}
-
-		const json: { metadata: string } = await res.json();
-
 		metadataUploaded = true;
-
-		/**
-		 * Mint on Ethereum
-		 */
-		const midi = midiContract($signer);
-		const tx = await midi.mint($signerAddress, BigNumber.from(amount), json.metadata, []);
-
+		const receipt = await signMint(json);
 		mintTxSigned = true;
-
-		const receipt = await tx.wait();
-
-		txProcessed = true;
-
-		/**
-		 * We poll MIDI from our DB to get indexed device data
-		 */
 		pollMIDI(receipt.events[0].args.id);
 	});
 
@@ -90,17 +45,65 @@
 				if (!res.ok) {
 					throw new Error(`error fetching ${id}`);
 				}
-				const midi = (await res.json()) as MIDI;
-				createdMidiId = midi.id;
+				minted = (await res.json()) as MIDI;
 				metadataIndexed = true;
 			} catch (error) {
 				setTimeout(() => pollMIDI(id), 10 * 1000); // every 10 seconds
 			}
 		}
 	};
+
+	const uploadMetaData = async () => {
+		const formData = new FormData();
+		formData.append('name', $mint.packName);
+		formData.append('description', $mint.description);
+		if ($mint.image != undefined) formData.append('logo', $mint.image);
+		formData.append('devices', JSON.stringify($mint.devices));
+		formData.append('packTags', JSON.stringify($mint.packTags));
+		$mint.patches.forEach((entry, i) => {
+			formData.append(`entries[${i}].name`, entry.name);
+			formData.append(`entries[${i}].midi`, entry.midi?.toString() ?? '');
+			formData.append(`entries[${i}].tags`, JSON.stringify(entry.tags));
+			if (entry.image) {
+				formData.append(`entries[${i}].image`, entry.image);
+			}
+		});
+
+		try {
+			const res = await fetch('api/mint.json', {
+				method: 'POST',
+				headers: {
+					accept: 'application/json'
+				},
+				body: formData
+			});
+
+			const json: { metadata: string } = await res.json();
+			return json;
+		} catch (error) {
+			console.error(error);
+			return;
+		}
+	};
+
+	const signMint = async (json: { metadata: string }) => {
+		const midi = midiContract($signer);
+		const tx = await midi.mint(
+			$signerAddress,
+			BigNumber.from($mint.amountToMint),
+			json.metadata,
+			[]
+		);
+		const receipt = await tx.wait();
+		return receipt;
+	};
+
+	onDestroy(() => {
+		$mint = getNewMint();
+	});
 </script>
 
-{#if txProcessed == false}
+{#if metadataIndexed == false}
 	<BlueBox>
 		<div class="flex flex-col md:flex-row gap-8">
 			<img src="/images/pack-example.png" alt="" class="w-full md:w-1/2 h-auto" />
@@ -111,28 +114,21 @@
 							<CircleCheck width="28px" height="28px" />
 						{:else}
 							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
-						{/if} Transmitting metadata...
+						{/if}Uploading Metadata to IPFS...
 					</p>
 					<p class="flex gap-2 mb-6  items-center">
 						{#if mintTxSigned}
 							<CircleCheck width="28px" height="28px" />
 						{:else}
 							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
-						{/if} Uploading images...
+						{/if}Waiting for wallet to sign transaction...
 					</p>
 					<p class="flex gap-2 mb-6 items-center">
-						{#if metadataUploaded}
+						{#if metadataIndexed}
 							<CircleCheck width="28px" height="28px" />
 						{:else}
 							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
-						{/if} Engaging metamask...
-					</p>
-					<p class="flex gap-2 mb-6 items-center">
-						{#if mintTxSigned}
-							<CircleCheck width="28px" height="28px" />
-						{:else}
-							<CircleCheck width="28px" height="28px" color="#D9D9D9" />
-						{/if} minting NFT..
+						{/if}Metadata indexed on Sonobay...
 					</p>
 				</div>
 
@@ -161,16 +157,17 @@
 
 				<div class="flex flex-col gap-4">
 					<a
-						href="#"
+						href={'/midi/' + minted?.id}
 						class="bg-midiYellow text-center py-4 px-6 rounded-3xl text-base lg:text-xl text-white"
 						>VIEW PACK</a
 					>
+					<!-- 
 					<a
 						href="#"
 						class="bg-midiBlue text-center py-4 px-6 rounded-3xl text-base lg:text-xl text-white"
 					>
-						GO TO LISTING
-					</a>
+						GO TO LISTINGS
+					</a>-->
 				</div>
 			</div>
 		</div>

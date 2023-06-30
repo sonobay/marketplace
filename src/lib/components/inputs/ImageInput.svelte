@@ -1,7 +1,6 @@
 <script lang="ts">
-	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
 	import { createEventDispatcher } from 'svelte';
-	export let image: string | undefined;
+	export let image: File | undefined;
 	export let id: string;
 
 	let files: FileList | undefined;
@@ -12,7 +11,11 @@
 <label class="cursor-pointer flex flex-col justify-center gap-2" for={id}>
 	{#if image}
 		<div class="w-24 h-24">
-			<img class="w-full h-full object-cover rounded-xl" src={image} alt="Entry Logo" />
+			<img
+				class="w-full h-full object-cover rounded-xl"
+				src={URL.createObjectURL(image)}
+				alt="Entry Logo"
+			/>
 		</div>
 	{:else}
 		<div class="p-2 bg-white rounded-xl w-24 h-24">
