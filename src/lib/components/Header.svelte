@@ -72,9 +72,20 @@
 					<Logo />
 					<img src="/images/sono-bay-logo.png" alt="Sonobay.xyz" class="h-8 ml-2" />
 				</a>
-				<a class="flex items-center text-sm " href="/devices">Browse Devices</a>
+				<div class="flex items-center">
+					<a
+						class="text-sm hover:before:scale-x-100 hover:before:origin-left relative before:w-full before:h-[2px] before:origin-right before:transition-transform before:duration-300 before:scale-x-0 before:bg-charcoal before:absolute before:left-0 before:bottom-0"
+						href="/devices">Browse Devices</a
+					>
+				</div>
+
 				{#if deviceConnected}
-					<a class="flex items-center text-sm " href="/mint">Mint</a>
+					<div class="flex items-center">
+						<a
+							class="flex items-center text-sm hover:before:scale-x-100 hover:before:origin-left relative before:w-full before:h-[2px] before:origin-right before:transition-transform before:duration-300 before:scale-x-0 before:bg-charcoal before:absolute before:left-0 before:bottom-0"
+							href="/mint">Mint</a
+						>
+					</div>
 				{/if}
 			</div>
 			<div class="flex gap-4">

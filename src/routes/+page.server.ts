@@ -1,7 +1,10 @@
 import { environment } from '$lib/env';
 import type { ListingRow } from '$lib/types/listing-row';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async () => {
+	throw redirect(302, '/devices');
+
 	const { apiEndpoint } = environment;
 
 	const listingsRes = await fetch(`${apiEndpoint}/listings`);

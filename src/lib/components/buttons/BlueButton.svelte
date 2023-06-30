@@ -7,6 +7,6 @@
 <button
 	on:click={action}
 	{disabled}
-	class="rounded-2xl px-4 py-1 bg-midiBlue border text-center border-charcoal disabled:opacity-60"
+	class="rounded-2xl px-4 py-1 bg-midiBlue border text-center border-charcoal disabled:opacity-60 hover:brightness-105 disabled:hover:brightness-100"
 	>{text}</button
 >

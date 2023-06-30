@@ -3,7 +3,7 @@
 	import { getManufacturersList } from '$lib/utils';
 	import BlueButton from '$lib/components/buttons/BlueButton.svelte';
 	import BlueBox from '$lib/components/boxes/BlueBox.svelte';
-	import Input from '../components/Input.svelte';
+	import Input from '$lib/components/inputs/Input.svelte';
 	import Dropdown from '$lib/components/buttons/Dropdown.svelte';
 	import YellowButton from '$lib/components/buttons/YellowButton.svelte';
 	import { mint } from '$lib/stores/mint';

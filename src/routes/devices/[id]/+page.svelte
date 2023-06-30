@@ -52,20 +52,20 @@
 	onDestroy(unsubscribe);
 </script>
 
-<div class="mb-16 sticky top-16 md:top-0 z-10 bg-white py-4 md:py-6">
+<div class="mb-12 sticky top-16 md:top-0 z-10 py-6 bg-white">
 	<div class="flex md:flex-row flex-col justify-between md:items-center mb-4 gap-2">
-		<h1 class="hidden lg:inline">{device.manufacturer} {device.name}</h1>
+		<h1 class="hidden md:inline">{device.manufacturer} {device.name}</h1>
 		<div class="flex h-min gap-4 ">
 			<button class="rounded-2xl px-4 py-1 bg-white hover:bg-midiYellow text-center">
 				For sale
 			</button>
-			<button class="rounded-2xl px-4 py-1 bg-midiYellow hover:bg-midiYellow text-center font-bold">
+			<button class="rounded-2xl px-4 py-1 bg-midiYellow hover:bg-midiYellow text-center">
 				All
 			</button>
 		</div>
 	</div>
 
-	<div class="flex md:flex-row flex-col mt-2 gap-8 justify-between">
+	<div class="flex md:flex-row flex-col mt-2 gap-4 md:gap-8 justify-between">
 		<input
 			type="text"
 			placeholder="search..."
@@ -73,13 +73,13 @@
 			class="rounded-2xl w-full px-4 py-1 border border-charcoal bg-white focus:outline-none"
 		/>
 		<div class="flex flex-row gap-2 md:gap-4 md:w-1/2 w-full">
-			<Dropdown placeholder="Sort by" />
+			<Dropdown placeholder="Sort by" items={['price', 'date']} />
 		</div>
 	</div>
 </div>
 
 {#if device.midi_devices}
-	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8">
+	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8 place-items-center ">
 		{#each visible as _midi}
 			<a href={`/midi/${_midi.id}`}>
 				<Pack
@@ -113,3 +113,5 @@
 		</div>
 	</div>
 {/if}
+
+<div class="mt-16" />
