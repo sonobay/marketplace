@@ -9,6 +9,7 @@
 	import TriangleExclamation from './icons/TriangleExclamation.svelte';
 	import Button from './Button.svelte';
 	import Label from './inputs/Label.svelte';
+	import type { Unsubscriber } from 'svelte/store';
 
 	const inputContainerClass = 'flex flex-col mb-4';
 	let currentTag = '';
@@ -47,7 +48,7 @@
 		currentTag = currentTag.replaceAll(' ', '');
 	};
 
-	let unsubscribe;
+	let unsubscribe: Unsubscriber;
 
 	onMount(() => {
 		unsubscribe = midi.subscribe((store) => {
