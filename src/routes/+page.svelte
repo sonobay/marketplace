@@ -2,10 +2,28 @@
 	import Pack from '$lib/components/Pack.svelte';
 	import FilterDropdown from '$lib/components/buttons/FilterDropdown.svelte';
 	import Dropdown from '$lib/components/buttons/Dropdown.svelte';
-	import type { listingsRow } from '$lib/types/listings[0]-row';
+	import type { Device } from '$lib/types/device';
+	import { getManufacturersList } from '$lib/utils';
+	import CaretRight from '$lib/components/icons/CaretRight.svelte';
+	import CaretLeft from '$lib/components/icons/CaretLeft.svelte';
+	import type { ListingRow } from '$lib/types/listing-row';
 
-	export let data: { listingss: listingsRow[] };
+	export let data: { listings: ListingRow[]; devices: Device[] };
+
 	let { listings } = data;
+
+	let page = 0;
+	let listingsPerPage = 2;
+	let sliceIndex = listingsPerPage;
+
+	$: sliceIndex = calculateSliceIndex(page);
+	$: visible = listings.slice(page, sliceIndex);
+
+	function calculateSliceIndex(page: number) {
+		if (page == 0) return listingsPerPage;
+		if (page + listingsPerPage > listings.length) return listings.length;
+		return page + listingsPerPage;
+	}
 </script>
 
 <div>
@@ -25,10 +43,10 @@
 				type="text"
 				placeholder="search..."
 				aria-label="search for nfts"
-				class="rounded-2xl px-4 py-1 border-2 border-midiGray bg-white  focus:outline-none"
+				class="rounded-2xl px-4 py-1 border border-charcoal bg-white focus:outline-none"
 			/>
 			<div class="flex flex-row gap-2 md:gap-4 md:w-1/2 w-full">
-				<FilterDropdown placeholder="Filter device" />
+				<FilterDropdown placeholder="Filter device" items={getManufacturersList(data.devices)} />
 				<Dropdown placeholder="Sort by" />
 			</div>
 		</div>
@@ -36,7 +54,7 @@
 
 	{#if listings && listings.length > 0}
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8">
-			{#each listings as listing}
+			{#each visible as listing, i}
 				<a href={`/listing/${listing.listing_address}`}>
 					<Pack
 						image={listing.midi ? listing?.midi.metadata.image : undefined}
@@ -55,3 +73,24 @@
 		</div>
 	{/if}
 </div>
+
+{#if listings && listingsPerPage < listings.length}
+	<div class="flex justify-end mt-4">
+		<div>
+			<button
+				class="bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				disabled={page <= 0}
+				on:click={() => {
+					page -= listingsPerPage;
+				}}><CaretLeft /></button
+			>
+			<button
+				disabled={sliceIndex == listings.length}
+				class="bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				on:click={() => {
+					page += listingsPerPage;
+				}}><CaretRight /></button
+			>
+		</div>
+	</div>
+{/if}

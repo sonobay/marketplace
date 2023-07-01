@@ -5,9 +5,9 @@
 	export let height = '24px';
 </script>
 
-<svg in:scale xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" {width} {height}
-	><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path
+<svg in:scale {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 83.11 47.62"
+	><path
 		fill={color}
-		d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"
+		d="m76.92,0c2.09,2.11,4.13,4.16,6.19,6.24-13.82,13.76-27.67,27.54-41.57,41.38C27.66,33.81,13.81,20.02,0,6.27,2.06,4.19,4.11,2.12,6.18.02c11.77,11.71,23.53,23.42,35.35,35.19C53.33,23.47,65.11,11.75,76.92,0Z"
 	/></svg
 >

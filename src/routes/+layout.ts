@@ -1,6 +1,8 @@
 import { environment } from '$lib/env';
 import type { Device } from '$lib/types/device';
 
+export let ssr = true;
+
 export const load = async () => {
 	const { apiEndpoint } = environment;
 

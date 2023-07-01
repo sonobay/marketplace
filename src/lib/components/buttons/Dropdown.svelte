@@ -1,15 +1,15 @@
-<script>
+<script lang="ts">
 	import { slide } from 'svelte/transition';
 	import CaretDown from '../icons/CaretDown.svelte';
 	import CaretUp from '../icons/CaretUp.svelte';
 	export let items = ['recent', 'popular', 'price lowest'];
 	export let placeholder = 'dropdown';
-	export let action = () => {};
+	export let action = (value: string) => {};
 
 	let showMenu = false;
 	let mouseOverMenu = false;
 
-	function onSelect(option) {
+	function onSelect(option: string) {
 		placeholder = option;
 		showMenu = false;
 		action(option);
@@ -26,14 +26,14 @@
 		on:click={() => {
 			showMenu = !showMenu;
 		}}
-		class="rounded-2xl px-3 py-1 border-2 border-midiGray bg-white text-midiGray flex flex-row justify-between w-full items-center"
+		class="rounded-xl px-3 py-1 border border-charcoal bg-transparent  flex flex-row justify-between w-full items-center"
 	>
 		{placeholder}
 
 		{#if showMenu}
-			<CaretUp color="rgb(0 0 0 / 0.3)" width="16px" height="16px" />
+			<CaretUp color="rgb(65 65 65)" width="14px" height="14px" />
 		{:else}
-			<CaretDown color="rgb(0 0 0 / 0.3)" width="16px" height="16px" />
+			<CaretDown color="rgb(65 65 65)" width="14px" height="14px" />
 		{/if}
 	</button>
 
@@ -41,7 +41,7 @@
 		<div
 			in:slide={{ duration: 50 }}
 			out:slide={{ duration: 50 }}
-			class="absolute w-full"
+			class="absolute w-full z-20"
 			on:mouseleave={() => {
 				mouseOverMenu = false;
 				showMenu = false;
@@ -50,12 +50,10 @@
 				mouseOverMenu = true;
 			}}
 		>
-			<div
-				class=" bg-white text-midiGray  rounded-md py-2 px-2 flex-col flex gap-1 mt-4 shadow-lg "
-			>
+			<div class="bg-white rounded-md py-2 px-2 flex-col flex gap-1 mt-4 shadow-lg ">
 				{#each items as item}
 					<button
-						class="hover:bg-midiGrayLight pl-2 py-2 rounded-md list-none text-left"
+						class="hover:bg-midiGray/25 pl-2 py-2 rounded-md list-none text-left"
 						on:click={() => {
 							onSelect(item);
 						}}
