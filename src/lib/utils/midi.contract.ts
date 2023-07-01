@@ -4,6 +4,8 @@ import { environment } from '$lib/env';
 
 export const midiContract = (signer?: Signer) => {
 	const { providerEndpoint, midiAddress } = environment;
+	console.log('MIDI: provider endpoint: ', providerEndpoint);
+	console.log('MIDI: address: ', midiAddress);
 	return new Contract(
 		midiAddress,
 		midiArtifact.abi,

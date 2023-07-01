@@ -16,9 +16,11 @@ export const load = async ({ params }: LoadEvent) => {
 		fetchListed(address)
 	]);
 
-	const availableAmount = await fetchBalanceOf(address, tokenId.toNumber());
-	const totalAmount = await fetchTotalReceived(address, tokenId.toNumber());
-	const ipfsMetadata = await get(tokenId.toString());
+	const [availableAmount, totalAmount, ipfsMetadata] = await Promise.all([
+		fetchBalanceOf(address, tokenId.toNumber()),
+		fetchTotalReceived(address, tokenId.toNumber()),
+		get(tokenId.toString())
+	]);
 
 	return {
 		availableAmount,
