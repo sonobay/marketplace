@@ -106,7 +106,13 @@
 {#if metadataIndexed == false}
 	<BlueBox>
 		<div class="flex flex-col md:flex-row gap-8">
-			<img src="/images/pack-example.png" alt="" class="w-full md:w-1/2 h-auto" />
+			{#if $mint.image}
+				<img
+					src={URL.createObjectURL($mint.image)}
+					alt=""
+					class="w-full md:w-1/2 h-auto rounded-xl"
+				/>
+			{/if}
 			<div class="flex flex-col justify-between w-full md:w-1/2">
 				<div>
 					<p class="flex gap-2 mb-6 items-center">
