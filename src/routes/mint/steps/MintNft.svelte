@@ -164,7 +164,7 @@
 				<div class="flex flex-col gap-4">
 					<a
 						href={'/midi/' + minted?.id}
-						class="bg-midiYellow text-center py-4 px-6 rounded-3xl text-base lg:text-xl text-white"
+						class="bg-midiYellow text-center py-4 px-6 rounded-3xl text-base lg:text-xl text-white hover:brightness-105"
 						>VIEW PACK</a
 					>
 					<!-- 

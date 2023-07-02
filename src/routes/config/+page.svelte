@@ -41,38 +41,37 @@
 </script>
 
 <div>
-	<h1 class="text-xl mb-4">MIDI Settings</h1>
+	<h1 class="mb-4">MIDI Settings</h1>
 
 	<div class="grid grid-cols-2 gap-4">
 		<div>
-			<span>Inputs: </span>
-
+			<h2>Inputs</h2>
 			<ul>
 				{#each inputs as input}
 					<li class="flex items-center">
-						<span
+						<button
 							on:click={(_) => midi.selectInput(input)}
-							class={`cursor-pointer px-2 ${
-								selectedInput?.id === input.id ? 'bg-emerald-500 text-white' : 'text-gray-400'
-							}`}>- {input.manufacturer}: {input.name}</span
+							class={`hover:before:scale-x-100 hover:before:origin-left relative before:w-full before:h-[2px] before:origin-right before:transition-transform before:duration-300 before:scale-x-0 before:bg-charcoal before:absolute before:left-0 before:bottom-0 ${
+								selectedInput?.id === input.id ? 'font-bold' : ''
+							}`}>{input.manufacturer}: {input.name}</button
 						>
 					</li>
 				{/each}
 			</ul>
 		</div>
 
-		<div>
-			<span>Outputs: </span>
-
+		<div class="flex flex-col">
+			<h2>Outputs</h2>
 			<ul>
 				{#each outputs as output}
-					<li class="flex items-center">
-						<span
+					<li>
+						<button
 							on:click={(_) => midi.selectOutput(output)}
-							class={`cursor-pointer px-2 ${
-								selectedOutput?.id === output.id ? 'bg-emerald-500 text-white' : 'text-gray-400'
-							}`}>- {output.manufacturer}: {output.name}</span
-						>
+							class={`hover:before:scale-x-100 hover:before:origin-left relative before:w-full before:h-[2px] before:origin-right before:transition-transform before:duration-300 before:scale-x-0 before:bg-charcoal before:absolute before:left-0 before:bottom-0 ${
+								selectedOutput?.id === output.id ? 'font-bold' : ''
+							}`}
+							>{output.manufacturer}: {output.name}
+						</button>
 					</li>
 				{/each}
 			</ul>

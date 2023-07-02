@@ -1,9 +1,9 @@
 <script lang="ts">
 	import BlueBox from '$lib/components/boxes/BlueBox.svelte';
 	import YellowButton from '$lib/components/buttons/YellowButton.svelte';
-	import Input from '../components/Input.svelte';
+	import Input from '$lib/components/inputs/Input.svelte';
 	import Tag from '../components/Tag.svelte';
-	import TagInput from '../components/TagInput.svelte';
+	import TagInput from '$lib/components/inputs/TagInput.svelte';
 	import { mint } from '$lib/stores/mint';
 	import BlueButton from '$lib/components/buttons/BlueButton.svelte';
 	import { midi } from '$lib/stores/midi';
@@ -15,6 +15,7 @@
 	import ImageRegular from '$lib/components/icons/ImageRegular.svelte';
 	import { fade } from 'svelte/transition';
 	import { connected } from 'svelte-ethers-store';
+	import PatchTable from '$lib/components/PatchTable.svelte';
 
 	export let nextAction = () => {};
 	export let previousAction = () => {};
@@ -119,47 +120,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="bg-white p-6 rounded-2xl w-full text-xs ">
-			{#each $mint.patches as patch, i}
-				<div class="my-3 flex justify-between">
-					<div class="flex gap-3 items-center w-2/6">
-						<p class="w-4">{i + 1}.</p>
-						{#if patch.image}
-							<img
-								src={URL.createObjectURL(patch.image)}
-								alt={patch.name}
-								class="w-8 h-8 object-cover rounded-md"
-							/>
-						{:else}
-							<ImageRegular size={32} color="rgb(156 163 175)" />
-						{/if}
-
-						<p class="">
-							{patch.name.length > 12 ? patch.name.slice(0, 12) + '...' : patch.name}
-						</p>
-					</div>
-
-					<p class="flex items-center text-left w-2/6">
-						{patch.tags.length > 1 ? patch.tags[0] + '...' : patch.tags[0]}
-					</p>
-
-					<div class="flex gap-3 w-2/6 justify-end">
-						<button
-							class="rounded-2xl px-4 py-1 bg-charcoal text-white text-center"
-							on:click={() => {
-								sendMidiToOutput(entry.midi ?? new Uint8Array(0));
-							}}>SEND TO DEVICE</button
-						>
-						<button
-							class="rounded-2xl px-4 py-1 bg-charcoal text-white text-center"
-							on:click={() => {
-								removePatch(patch);
-							}}>DELETE</button
-						>
-					</div>
-				</div>
-			{/each}
-		</div>
+		<PatchTable patches={$mint.patches} {removePatch} />
 	</BlueBox>
 </div>
 

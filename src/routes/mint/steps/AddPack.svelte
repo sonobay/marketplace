@@ -3,10 +3,10 @@
 	import BlueButton from '$lib/components/buttons/BlueButton.svelte';
 	import YellowButton from '$lib/components/buttons/YellowButton.svelte';
 	import Tag from '../components/Tag.svelte';
-	import TagInput from '../components/TagInput.svelte';
+	import TagInput from '$lib/components/inputs/TagInput.svelte';
 	import { mint } from '$lib/stores/mint';
-	import Input from '../components/Input.svelte';
-	import TextArea from '../components/TextArea.svelte';
+	import Input from '$lib/components/inputs/Input.svelte';
+	import TextArea from '$lib/components/inputs/TextArea.svelte';
 	import { isPositiveInteger } from '$lib/utils';
 	import ImageInput from '$lib/components/inputs/ImageInput.svelte';
 	import { fade } from 'svelte/transition';

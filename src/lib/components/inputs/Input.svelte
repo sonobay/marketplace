@@ -1,52 +1,20 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
-	export let id: string;
-	export let name: string;
-	export let value: string;
-	export let required = false;
-	export let type: 'text' | 'number' = 'text';
-	export let placeholder = '';
-
-	const inputClass = 'rounded-[3px] w-full px-2 py-1 bg-white';
-
-	const dispatch = createEventDispatcher<{
-		change: {
-			e: Event & {
-				currentTarget: EventTarget & HTMLInputElement;
-			};
-		};
-		keyup: {
-			e: Event & {
-				currentTarget: EventTarget & HTMLInputElement;
-			};
-		};
-	}>();
+	export let placeholder = 'Placeholder';
+	export let max = 20;
+	export let min = 2;
+	export let number = false;
+	export let onInputAction = (value: string) => {};
+	export let value = '';
 </script>
 
-<div class="rounded bg-gradient-to-b p-0.5 from-gray-300 to-gray-400 w-full flex">
-	{#if type === 'text'}
-		<input
-			{id}
-			{name}
-			bind:value
-			class={inputClass}
-			type="text"
-			{required}
-			{placeholder}
-			on:change={(event) => dispatch('change', { e: event })}
-			on:keyup={(event) => dispatch('keyup', { e: event })}
-		/>
-	{:else if type === 'number'}
-		<input
-			{id}
-			{name}
-			bind:value
-			class={inputClass}
-			type="number"
-			{required}
-			on:change={(event) => dispatch('change', { e: event })}
-			on:keyup={(event) => dispatch('keyup', { e: event })}
-		/>
-	{/if}
-</div>
+<input
+	bind:value
+	maxlength={max}
+	minlength={min}
+	class="rounded-xl border border-charcoal bg-transparent px-3 py-1 focus:outline-none w-full"
+	on:input={() => {
+		if (number) value = value.replace(/\D/g, '');
+		onInputAction(value);
+	}}
+	{placeholder}
+/>

@@ -102,7 +102,7 @@
 	/>
 
 	<!-- Patch Table -->
-	<PatchTable entries={midi.metadata.properties.entries} />
+	<PatchTable patches={midi.metadata.properties.entries} removeButton={false} />
 </div>
 
 <!-- modal -->
