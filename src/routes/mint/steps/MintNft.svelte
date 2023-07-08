@@ -31,6 +31,7 @@
 			return;
 		}
 		metadataUploaded = true;
+		console.log('metadata uploaded: ', json);
 		const receipt = await signMint(json);
 		mintTxSigned = true;
 		pollMIDI(receipt.events[0].args.id);
@@ -88,13 +89,17 @@
 
 	const signMint = async (json: { metadata: string }) => {
 		const midi = midiContract($signer);
+		console.log('prompt sign tx');
 		const tx = await midi.mint(
 			$signerAddress,
 			BigNumber.from($mint.amountToMint),
 			json.metadata,
 			[]
 		);
+		console.log('tx is: ', tx);
 		const receipt = await tx.wait();
+		console.log('waiting complete');
+		console.log('receipt is: ', receipt);
 		return receipt;
 	};
 

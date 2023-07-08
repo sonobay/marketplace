@@ -29,7 +29,7 @@
 			</div>
 
 			<p class="flex items-center text-left w-2/6">
-				{patch.tags.length > 1 ? patch.tags[0] + '...' : patch.tags[0]}
+				{patch.tags.length > 1 ? patch.tags[0] + '...' : patch.tags[0] ?? ''}
 			</p>
 
 			<div class="flex gap-3 w-2/6 justify-end">
