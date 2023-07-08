@@ -104,8 +104,6 @@ export const POST = async ({ request }: { request: Request }) => {
 			metadata: metadata.url
 		});
 	} catch (err) {
-		console.log('error occurred');
-		console.log(err);
 		return json({ message: err }, { status: 500 });
 	}
 };
