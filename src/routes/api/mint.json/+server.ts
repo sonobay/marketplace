@@ -94,6 +94,8 @@ export const POST = async ({ request }: { request: Request }) => {
 		properties: { devices, entries, tags: packTags }
 	};
 
+	console.log('NFT_STORAGE_API_KEY: ', NFT_STORAGE_API_KEY);
+
 	const client = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 	try {
@@ -102,6 +104,8 @@ export const POST = async ({ request }: { request: Request }) => {
 			metadata: metadata.url
 		});
 	} catch (err) {
+		console.log('error occurred');
+		console.log(err);
 		return json({ message: err }, { status: 500 });
 	}
 };

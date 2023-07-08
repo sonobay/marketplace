@@ -90,6 +90,9 @@
 	const signMint = async (json: { metadata: string }) => {
 		const midi = midiContract($signer);
 		console.log('prompt sign tx');
+		console.log('signer address is: ', $signerAddress);
+		console.log('amount to mint is: ', BigNumber.from($mint.amountToMint).toString());
+
 		const tx = await midi.mint(
 			$signerAddress,
 			BigNumber.from($mint.amountToMint),
