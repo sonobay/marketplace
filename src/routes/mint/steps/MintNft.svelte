@@ -150,7 +150,7 @@
 {:else}
 	<Greenbox>
 		<div class="flex flex-col md:flex-row gap-8">
-			<img src="/images/pack-example.png" alt="" class="w-full md:w-1/2 h-auto " />
+			<img src="" alt="" class="w-full md:w-1/2 h-auto " />
 			<div class="flex flex-col justify-between w-full md:w-1/2">
 				<div>
 					<p class="flex gap-2 mb-6 items-center font-bold">

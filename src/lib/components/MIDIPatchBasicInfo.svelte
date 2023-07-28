@@ -31,7 +31,7 @@
 	});
 </script>
 
-<div class="flex justify-between mb-4">
+<div class="flex justify-between mb-4 pt-32">
 	<div class="flex">
 		<div class="rounded-xl overflow-hidden w-72 h-72">
 			{#if midi.metadata.image}

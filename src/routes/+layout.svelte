@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
 	import '../app.css';
-
 	import { chainId } from 'svelte-ethers-store';
 	import { onDestroy, onMount } from 'svelte';
 	import type { Unsubscriber } from 'svelte/store';
@@ -31,6 +30,6 @@
 
 <Header {devices} />
 
-<main class="container mx-auto py-8 px-4 text-charcoal">
+<main class="mx-auto text-charcoal">
 	<slot />
 </main>

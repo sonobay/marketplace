@@ -172,14 +172,14 @@
 
 		<div class="flex justify-start mt-8">
 			<div class="lg:mr-3 lg:w-1/6" />
-			<YellowButton text="ADD DEVICES" action={addDevice} />
+			<YellowButton text="ADD DEVICE" action={addDevice} />
 		</div>
 
 		<div class="flex justify-start mt-8">
 			<div class="lg:mr-3 lg:w-1/6" />
 			<div class="grid grid-cols md:grid-cols-2 gap-2">
 				{#each $mint.devices as device}
-					<div class="rounded-2xl  bg-white py-2 px-4 justify-between flex gap-2">
+					<div class="rounded-3xl text-white  bg-midiBlue py-2 px-4 justify-between flex gap-2">
 						<p>
 							{device.manufacturer}: {device.name}
 						</p>
@@ -188,7 +188,7 @@
 								removeDevice(device);
 							}}
 						>
-							<XMark color="rgb(65 65 65)" />
+							<XMark color="#FFFF" />
 						</button>
 					</div>
 				{/each}

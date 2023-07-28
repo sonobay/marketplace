@@ -12,6 +12,7 @@
 	viewBox="0 0 82.95 83.06"
 	{width}
 	{height}
+	aria-hidden="true"
 	><defs
 		><style>
 		</style></defs
