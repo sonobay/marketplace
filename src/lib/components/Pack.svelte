@@ -6,13 +6,13 @@
 	import { ethers } from 'ethers';
 	import Synth from './icons/Synth.svelte';
 	export let listing: ListingRow;
-	let image=listing.midi?.metadata?.image
+	$: image=listing.midi?.metadata?.image
 									? listing.midi.metadata.image.replace('ipfs://', 'https://nftstorage.link/ipfs/')
 									: ''
-	let name = listing.midi?.metadata?.name ? listing.midi.metadata.name : ''
-	let manufacturer = listing.midi?.metadata?.properties?.devices[0] ? listing.midi?.metadata?.properties?.devices[0].manufacturer : "";
-	let model = listing.midi?.metadata?.properties?.devices[0] ? listing.midi?.metadata?.properties?.devices[0].name : "";
-	console.log(model);
+	$: name = listing.midi?.metadata?.name ? listing.midi.metadata.name : ''
+	$: manufacturer = listing.midi?.metadata?.properties?.devices[0] ? listing.midi?.metadata?.properties?.devices[0].manufacturer : "";
+	$: model = listing.midi?.metadata?.properties?.devices[0] ? listing.midi?.metadata?.properties?.devices[0].name : "";
+	
 </script>
 
 <div class="relative">

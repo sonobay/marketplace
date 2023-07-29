@@ -14,7 +14,7 @@
 	let deviceId = device.id;
 
 	let pageIndex = 0;
-	let listingsPerPage = 3;
+	let listingsPerPage = 9;
 	let sliceIndex = listingsPerPage;
 
 	$: sliceIndex = calculateSliceIndex(pageIndex);
