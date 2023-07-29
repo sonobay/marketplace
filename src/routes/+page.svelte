@@ -8,6 +8,7 @@
 	import {headerCSS} from '$lib/stores/header.js';
 	import { fade } from 'svelte/transition';
 	import Footer from '$lib/components/Footer.svelte';
+	import BlueLink from '$lib/components/buttons/BlueLink.svelte';
 
 	let scrollContainer: HTMLDivElement;
 	let innerWidth: number;
@@ -44,7 +45,7 @@
 			<h1 class="text-white text-5xl" id="frontpage-header">Create something completley new</h1>
 			<p class="text-midiYellowLight">Connect your synthesizer to build NFT packs and explore new sounds to grow your collection</p>
 			<div>
-				<a href="/config" class="shadow-md bg-white border-midiBlue border-2 text-center py-2 px-6 rounded-3xl text-base lg:text-xl text-midiBlue hover:brightness-105">CONNECT</a>
+				<BlueLink href="/config" text="CONNECT"></BlueLink>
 			</div>	
 		</div>
 		<img class="w-full md:w-1/2" src="/images/frontpage/frontpage-image.webp" alt="">
@@ -70,7 +71,7 @@
 			<h1 class="text-5xl" id="marketplace-header">List your creations on the marketplace</h1>
 			<p>Once your device is connected, youre ready to upload your original sounds and start selling</p>
 			<div>
-				<a href="/mint" class="shadow-md bg-white  border-midiBlue border-2 text-center py-2 px-6 rounded-3xl text-base lg:text-xl text-midiBlue hover:brightness-105">CREATE PACK</a>
+				<BlueLink href="/mint" text="CREATE PACK"></BlueLink>
 			</div>	
 		</div>
 	</div>
@@ -82,7 +83,7 @@
 			<h1 class="text-5xl" id="leaderboard-header">Top the charts on the Sono bay leaderboard</h1>
 			<p>Users smashing sells and building massive collections are rewarded with goodies + cred</p>
 			<div>
-				<a href="/leaderboard" class="shadow-md bg-white  border-midiBlue border-2 text-center py-2 px-6 rounded-3xl text-base lg:text-xl text-midiBlue hover:brightness-105">LEADERBOARD</a>
+				<BlueLink href="/leaderboard" text="LEADERBOARD"></BlueLink>
 			</div>	
 		</div>
 		<div class="hidden lg:flex w-[40%] relative">

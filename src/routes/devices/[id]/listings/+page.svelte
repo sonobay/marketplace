@@ -5,11 +5,26 @@
 	import { onDestroy } from 'svelte';
 	import type { ListingRow } from '$lib/types/listing-row';
 	import DeviceMidiSearch from '$lib/components/DeviceMidiSearch.svelte';
+	import CaretLeft from '$lib/components/icons/CaretLeft.svelte';
+	import CaretRight from '$lib/components/icons/CaretRight.svelte';
 
 	export let data: { device: Device; listings: ListingRow[] };
 
 	let { device, listings } = data;
 	let deviceId = device.id;
+
+	let pageIndex = 0;
+	let listingsPerPage = 3;
+	let sliceIndex = listingsPerPage;
+
+	$: sliceIndex = calculateSliceIndex(pageIndex);
+	$: visible = listings.slice(pageIndex, sliceIndex);
+
+	function calculateSliceIndex(page: number) {
+		if (pageIndex == 0) return listingsPerPage;
+		if (pageIndex + listingsPerPage > listings.length) return listings.length;
+		return pageIndex + listingsPerPage;
+	}
 
 	/**
 	 * used when device id url param changes
@@ -85,15 +100,12 @@
 		</div>
 		
 		<div>
-			{#if listings && listings.length > 0}
+			{#if visible && visible.length > 0}
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-8">
-					{#each listings as listing}
+					{#each visible as listing}
 						<a href={`/listing/${listing.listing_address}`}>
 							<Pack
-								image={listing.midi ? listing?.midi.metadata.image : undefined}
-								name={listing.midi ? listing.midi.metadata.name : ''}
-								entries={listing.midi ? listing.midi.metadata.properties.entries : []}
-								totalSupply={listing.midi?.totalSupply ?? 0}
+							{listing}
 							/>
 						</a>
 					{/each}
@@ -106,6 +118,27 @@
 				</div>
 			{/if}
 	</div>
+
+	{#if visible && listingsPerPage < listings.length}
+	<div class="flex justify-end mt-4">
+		<div>
+			<button
+				class="bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				disabled={pageIndex <= 0}
+				on:click={() => {
+					pageIndex -= listingsPerPage;
+				}}><CaretLeft /></button
+			>
+			<button
+				disabled={sliceIndex == listings.length}
+				class="bg-transparent p-2 focus:outline-none disabled:opacity-40"
+				on:click={() => {
+					pageIndex += listingsPerPage;
+				}}><CaretRight /></button
+			>
+		</div>
+	</div>
+{/if}
 
 </div>
 </section>
