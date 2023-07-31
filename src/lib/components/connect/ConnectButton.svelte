@@ -21,7 +21,7 @@
 	};
 
 	const baseClass =
-		'bg-midiYellow border-midiYellow border-2 text-black rounded-xl py-2 px-4 uppercase text-sm';
+		'bg-midiYellow border-midiYellow border-2 text-black rounded-3xl py-2 px-4 uppercase text-sm';
 
 	const dispatch = createEventDispatcher();
 </script>

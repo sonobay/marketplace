@@ -6,6 +6,12 @@
 	import AddPack from './steps/AddPack.svelte';
 	import AddMidi from './steps/AddMidi.svelte';
 	import MintNft from './steps/MintNft.svelte';
+	import {headerCSS} from '$lib/stores/header.js';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		$headerCSS = "text-black before:bg-black";
+	})
 
 	export let data: { devices: Device[] };
 
@@ -19,7 +25,7 @@
 	}
 </script>
 
-<section class="mt-16 md:mt-0 flex flex-col justify-center items-center w-full ">
+<section class="pt-32 flex flex-col justify-center items-center w-full px-4 ">
 	<div class="text-center mb-12">
 		<h1 class="font-bold text-5xl mb-6">Minting MIDI NFT Pack</h1>
 		<div class="flex justify-center gap-4 md:gap-10">

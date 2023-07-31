@@ -12,6 +12,7 @@
 	viewBox="0 0 93.42 75.77"
 	{width}
 	{height}
+	aria-hidden="true"
 	><path d="m93.4,15.06H.07V0h93.33v15.06Z" fill={color} /><path
 		fill={color}
 		d="m93.42,60.63v14.96c-.59.19-91.99.25-93.27.08-.16-.58-.21-13.93-.05-15.04h93.32Z"

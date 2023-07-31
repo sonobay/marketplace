@@ -52,8 +52,8 @@
 	onDestroy(unsubscribe);
 </script>
 
-<div class="mb-12 sticky top-16 md:top-0 z-10 py-6 bg-white">
-	<div class="flex md:flex-row flex-col justify-between md:items-center mb-4 gap-2">
+<div class="mb-12 sticky z-10 pb-6 bg-white pt-16 md:pt-32 px-4 ">
+	<div class="flex justify-between mb-4 gap-2">
 		<h1 class="hidden md:inline">{device.manufacturer} {device.name}</h1>
 
 		<!-- hiding -->

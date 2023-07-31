@@ -1,4 +1,5 @@
 import type { IPFSEntry } from './entry';
+import type { Device } from './device';
 
 export interface IPFSMetadata {
 	name: string;
@@ -6,5 +7,6 @@ export interface IPFSMetadata {
 	image: string;
 	properties: {
 		entries: IPFSEntry[];
+		devices: Device[];
 	};
 }

@@ -1,5 +1,6 @@
 import { environment } from '$lib/env';
 import type { Device } from '$lib/types/device';
+import {getLatestListings} from "$lib/api/listings";
 
 export let ssr = true;
 
@@ -11,6 +12,7 @@ export const load = async () => {
 		throw new Error(`error fetching devices`);
 	}
 	const devices = (await res.json()) as Device[];
+	const  latestListings  = await getLatestListings();
 
-	return { devices };
+	return { devices, listings: latestListings };
 };

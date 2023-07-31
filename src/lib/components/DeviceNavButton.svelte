@@ -5,14 +5,14 @@
 	export let connected: boolean;
 </script>
 
-<a href="/config" class="flex items-center text-sm border-black border-2 relative rounded-xl px-4">
+<a href="/config" class="flex items-center text-sm border-black bg-white border-2 relative rounded-3xl px-4">
 	<span>DEVICE</span>
 
 	<div class="absolute -top-2 -right-2">
 		{#if connected}
-			<div class="bg-white rounded-full"><CircleCheck /></div>
+			<CircleCheck />
 		{:else}
-			<span><TriangleExclamation /></span>
+			<TriangleExclamation />
 		{/if}
 	</div>
 </a>
