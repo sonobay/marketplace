@@ -6,12 +6,13 @@
 	import AddPack from './steps/AddPack.svelte';
 	import AddMidi from './steps/AddMidi.svelte';
 	import MintNft from './steps/MintNft.svelte';
-	import {headerCSS} from '$lib/stores/header.js';
+	import { headerCSS } from '$lib/stores/header.js';
 	import { onMount } from 'svelte';
+	import Container from '$lib/components/Container.svelte';
 
 	onMount(() => {
-		$headerCSS = "text-black before:bg-black";
-	})
+		$headerCSS = 'text-black before:bg-black';
+	});
 
 	export let data: { devices: Device[] };
 
@@ -25,29 +26,31 @@
 	}
 </script>
 
-<section class="pt-32 flex flex-col justify-center items-center w-full px-4 ">
-	<div class="text-center mb-12">
-		<h1 class="font-bold text-5xl mb-6">Minting MIDI NFT Pack</h1>
-		<div class="flex justify-center gap-4 md:gap-10">
-			<StepHeader blue={$mint.step >= 1} text="Add Devices" />
-			<StepHeader blue={$mint.step >= 2} text="Add Pack Info" />
-			<StepHeader blue={$mint.step >= 3} text="Add MIDI Patches" />
-			<StepHeader blue={$mint.step >= 4} text="Mint NFT" />
+<Container>
+	<section class="flex flex-col justify-center items-center w-full px-4 ">
+		<div class="text-center mb-6">
+			<h1 class="font-bold text-5xl mb-6">Minting MIDI NFT Pack</h1>
+			<div class="flex justify-center gap-4 md:gap-10">
+				<StepHeader blue={$mint.step >= 1} text="Add Devices" />
+				<StepHeader blue={$mint.step >= 2} text="Add Pack Info" />
+				<StepHeader blue={$mint.step >= 3} text="Add MIDI Patches" />
+				<StepHeader blue={$mint.step >= 4} text="Mint NFT" />
+			</div>
 		</div>
-	</div>
 
-	<div class="w-full lg:w-[800px]">
-		{#if $mint.step == 1}
-			<AddDevice devices={data.devices} nextAction={nextStep} />
-		{/if}
-		{#if $mint.step == 2}
-			<AddPack nextAction={nextStep} previousAction={previousStep} />
-		{/if}
-		{#if $mint.step == 3}
-			<AddMidi nextAction={nextStep} previousAction={previousStep} />
-		{/if}
-		{#if $mint.step == 4}
-			<MintNft />
-		{/if}
-	</div>
-</section>
+		<div class="w-full">
+			{#if $mint.step == 1}
+				<AddDevice devices={data.devices} nextAction={nextStep} />
+			{/if}
+			{#if $mint.step == 2}
+				<AddPack nextAction={nextStep} previousAction={previousStep} />
+			{/if}
+			{#if $mint.step == 3}
+				<AddMidi nextAction={nextStep} previousAction={previousStep} />
+			{/if}
+			{#if $mint.step == 4}
+				<MintNft />
+			{/if}
+		</div>
+	</section>
+</Container>

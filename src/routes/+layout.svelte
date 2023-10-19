@@ -30,6 +30,6 @@
 
 <Header {devices} />
 
-<main class="mx-auto text-charcoal">
+<main class="text-charcoal py-8 h-screen">
 	<slot />
 </main>

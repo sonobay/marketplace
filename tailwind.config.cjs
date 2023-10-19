@@ -21,7 +21,7 @@ module.exports = {
 				midiGray: '#7F7F7F',
 				midiGrayLight: '#D9D9D9',
 				grayLight: '#F2F2F2',
-				black: "#1E2326",
+				black: '#1E2326',
 				midiGreen: '#22c55e',
 				midiGreenLight: '#4ade80'
 			}
@@ -30,8 +30,8 @@ module.exports = {
 			screens: {
 				sm: '640px',
 				md: '768px',
-				lg: '1024px'
-				// xl: '768px'
+				lg: '1024px',
+				xl: '1024px'
 			}
 		}
 	},

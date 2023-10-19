@@ -1,10 +1,10 @@
 <script lang="ts">
 	export let data: { midi: MIDI };
 	import { signerAddress, signer } from 'svelte-ethers-store';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { isApprovedForAll, midiContract, setApprovalForAll } from '$lib/utils/midi.contract';
-	import { createListing } from '$lib/utils/market.contract';
+	import { createListing, fetchListingEvents } from '$lib/utils/market.contract';
 	import { BigNumber } from 'ethers';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -13,6 +13,8 @@
 	import MidiPatchBasicInfo from '$lib/components/MIDIPatchBasicInfo.svelte';
 	import MidiSubNav from '$lib/components/MIDISubNav.svelte';
 	import { environment } from '$lib/env';
+	import Container from '$lib/components/Container.svelte';
+	import type { Listing } from '$lib/types/listing';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
@@ -23,6 +25,11 @@
 	let approvalIsLoading = false;
 	const tokenId = $page.params.id;
 	const { marketAddress } = environment;
+	let listings: Listing[] = [];
+
+	onMount(() => {
+		fetchListings();
+	});
 
 	const checkOwner = async () => {
 		if (!$signerAddress) {
@@ -47,6 +54,10 @@
 
 		const fetchBalance = await midiContract().balanceOf($signerAddress, id);
 		tokenBalance = BigNumber.from(fetchBalance);
+	};
+
+	const fetchListings = async () => {
+		listings = await fetchListingEvents(+$page.params.id);
 	};
 
 	const sub = signerAddress.subscribe(async (address) => {
@@ -90,7 +101,7 @@
 	onDestroy(sub);
 </script>
 
-<div>
+<Container>
 	<MidiPatchBasicInfo {midi} {tokenBalance} on:refreshBalance={() => fetchBalance()} />
 
 	<!-- Sub nav-->
@@ -102,8 +113,10 @@
 	/>
 
 	<!-- Patch Table -->
-	<PatchTable patches={midi.metadata.properties.entries} removeButton={false} />
-</div>
+	<div class="rounded-xl shadow">
+		<PatchTable patches={midi.metadata.properties.entries} removeButton={false} />
+	</div>
+</Container>
 
 <!-- modal -->
 <Dialog id="listings-dialog" visible={dialogVisible} on:close={toggleModal}>

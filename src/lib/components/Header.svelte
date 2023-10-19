@@ -11,7 +11,9 @@
 	import XMark from './icons/XMark.svelte';
 	import Filter from './icons/Filter.svelte';
 	import { onDestroy } from 'svelte';
-	import {headerCSS} from '$lib/stores/header.js';
+	import { headerCSS } from '$lib/stores/header.js';
+	import Logo from './Logo.svelte';
+	import Container from './Container.svelte';
 
 	export let devices: Device[];
 
@@ -65,29 +67,25 @@
 	</button>
 {/if}
 
-<header>
-	<nav class="hidden md:flex justify-center py-4 px-4 absolute top-0 w-full z-20" aria-label="Main navigation">
-		<div class="flex justify-between container">
+<header class="flex bg-white shadow">
+	<nav class="hidden md:flex justify-center py-4 px-4 w-full z-20" aria-label="Main navigation">
+		<Container>
+			<div class="flex justify-between">
 				<a href="/" class="flex items-center">
-					<img src="/images/Logo.png" alt="Sonobay.xyz" class="h-8 ml-2" />
+					<Logo />
 				</a>
-			<div class="flex gap-4">
-				<div class="flex items-center">
-					<a
-						class={"text-sm hover:before:scale-x-100 hover:before:origin-left relative before:w-full before:h-[2px] before:origin-right before:transition-transform before:duration-300 before:scale-x-0 before:absolute before:left-0 before:bottom-0 " + $headerCSS}
-						href="/mint">CREATE</a
-					>
-				</div>
+				<div class="flex gap-4">
 					<div class="flex items-center">
-						<a
-							class={"flex items-center text-sm hover:before:scale-x-100 hover:before:origin-left relative before:w-full before:h-[2px] before:origin-right before:transition-transform before:duration-300 before:scale-x-0  before:absolute before:left-0 before:bottom-0 " + $headerCSS}
-							href="/devices">MARKET</a
-						>
+						<a class={'text-sm relative'} href="/mint">CREATE</a>
 					</div>
-				<DeviceNavButton connected={deviceConnected} />
-				<ConnectButtonWrapper />
+					<div class="flex items-center">
+						<a class={'flex items-center text-sm relative'} href="/devices">MARKET</a>
+					</div>
+					<DeviceNavButton connected={deviceConnected} />
+					<ConnectButtonWrapper />
+				</div>
 			</div>
-		</div>
+		</Container>
 	</nav>
 
 	<nav class="flex md:hidden fixed top-0 w-full z-20" aria-label="Main navigation">

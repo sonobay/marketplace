@@ -196,6 +196,6 @@
 		</div>
 	</BlueBox>
 </div>
-<div class="flex justify-end mt-12">
+<div class="flex justify-end">
 	<BlueButton text="NEXT" action={nextAction} disabled={!done} />
 </div>

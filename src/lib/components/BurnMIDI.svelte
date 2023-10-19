@@ -6,6 +6,7 @@
 	import Button from './Button.svelte';
 	import { environmentNetwork, etherscanBaseUrl } from '$lib/utils';
 	import { signer, signerAddress } from 'svelte-ethers-store';
+	import BurnIcon from './icons/BurnIcon.svelte';
 
 	export let balance: BigNumber;
 	export let id: number;
@@ -38,7 +39,14 @@
 	};
 </script>
 
-<Button on:click={(_) => toggleModal()} text="Burn" />
+<!-- <Button on:click={(_) => toggleModal()} text="Burn" /> -->
+
+<button on:click={(_) => toggleModal()}>
+	<div class="flex items-center">
+		<BurnIcon />
+		<span class="ml-1">Burn</span>
+	</div>
+</button>
 
 <!-- modal -->
 <Dialog id="burn-dialog" visible={dialogVisible} on:close={toggleModal}>

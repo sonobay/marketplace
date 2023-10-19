@@ -58,7 +58,7 @@
 	const labelClass = 'text-xs text-gray-500 font-bold';
 </script>
 
-<div class="flex flex-col shadow-lg rounded border mb-4 py-4 px-8">
+<div class="flex flex-col shadow rounded mb-4 py-4 px-8 bg-white">
 	<a class="flex flex-col" href={`/listing/${listing.listing}`}>
 		<div class="flex flex-col mb-1">
 			<span class={labelClass}>Listing Address</span>

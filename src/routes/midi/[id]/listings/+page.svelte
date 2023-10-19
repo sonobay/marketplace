@@ -14,6 +14,7 @@
 	import MidiPatchBasicInfo from '$lib/components/MIDIPatchBasicInfo.svelte';
 	import MidiSubNav from '$lib/components/MIDISubNav.svelte';
 	import { environment } from '$lib/env';
+	import Container from '$lib/components/Container.svelte';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
@@ -101,7 +102,7 @@
 	onDestroy(sub);
 </script>
 
-<div>
+<Container>
 	<MidiPatchBasicInfo {midi} {tokenBalance} />
 
 	<!-- Sub nav-->
@@ -114,10 +115,12 @@
 
 	<!-- Listings -->
 	{#if listings.length > 0}
-		<div class="grid grid-cols-3 gap-4">
-			{#each listings as listing}
-				<ListingItem {listing} on:purchaseComplete={() => fetchBalance()} />
-			{/each}
+		<div class="flex">
+			<div class="grid grid-cols-3 gap-4">
+				{#each listings as listing}
+					<ListingItem {listing} on:purchaseComplete={() => fetchBalance()} />
+				{/each}
+			</div>
 		</div>
 	{:else}
 		<div
@@ -126,7 +129,7 @@
 			No Listings Found
 		</div>
 	{/if}
-</div>
+</Container>
 
 <!-- modal -->
 <Dialog id="listings-dialog" visible={dialogVisible} on:close={toggleModal}>

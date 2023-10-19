@@ -3,7 +3,7 @@
 	import type { MintEntry } from '$lib/types/entry';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { midi } from '$lib/stores/midi';
-	import Tag from './Tag.svelte';
+	import Tag from './TagOld.svelte';
 	import Input from './inputs/Input.svelte';
 	import CircleCheck from './icons/CircleCheck.svelte';
 	import TriangleExclamation from './icons/TriangleExclamation.svelte';

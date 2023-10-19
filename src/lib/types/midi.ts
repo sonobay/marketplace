@@ -6,6 +6,7 @@ export type MIDI = {
 	createdBy: string;
 	metadata: IPFSMetadata;
 	totalSupply: number;
+	tags: string[];
 	midi_devices: {
 		id?: number;
 		device: Device;
