@@ -78,7 +78,7 @@
 	};
 </script>
 
-<div in:fade class="min-h-[365px]">
+<div in:fade|global class="min-h-[365px]">
 	<BlueBox>
 		{#if setManufacturerManually}
 			<div class="lg:flex items-start justify-start mb-6">

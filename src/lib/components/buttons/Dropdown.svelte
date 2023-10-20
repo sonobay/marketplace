@@ -39,8 +39,8 @@
 
 	{#if showMenu}
 		<div
-			in:slide={{ duration: 50 }}
-			out:slide={{ duration: 50 }}
+			in:slide|global={{ duration: 50 }}
+			out:slide|global={{ duration: 50 }}
 			class="absolute w-full z-20"
 			on:mouseleave={() => {
 				mouseOverMenu = false;
