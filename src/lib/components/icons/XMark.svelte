@@ -6,7 +6,7 @@
 </script>
 
 <svg
-	in:fade
+	in:fade|global
 	id="Layer_1"
 	xmlns="http://www.w3.org/2000/svg"
 	viewBox="0 0 82.95 83.06"

@@ -43,7 +43,7 @@
 	}
 </script>
 
-<div in:fade class="min-h-[365px]">
+<div in:fade|global class="min-h-[365px]">
 	<BlueBox>
 		<div class="flex lg:flex-row flex-col items-center md:items-start gap-6">
 			<ImageInput

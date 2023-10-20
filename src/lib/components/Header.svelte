@@ -111,8 +111,8 @@
 			</div>
 			{#if openMenu}
 				<div
-					in:slide={{ duration: 300 }}
-					out:slide={{ duration: 300 }}
+					in:slide|global={{ duration: 300 }}
+					out:slide|global={{ duration: 300 }}
 					class="w-full py-8 flex flex-col gap-4 bg-midiYellow px-4"
 				>
 					<a href="#">CREATE</a>

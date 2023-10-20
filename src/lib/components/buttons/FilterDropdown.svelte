@@ -44,14 +44,14 @@
 				<CaretDown color="rgb(65 65 65)" width="16px" height="16px" />
 			{/if}
 		{:else}
-			<div in:scale class="rounded-full bg-midiBlue text-white px-2">{selected.length}</div>
+			<div in:scale|global class="rounded-full bg-midiBlue text-white px-2">{selected.length}</div>
 		{/if}
 	</button>
 
 	{#if showMenu}
 		<div
-			in:slide={{ duration: 50 }}
-			out:slide={{ duration: 50 }}
+			in:slide|global={{ duration: 50 }}
+			out:slide|global={{ duration: 50 }}
 			class="absolute w-full"
 			on:mouseleave={() => {
 				mouseOverMenu = false;

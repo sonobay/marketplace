@@ -116,8 +116,8 @@
 				<div class="hidden absolute top-0 bottom-6 left-2  m-auto lg:flex items-center z-10">
 					<button
 						aria-label="Scroll left"
-						in:fade
-						out:fade
+						in:fade|global
+						out:fade|global
 						on:click={scrollLeft}
 						class="bg-gray-50 border border-white hover:cursor-pointer rounded-full p-2 sm:p-4 shadow-md hover:shadow-lg "
 					>
@@ -131,8 +131,8 @@
 				>
 					<button
 						aria-label="Scroll right"
-						in:fade
-						out:fade
+						in:fade|global
+						out:fade|global
 						on:click={scrollRight}
 						class="bg-gray-50 border border-white hover:cursor-pointer rounded-full p-2 sm:p-4 shadow-md hover:shadow-lg "
 					>
