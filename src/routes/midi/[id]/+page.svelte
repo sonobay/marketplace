@@ -113,9 +113,9 @@
 	/>
 
 	<!-- Patch Table -->
-	<div class="rounded-xl shadow">
+	<!-- <div class="rounded-xl shadow">
 		<PatchTable patches={midi.metadata.properties.entries} removeButton={false} />
-	</div>
+	</div> -->
 </Container>
 
 <!-- modal -->

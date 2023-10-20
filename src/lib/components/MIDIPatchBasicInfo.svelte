@@ -10,6 +10,7 @@
 	import { environment } from '$lib/env';
 	import Tag from './Tag.svelte';
 	import Cart from './icons/Cart.svelte';
+	import PatchTable from './PatchTable.svelte';
 
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
@@ -129,4 +130,7 @@
 			{/if}
 		</div>
 	{/if}
+
+	<!-- Patch Table -->
+	<PatchTable {midi} />
 </div>
