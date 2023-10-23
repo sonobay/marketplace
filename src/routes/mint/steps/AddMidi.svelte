@@ -107,7 +107,9 @@
 				</div>
 
 				<div class="mt-8 mb-8 flex flex-col sm:flex-row gap-4 items-center">
-					<YellowButton text="ADD TO PACK" disabled={!validEntry} action={addPatch} />
+					<YellowButton disabled={!validEntry} action={addPatch}>
+						<span>Add to Pack</span>
+					</YellowButton>
 					<div>
 						{#if entry.midi && entry.midi.length > minMidiLength}
 							<p class="flex gap-2 items-center"><CircleCheck /> MIDI Received</p>
@@ -126,5 +128,7 @@
 
 <div class="flex justify-end mt-12 gap-4">
 	<YellowButton text="BACK" action={previousAction} />
-	<BlueButton text="MINT NFT" action={nextAction} disabled={!done || $connected == undefined} />
+	<BlueButton action={nextAction} disabled={!done || $connected == undefined}>
+		<span class="uppercase">Mint NFT</span>
+	</BlueButton>
 </div>

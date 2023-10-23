@@ -30,6 +30,6 @@
 
 <Header {devices} />
 
-<main class="text-charcoal py-8 h-screen">
+<main class="text-charcoal py-8">
 	<slot />
 </main>

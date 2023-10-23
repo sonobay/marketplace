@@ -15,17 +15,17 @@
 
 	$: done = $mint.devices.length > 0;
 
-	let selectedManufacturer: String | undefined;
-	let selectedDevice: String | undefined;
+	let selectedManufacturer: string | undefined;
+	let selectedDevice: string | undefined;
 	let manufacturerDevices: Device[] = [];
 	let setManufacturerManually = false;
 	let setDeviceManually = false;
 
 	const filterManufacturerDevices = () => {
-		if (selectedManufacturer == undefined) return;
+		if (!selectedManufacturer) return;
 
 		manufacturerDevices = devices.filter(
-			(device) => device.manufacturer.toUpperCase() === selectedManufacturer.toUpperCase()
+			(device) => device.manufacturer.toUpperCase() === selectedManufacturer?.toUpperCase()
 		);
 
 		if (!manufacturerDevices[0]) return;
@@ -172,7 +172,9 @@
 
 		<div class="flex justify-start mt-8">
 			<div class="lg:mr-3 lg:w-1/6" />
-			<YellowButton text="ADD DEVICE" action={addDevice} />
+			<YellowButton action={addDevice}>
+				<span>Add Device</span>
+			</YellowButton>
 		</div>
 
 		<div class="flex justify-start mt-8">
@@ -197,5 +199,7 @@
 	</BlueBox>
 </div>
 <div class="flex justify-end">
-	<BlueButton text="NEXT" action={nextAction} disabled={!done} />
+	<BlueButton action={nextAction} disabled={!done}>
+		<span class="uppercase">Next</span>
+	</BlueButton>
 </div>

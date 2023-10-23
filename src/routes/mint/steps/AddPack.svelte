@@ -99,6 +99,10 @@
 </div>
 
 <div class="flex justify-end mt-12 gap-4">
-	<YellowButton text="BACK" action={previousAction} />
-	<BlueButton text="NEXT" action={nextAction} disabled={!done} />
+	<YellowButton action={previousAction}>
+		<span>Back</span>
+	</YellowButton>
+	<BlueButton action={nextAction} disabled={!done}>
+		<span class="uppercase">Next</span>
+	</BlueButton>
 </div>

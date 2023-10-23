@@ -6,7 +6,9 @@
 	import { signer, signerAddress } from 'svelte-ethers-store';
 	import { environmentNetwork, etherscanBaseUrl } from '$lib/utils';
 	import { createEventDispatcher } from 'svelte';
+	import { connected } from 'svelte-ethers-store';
 	import Send from './icons/Send.svelte';
+	import WhiteButton from './buttons/WhiteButton.svelte';
 
 	export let balance: BigNumber;
 	export let id: number;
@@ -56,12 +58,12 @@
 	};
 </script>
 
-<button on:click={(_) => toggleModal()}>
+<WhiteButton action={() => toggleModal()} disabled={!$connected}>
 	<div class="flex items-center">
 		<Send />
 		<span class="ml-1">Send</span>
 	</div>
-</button>
+</WhiteButton>
 
 <!-- modal -->
 <Dialog id="transfer-dialog" visible={dialogVisible} on:close={toggleModal}>

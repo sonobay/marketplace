@@ -3,17 +3,18 @@
 	export let type: 'device' | 'tag';
 
 	const bgColor = type === 'device' ? 'bg-black' : 'bg-blue-800';
+	const tagClass = `${bgColor} text-white px-2 py-1 flex mr-1 mb-1text-sm`;
 </script>
 
-<div class="float-left">
+<div class="float-left text-sm">
 	{#if link}
 		<a class="float-left" href={link}>
-			<div class={`${bgColor} text-white px-2 py-1 flex mr-1 text-sm`}>
+			<div class={tagClass}>
 				<slot />
 			</div>
 		</a>
 	{:else}
-		<div class={`${bgColor} text-white px-2 py-1 flex mr-1 text-sm`}>
+		<div class={tagClass}>
 			<slot />
 		</div>
 	{/if}

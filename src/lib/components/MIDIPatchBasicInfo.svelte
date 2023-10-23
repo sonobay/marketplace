@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { MIDI } from '$lib/types/midi';
 	import { environmentNetwork, etherscanBaseUrl, truncateAddress } from '$lib/utils';
-	import type { BigNumber } from 'ethers';
+	import { BigNumber } from 'ethers';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { connected } from 'svelte-ethers-store';
 	import TransferMidi from './TransferMIDI.svelte';
@@ -11,6 +11,10 @@
 	import Tag from './Tag.svelte';
 	import Cart from './icons/Cart.svelte';
 	import PatchTable from './PatchTable.svelte';
+	import DollarIcon from './icons/DollarIcon.svelte';
+	import BlueButton from './buttons/BlueButton.svelte';
+	import YellowButton from './buttons/YellowButton.svelte';
+	import ListingCreate from './ListingCreate.svelte';
 
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
@@ -89,7 +93,8 @@
 			</div>
 		</div>
 	</div>
-	{#if $connected}
+
+	<div class="pb-4 mb-4 border-b">
 		<div class="bg-gray-100 rounded shadow-sm pt-2 pb-4 px-4">
 			<div class="mb-2">
 				<span class="text-sm text-gray-400">Your Balance: </span>
@@ -102,35 +107,42 @@
 				{/if}
 			</div>
 
-			<!-- Buy -->
-			<button>
-				<div class="flex align-center items-center">
-					<Cart />
-					<span class="ml-1">Buy</span>
-				</div>
-			</button>
+			<!-- {#if tokenBalance && +tokenBalance > 0} -->
+			<div class="grid grid-cols-4 gap-4">
+				<BlueButton action={() => {}} disabled={!$connected}>
+					<div class="flex align-center items-center">
+						<Cart />
+						<span class="ml-1">Buy</span>
+					</div>
+				</BlueButton>
 
-			{#if tokenBalance && +tokenBalance > 0}
-				<div class="grid grid-cols-2 gap-4">
-					<TransferMidi
-						balance={tokenBalance}
-						id={midi.id}
-						on:midiTransferred={() => dispatch('refreshBalance')}
-					/>
+				<!-- <YellowButton action={() => {}} disabled={!$connected}>
+					<div class="flex align-center items-center">
+						<DollarIcon />
+						<span class="ml-1">Sell</span>
+					</div>
+				</YellowButton> -->
+				<ListingCreate />
 
-					<BurnMidi
-						balance={tokenBalance}
-						id={midi.id}
-						on:midiBurned={() => {
-							dispatch('refreshBalance');
-							_fetchTotalSupply();
-						}}
-					/>
-				</div>
-			{/if}
+				<TransferMidi
+					balance={tokenBalance ?? BigNumber.from(0)}
+					id={midi.id}
+					on:midiTransferred={() => dispatch('refreshBalance')}
+				/>
+
+				<BurnMidi
+					balance={tokenBalance ?? BigNumber.from(0)}
+					id={midi.id}
+					on:midiBurned={() => {
+						dispatch('refreshBalance');
+						_fetchTotalSupply();
+					}}
+				/>
+			</div>
+			<!-- {/if} -->
 		</div>
-	{/if}
+	</div>
 
 	<!-- Patch Table -->
-	<PatchTable {midi} />
+	<PatchTable patches={midi.metadata.properties.entries} removeButton={false} />
 </div>
