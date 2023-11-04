@@ -3,21 +3,20 @@
 	import { environmentNetwork, etherscanBaseUrl, truncateAddress } from '$lib/utils';
 	import { BigNumber } from 'ethers';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { connected } from 'svelte-ethers-store';
+	import { connected, signerAddress } from 'svelte-ethers-store';
 	import TransferMidi from './TransferMIDI.svelte';
 	import BurnMidi from './BurnMIDI.svelte';
-	import { fetchTotalSupply } from '$lib/utils/midi.contract';
+	import { fetchTotalSupply, midiContract } from '$lib/utils/midi.contract';
 	import { environment } from '$lib/env';
 	import Tag from './Tag.svelte';
-	import Cart from './icons/Cart.svelte';
 	import PatchTable from './PatchTable.svelte';
-	import DollarIcon from './icons/DollarIcon.svelte';
-	import BlueButton from './buttons/BlueButton.svelte';
-	import YellowButton from './buttons/YellowButton.svelte';
 	import ListingCreate from './ListingCreate.svelte';
+	import Buy from './buy/Buy.svelte';
+	import type { Listing } from '$lib/types/listing';
 
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
+	export let listings: Listing[];
 
 	let totalSupply: BigNumber | undefined = undefined;
 	const { midiAddress } = environment;
@@ -36,6 +35,20 @@
 	onMount(() => {
 		_fetchTotalSupply();
 	});
+
+	/** fetch balance on connect */
+	$: if ($signerAddress) {
+		fetchBalance();
+	}
+
+	const fetchBalance = async () => {
+		if (!$signerAddress) {
+			return;
+		}
+
+		const fetchBalance = await midiContract().balanceOf($signerAddress, midi.id);
+		tokenBalance = BigNumber.from(fetchBalance);
+	};
 </script>
 
 <div class="flex flex-col justify-between mb-4 rounded shadow p-4 bg-white">
@@ -98,9 +111,9 @@
 		<div class="bg-gray-100 rounded shadow-sm pt-2 pb-4 px-4">
 			<div class="mb-2">
 				<span class="text-sm text-gray-400">Your Balance: </span>
-				{#if tokenBalance}
+				{#if $connected && tokenBalance}
 					<span class="text-gray-500 text-sm">{tokenBalance.toString()}</span>
-				{:else if $connected}
+				{:else if $connected && !tokenBalance}
 					<span class="text-gray-500 text-sm">0</span>
 				{:else}
 					<span class="text-gray-500 text-sm">-</span>
@@ -109,19 +122,8 @@
 
 			<!-- {#if tokenBalance && +tokenBalance > 0} -->
 			<div class="grid grid-cols-4 gap-4">
-				<BlueButton action={() => {}} disabled={!$connected}>
-					<div class="flex align-center items-center">
-						<Cart />
-						<span class="ml-1">Buy</span>
-					</div>
-				</BlueButton>
+				<Buy {listings} {midi} />
 
-				<!-- <YellowButton action={() => {}} disabled={!$connected}>
-					<div class="flex align-center items-center">
-						<DollarIcon />
-						<span class="ml-1">Sell</span>
-					</div>
-				</YellowButton> -->
 				<ListingCreate />
 
 				<TransferMidi

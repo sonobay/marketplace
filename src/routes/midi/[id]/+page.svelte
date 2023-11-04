@@ -35,5 +35,5 @@
 </script>
 
 <Container>
-	<MidiPatchBasicInfo {midi} {tokenBalance} on:refreshBalance={() => fetchBalance()} />
+	<MidiPatchBasicInfo {listings} {midi} {tokenBalance} on:refreshBalance={() => fetchBalance()} />
 </Container>

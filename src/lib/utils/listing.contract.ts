@@ -23,11 +23,12 @@ export const buyItems = async ({
 		const contract = await listingContract(address, signer);
 		const userAddress = await signer.getAddress();
 		const res = await contract.buyItems(amount, userAddress, { value: price.mul(amount) });
-		await res.wait();
-		return true;
+		const receipt = await res.wait();
+		console.log('receipt: ', receipt);
+		return receipt;
 	} catch (error) {
 		console.log('error buying items: ', error);
-		return false;
+		return new Error(`${error}`);
 	}
 };
 
