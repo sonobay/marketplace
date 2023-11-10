@@ -1,9 +1,7 @@
 <script lang="ts">
 	import type { Listing } from '$lib/types/listing';
-	import { environmentNetwork, etherscanBaseUrl, truncateAddress } from '$lib/utils';
-	import { utils } from 'ethers';
-	import YellowButton from '../buttons/YellowButton.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import ListingsTableItem from './ListingsTableItem.svelte';
 
 	export let listings: Listing[];
 
@@ -15,38 +13,17 @@
 	};
 </script>
 
-<table>
+<table class="w-full">
 	<thead>
-		<th>Listing Address</th>
-		<th>Amount Available</th>
-		<th>Price</th>
-		<th>Listed By</th>
-		<th />
+		<th class="px-1 text-left">Listing Address</th>
+		<th class="px-1 text-left">Available</th>
+		<th class="px-1 text-left">Price</th>
+		<th class="px-1 text-left">Listed By</th>
+		<th class="px-1" />
 	</thead>
 	<tbody>
 		{#each listings as listing}
-			<tr>
-				<td>
-					<a
-						href={`${etherscanBaseUrl(environmentNetwork()?.chainId ?? 137)}/address/${
-							listing.listing
-						}`}
-						target="_blank"
-						rel="noreferrer">{truncateAddress(listing.listing)}</a
-					>
-				</td>
-				<td>{listing.amount}</td>
-				<td>{utils.formatEther(listing.price)}</td>
-				<td>
-					<a
-						href={`${etherscanBaseUrl}/address/${listing.user}`}
-						target="_blank"
-						rel="noreferrer"
-						class="text-link">{truncateAddress(listing.user)}</a
-					></td
-				>
-				<td><YellowButton action={() => selectListing(listing)}>Buy</YellowButton></td>
-			</tr>
+			<ListingsTableItem {listing} on:listingSelected={(e) => selectListing(e.detail)} />
 		{/each}
 	</tbody>
 </table>
