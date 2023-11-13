@@ -16,7 +16,6 @@
 
 	export let midi: MIDI;
 	export let tokenBalance: BigNumber | undefined;
-	export let listings: Listing[];
 
 	let totalSupply: BigNumber | undefined = undefined;
 	const { midiAddress } = environment;
@@ -122,7 +121,7 @@
 
 			<!-- {#if tokenBalance && +tokenBalance > 0} -->
 			<div class="grid grid-cols-4 gap-4">
-				<Buy {listings} {midi} />
+				<Buy {midi} />
 
 				<ListingCreate />
 

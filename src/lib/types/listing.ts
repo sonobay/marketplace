@@ -7,3 +7,8 @@ export interface Listing {
 	amount: BigNumber;
 	user: string;
 }
+
+export type AvailableListing = Listing & {
+	available: BigNumber;
+	listed: boolean;
+};

@@ -4,19 +4,17 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { midiContract } from '$lib/utils/midi.contract';
-	import { fetchListingEvents } from '$lib/utils/market.contract';
 	import { BigNumber } from 'ethers';
 	import type { MIDI } from '$lib/types/midi';
 	import MidiPatchBasicInfo from '$lib/components/MIDIPatchBasicInfo.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import type { Listing } from '$lib/types/listing';
+	import { listingsStore } from '$lib/stores/listings';
 
 	let { midi } = data;
 	let tokenBalance = BigNumber.from(0);
-	let listings: Listing[] = [];
 
 	onMount(() => {
-		fetchListings();
+		listingsStore.fetchListings(+$page.params.id);
 	});
 
 	const fetchBalance = async () => {
@@ -28,12 +26,8 @@
 		const fetchBalance = await midiContract().balanceOf($signerAddress, id);
 		tokenBalance = BigNumber.from(fetchBalance);
 	};
-
-	const fetchListings = async () => {
-		listings = await fetchListingEvents(+$page.params.id);
-	};
 </script>
 
 <Container>
-	<MidiPatchBasicInfo {listings} {midi} {tokenBalance} on:refreshBalance={() => fetchBalance()} />
+	<MidiPatchBasicInfo {midi} {tokenBalance} on:refreshBalance={() => fetchBalance()} />
 </Container>

@@ -2,8 +2,7 @@
 	import type { Listing } from '$lib/types/listing';
 	import { createEventDispatcher } from 'svelte';
 	import ListingsTableItem from './ListingsTableItem.svelte';
-
-	export let listings: Listing[];
+	import { listingsStore } from '$lib/stores/listings';
 
 	// when clicking buy, dispatch an event that passes the listing
 	// to the parent component
@@ -22,7 +21,7 @@
 		<th class="px-1" />
 	</thead>
 	<tbody>
-		{#each listings as listing}
+		{#each $listingsStore.listings as listing}
 			<ListingsTableItem {listing} on:listingSelected={(e) => selectListing(e.detail)} />
 		{/each}
 	</tbody>

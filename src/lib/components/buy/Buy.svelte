@@ -8,9 +8,9 @@
 	import SelectedListing from './SelectedListing.svelte';
 	import PurchaseSuccess from './PurchaseSuccess.svelte';
 	import type { MIDI } from '@sonobay/sdk';
+	import { listingsStore } from '$lib/stores/listings';
 
 	export let midi: MIDI;
-	export let listings: Listing[];
 	let dialogVisible = false;
 	let selectedListing: Listing | undefined = undefined;
 	let purchaseTxHash: string | undefined = undefined;
@@ -34,8 +34,8 @@
 		<div class="mb-6">
 			{#if !selectedListing && !purchaseTxHash}
 				<!-- if no listing is selected, show listings table -->
-				{#if listings.length > 0}
-					<ListingsTable {listings} on:listingSelected={(e) => (selectedListing = e.detail)} />
+				{#if $listingsStore.listings.length > 0}
+					<ListingsTable on:listingSelected={(e) => (selectedListing = e.detail)} />
 				{:else}
 					<span>No packs listed.</span>
 				{/if}
